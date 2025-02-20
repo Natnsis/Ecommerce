@@ -24,7 +24,7 @@ const HeaderW = () => {
         rounded-lg" 
         placeholder="Search Here"/>
         <button className="border 
-        bg-gray-500  text-white px-3 pb-1  rounded-lg mx-[-75px]">
+        bg-gray-500  text-white px-3 pb-1  rounded-lg mx-[-75px] hover:text-blue-300">
           search
         </button>
       </div>
