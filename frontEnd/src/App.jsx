@@ -10,6 +10,11 @@ import DashboardV from "./pages/Vendor/DashboardV"
 import Outofstock from "./pages/Vendor/Outofstock"
 import ChangePassV from "./pages/Vendor/ChangePassV"
 import AddPro from "./pages/Vendor/AddPro"
+import Cdash from "./pages/Customer/Cdash"
+import Search from "./pages/Customer/Search"
+import Feedback from "./pages/Customer/Feedback"
+import Cart from "./pages/Customer/Cart"
+import Account from "./pages/Customer/Account"
 
 
 
@@ -28,6 +33,11 @@ const App = () => {
         <Route path="/out" element={<Outofstock/>}/>
         <Route path="/addPro" element={<AddPro/>}/>
         <Route path="/changeV" element={<ChangePassV/>}/>
+        <Route path="/Cdash" element={<Cdash/>}/>
+        <Route path="/search" element={<Search/>}/>
+        <Route path="/feedback" element={<Feedback/>}/>
+        <Route path="/cart" element={<Cart/>}/>
+        <Route path="/account" element={<Account/>}/>
         
       </Routes>
     </Router>
