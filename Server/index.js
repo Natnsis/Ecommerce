@@ -1,30 +1,58 @@
-import express from "express";
-import cors from "cors";
-import mysql from "mysql";
-import session from "express-session";
+const express = require('express');
+const bcrypt = require('bcrypt');
+const mysql = require('mysql');
+const cors = require('cors');
+const session = require('express-session'); 
+const salt = 10;
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
-app.use(session({
-    secret:"secretKeyOfMine",
-    resave:false,
-    saveUninitialized:false,
-    cookie:{
-        expires: 60*60*24
-    }   
-}));
 
 const db = mysql.createConnection({
-    host:"localhost",
-    user:"mage-dev",
-    password:"12345",
-    database:"Ecommerce"
+    host:'localhost',
+    user:'root',
+    password:'12345',
+    database:'ecommerce'
+});
+
+app.use(session({
+    secret:'natnaelSisay1234',
+    resave:false,
+    saveUninitialized:false,
+}));
+
+app.post('/register', (req, res)=>{
+    const query = "INSERT INTO customers (username, password, fullName, image, email) VALUES (?)";
+    
+    bcrypt.hash(req.body.password,salt, (err, hash)=>{
+        if(err) return res.json({Error:"unable to hash password"});
+        const values = [
+            req.body.username,
+            hash,
+            req.body.fullName,
+            req.body.image,
+            req.body.email
+        ]
+    
+    } );
+
+    db.query(query,[values], (err, result)=>{
+        if(err) return res.json({Error:"registration error"});
+        res.json({status:"Registered successfully"});
+    });
 })
 
 
 
-app.listen(3004, ()=>{
-    console.log("server is running on port 3004")
+
+
+app.listen(4000, ()=>{
+    console.log('Server is running....');
+    if(!db){
+        console.log('Error in connecting to database');
+    }
+    else{
+        console.log('Database connected successfully');
+    }
 })
