@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Register = () => {
@@ -17,7 +17,22 @@ const Register = () => {
     fullName: "",
     image: "",
     email: "",
+    form: "",
   });
+
+  const navigate = useNavigate();
+
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    setCustomer((prevData) => ({
+      ...prevData,
+      [name]: files ? files[0] : value,
+    }));
+    setError((prevError) => ({
+      ...prevError,
+      [name]: "",
+    }));
+  };
 
   const handleRegistrtion = async (e) => {
     e.preventDefault();
@@ -28,6 +43,7 @@ const Register = () => {
       fullName: "",
       image: "",
       email: "",
+      form: "",
     };
 
     if (!customer.username) {
@@ -72,7 +88,8 @@ const Register = () => {
           form: response.data.Error,
         }));
       } else {
-        // Handle successful registration (e.g., redirect to login page)
+        // Handle successful registration and redirect to login page
+        navigate("/login");
       }
     } catch (err) {
       setError((prevError) => ({
@@ -95,7 +112,7 @@ const Register = () => {
             className="w-70 border px-5 py-1 rounded text-center"
             placeholder="Enter username"
             value={customer.username}
-            onChange={(e) => setCustomer({ ...customer, username: e.target.value })}
+            onChange={handleChange}
           />
           <p className="text-red-500 text-center">{error.username}</p>
 
@@ -105,7 +122,7 @@ const Register = () => {
             className="w-70 border px-5 py-1 rounded text-center"
             placeholder="Enter Password"
             value={customer.password}
-            onChange={(e) => setCustomer({ ...customer, password: e.target.value })}
+            onChange={handleChange}
           />
           <p className="text-red-500 text-center">{error.password}</p>
 
@@ -115,7 +132,7 @@ const Register = () => {
             className="w-70 border px-5 py-1 rounded text-center"
             placeholder="Enter Full Name"
             value={customer.fullName}
-            onChange={(e) => setCustomer({ ...customer, fullName: e.target.value })}
+            onChange={handleChange}
           />
           <p className="text-red-500 text-center">{error.fullName}</p>
 
@@ -124,7 +141,7 @@ const Register = () => {
             type="file"
             name="image"
             className="cursor-pointer border px-3 rounded-lg hover:bg-blue-300"
-            onChange={(e) => setCustomer({ ...customer, image: e.target.files[0] })}
+            onChange={handleChange}
           />
           <p className="text-red-500 text-center">{error.image}</p>
 
@@ -134,7 +151,7 @@ const Register = () => {
             className="w-70 border px-5 py-1 rounded text-center"
             placeholder="Enter Email"
             value={customer.email}
-            onChange={(e) => setCustomer({ ...customer, email: e.target.value })}
+            onChange={handleChange}
           />
           <p className="text-red-500 text-center">{error.email}</p>
 
@@ -146,6 +163,7 @@ const Register = () => {
               Register
             </button>
           </div>
+          <p className="text-red-500 text-center">{error.form}</p>
         </form>
         <div>
           <p className="text-center">

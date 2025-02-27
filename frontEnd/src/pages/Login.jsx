@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate} from "react-router-dom";
 import axios from "axios";
 
 const Login = () => {
@@ -13,6 +13,9 @@ const Login = () => {
     password: "",
     form: "",
   });
+
+  const navigate = useNavigate();
+
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -58,7 +61,14 @@ const Login = () => {
           form: response.data.Error,
         }));
       } else {
-        // Handle successful login (e.g., redirect to dashboard)
+        // Handle successful login and redirect based on role
+        if (response.data.role === "admin") {
+          navigate("/Adash");
+        } else if (response.data.role === "vendor") {
+          navigate("/Vdash");
+        } else if (response.data.role === "customer") {
+          navigate("/Cdash");
+        }
       }
     } catch (err) {
       setError((prevError) => ({
