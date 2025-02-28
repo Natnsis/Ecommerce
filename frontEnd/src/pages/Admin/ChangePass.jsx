@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Header from "../../components/Admin/Header";
+import axios from "axios";
 
 const ChangePass = () => {
   const [formData, setFormData] = useState({
@@ -60,7 +61,7 @@ const ChangePass = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:4000/change-password", formData);
+      const response = await axios.post("http://localhost:4000/change-password-admin", formData);
       console.log(response.data);
       if (response.data.Error) {
         setError((prevError) => ({
@@ -68,6 +69,7 @@ const ChangePass = () => {
           form: response.data.Error,
         }));
       } else {
+        alert("Password changed successfully");
         // Handle successful password change (e.g., show success message)
       }
     } catch (err) {
