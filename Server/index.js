@@ -4,12 +4,19 @@ const mysql = require('mysql');
 const cors = require('cors');
 const session = require('express-session'); 
 const multer = require('multer');
-const path = require('path'); // Import path module
+const path = require('path'); 
 const salt = 10;
+
+//route imports
+const loginRouter = require('./routes/Login')
+
+
 
 const app = express();
 app.use(cors());
 app.use(express.json());
+
+
 
 const db = mysql.createConnection({
     host:'localhost',
@@ -45,8 +52,14 @@ const vendorStorage = multer.diskStorage({
     },
 });
 
+
 const customerUpload = multer({ storage: customerStorage });
 const vendorUpload = multer({ storage: vendorStorage });
+
+
+// login routes
+app.use("/login", loginRouter);
+
 
 app.post('/register', customerUpload.single('image'), (req, res) => {
     const checkUserQuery = "SELECT * FROM customers WHERE username = ?";
@@ -74,50 +87,31 @@ app.post('/register', customerUpload.single('image'), (req, res) => {
     });
 });
 
-app.post('/login', (req, res) => {
-    const q = "SELECT * FROM admins WHERE username = (?)";
-    db.query(q, [req.body.username], (err, result) => {
-        if (err) return res.json({ Error: "error in login" });
-        if (result.length === 0) {
-            const query = "SELECT * FROM vendors WHERE username = (?)";
-            db.query(query, [req.body.username], (err, result) => {
-                if (err) return res.json({ Error: "error in login" });
 
-                if (result.length === 0) {
-                    const query = "SELECT * FROM customers WHERE username = (?)";
-                    db.query(query, [req.body.username], (err, result) => {
-                        if (err) return res.json({ Error: "error in login" });
-                        if (result.length === 0) return res.json({ Error: "username is incorrect" });
-                        bcrypt.compare(req.body.password, result[0].password, (err, isMatch) => { // customer success
-                            if (err) return res.json({ Error: "error in password" });
-                            if (!isMatch) return res.json({ Error: "password is incorrect" });
-                            req.session.user = result[0];
-                            req.session.username = req.body.username; // Store username in session
-                            res.json({ status: "login success", role: "customer" });
-                        });
-                    });
-                } else { 
-                    bcrypt.compare(req.body.password, result[0].password, (err, isMatch) => {
-                        if (err) return res.json({ Error: "error in password" });
-                        if (!isMatch) return res.json({ Error: "password is incorrect" });
-                        req.session.user = result[0];
-                        req.session.username = req.body.username; // Store username in session
-                        res.json({ status: "login success", role: "vendor" });
-                    });
-                }
-            });
-        } else {
-            if (req.body.password === result[0].password) {
-                req.session.user = result[0];
-                req.session.username = req.body.username; // Store username in session
-                res.json({ status: "login success", role: "admin" });
-            } else {
-                res.json({ Error: "password is incorrect" });
-            }
-        }
+////////////////////////////////////////////////////////////////////////////////////////////
+app.post('/change-password-admin', (req, res) => {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+
+    if (newPassword !== confirmPassword) {
+        return res.json({ Error: "Passwords do not match" });
+    }
+
+    const query = "SELECT password FROM admins WHERE id = ?"; // Adjust the query to match your database schema
+    db.query(query, [req.session.user.id], (err, result) => {
+        if (err) return res.json({ Error: "Error fetching current password" });
+
+        if (currentPassword !== result[0].password) return res.json({ Error: "Current password is incorrect" });
+
+        const updateQuery = "UPDATE admins SET password = ? WHERE id = ?"; // Adjust the query to match your database schema
+        db.query(updateQuery, [newPassword, req.session.user.id], (err, result) => {
+            if (err) return res.json({ Error: "Error updating password" });
+            res.json({ status: "Password changed successfully" });
+        });
     });
 });
 
+
+/////////////////////////////////////////////////////////////////////////////////////////
 app.post('/addVendor', vendorUpload.single('image'), (req, res) => {
     const checkUserQuery = "SELECT * FROM vendors WHERE username = ?";
     db.query(checkUserQuery, [req.body.username], (err, result) => {
@@ -143,6 +137,8 @@ app.post('/addVendor', vendorUpload.single('image'), (req, res) => {
     });
 });
 
+
+////////////////////////////////////////////////////////////////////////////////////////
 app.get('/vendorlist', (req, res) => {
     const query = "SELECT * FROM vendors";
     db.query(query, (err, result) => {
@@ -179,7 +175,7 @@ app.put('/updateVendor/:id', vendorUpload.single('image'), (req, res) => {
 });
 
 
-
+////////////////////////////////////////////////////////////////////////////////////////
 app.get('/session', (req, res) => {
     if (req.session.username) {
         res.json({ username: req.session.username });
@@ -188,6 +184,9 @@ app.get('/session', (req, res) => {
     }
 });
 
+
+
+////////////////////////////////////////////////////////////////////////////////////////
 app.listen(4000, () => {
     console.log('Server is running....');
     if (!db) {

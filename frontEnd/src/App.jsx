@@ -15,6 +15,7 @@ import Search from "./pages/Customer/Search"
 import Feedback from "./pages/Customer/Feedback"
 import Cart from "./pages/Customer/Cart"
 import Account from "./pages/Customer/Account"
+import UpdateVen from "./pages/Admin/UpdateVen"
 
 
 
@@ -38,6 +39,7 @@ const App = () => {
         <Route path="/feedback" element={<Feedback/>}/>
         <Route path="/cart" element={<Cart/>}/>
         <Route path="/account" element={<Account/>}/>
+        <Route path="/updateVendor/:id" element={<UpdateVen/>}/>
         
       </Routes>
     </Router>
