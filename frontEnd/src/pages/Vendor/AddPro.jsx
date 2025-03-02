@@ -12,6 +12,8 @@ const AddPro = () => {
             <h1 className="text-3xl font-bold text-black">Add Products</h1>
             <label htmlFor="">Product name: </label>
             <input type="text" className="border border-gray-200 px-2 py-1 text-center text-black" placeholder="" id="" /><br />
+            <label htmlFor="">Product Available Stock: </label>
+            <input type="number" className="border border-gray-200 px-2 py-1 text-center text-black w-20" placeholder="" id="" /><br />
             <label htmlFor="">Choose a product Image</label><br />
             <input type="file" className="border border-gray-200 px-2 py-1 text-center  hover:bg-gray-700 hover-text-white"  /><br />
             <label htmlFor="">Product Description</label><br />
