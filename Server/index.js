@@ -9,7 +9,7 @@ const salt = 10;
 
 //route imports
 const loginRouter = require('./routes/Login')
-
+const listOfCustomers = require('./routes/ListOfCustomer')
 
 
 const app = express();
@@ -59,8 +59,8 @@ const vendorUpload = multer({ storage: vendorStorage });
 
 // login routes
 app.use("/login", loginRouter);
-
-
+app.use("/listOfCustomers", listOfCustomers);
+//customer register
 app.post('/register', customerUpload.single('image'), (req, res) => {
     const checkUserQuery = "SELECT * FROM customers WHERE username = ?";
     db.query(checkUserQuery, [req.body.username], (err, result) => {
@@ -87,8 +87,7 @@ app.post('/register', customerUpload.single('image'), (req, res) => {
     });
 });
 
-
-////////////////////////////////////////////////////////////////////////////////////////////
+//admin change password
 app.post('/change-password-admin', (req, res) => {
     const { currentPassword, newPassword, confirmPassword } = req.body;
 
@@ -111,7 +110,8 @@ app.post('/change-password-admin', (req, res) => {
 });
 
 
-/////////////////////////////////////////////////////////////////////////////////////////
+
+//add vendors through admin
 app.post('/addVendor', vendorUpload.single('image'), (req, res) => {
     const checkUserQuery = "SELECT * FROM vendors WHERE username = ?";
     db.query(checkUserQuery, [req.body.username], (err, result) => {
@@ -138,7 +138,8 @@ app.post('/addVendor', vendorUpload.single('image'), (req, res) => {
 });
 
 
-////////////////////////////////////////////////////////////////////////////////////////
+
+//get all vendors
 app.get('/vendorlist', (req, res) => {
     const query = "SELECT * FROM vendors";
     db.query(query, (err, result) => {
@@ -147,6 +148,8 @@ app.get('/vendorlist', (req, res) => {
     });
 });
 
+
+//delete vendor
 app.delete('/deleteVendor/:id', (req, res) => {
     const query = "DELETE FROM vendors WHERE id = ?";
     db.query(query, [req.params.id], (err, result) => {
@@ -155,6 +158,8 @@ app.delete('/deleteVendor/:id', (req, res) => {
     });
 });
 
+
+//update vendor
 app.put('/updateVendor/:id', vendorUpload.single('image'), (req, res) => {
     const query = "UPDATE vendors SET username = ?, password = ?, fullName = ?, image = ? WHERE id = ?";
     bcrypt.hash(req.body.password, salt, (err, hash) => {
@@ -174,8 +179,10 @@ app.put('/updateVendor/:id', vendorUpload.single('image'), (req, res) => {
     });
 });
 
+//list of vendors
 
-////////////////////////////////////////////////////////////////////////////////////////
+
+//get all customers
 app.get('/session', (req, res) => {
     if (req.session.username) {
         res.json({ username: req.session.username });
@@ -185,8 +192,7 @@ app.get('/session', (req, res) => {
 });
 
 
-
-////////////////////////////////////////////////////////////////////////////////////////
+//main process
 app.listen(4000, () => {
     console.log('Server is running....');
     if (!db) {

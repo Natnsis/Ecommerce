@@ -1,8 +1,41 @@
 import Count from "../../components/Admin/Count"
 import Footer from "../../components/Admin/Footer"
 import Header from "../../components/Admin/Header"
+import {useState, useEffect } from 'react'
+import axios from "axios";
+
+
 
 const Dashboard = () => {
+    const [vendors, setVendors] = useState([]);
+    const [customers, setCustomers] = useState([]);
+    useEffect(() => {
+        const fetchVendors = async () => {
+            try {
+                const response = await axios.get("http://localhost:4000/listOfCustomers");
+                setCustomers(response.data);
+            } catch (err) {
+                console.error("Error fetching vendor list:", err);
+            }
+        };
+
+        fetchVendors();
+    }, []);
+
+    useEffect(() => {
+        const fetchVendors = async () => {
+            try {
+                const response = await axios.get("http://localhost:4000/vendorlist");
+                console.log(response.data); // Log the vendor data
+                setVendors(response.data);
+            } catch (err) {
+                console.error("Error fetching vendor list:", err);
+            }
+        };
+
+        fetchVendors();
+    }, []);
+
   return (
     <div className="px-10 pt-10 space-y-15">
       <Header/>
@@ -22,12 +55,14 @@ const Dashboard = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td className="text-md px-15 py-3">1</td>
-                    <td className="text-md px-15 py-3">Natnael</td>
-                    <td className="text-md px-15 py-3">Nati</td>
-                    <td className="text-md px-15 py-3">5</td>
-                  </tr>
+                  {vendors.map((vendor) => (
+                <tr key={vendor.id}>
+                  <td className="text-md px-15 py-3">{vendor.id}</td>
+                  <td className="text-md px-15 py-3">{vendor.fullName}</td>
+                    <td className="text-md px-15 py-3">{vendor.username}</td>
+                  <td className="text-md px-15 py-3">0</td>
+                </tr>
+              ))}
                 </tbody>
             </table>
         </div>
@@ -43,16 +78,18 @@ const Dashboard = () => {
                     <th className="text-md px-15 py-3 ">Id</th>
                     <th className="text-md px-15 py-3 ">Full Name</th>
                     <th className="text-md px-15 py-3 ">Username</th>
-                    <th className="text-md px-15 py-3 ">Number Of Products</th>
+                    <th className="text-md px-15 py-3 ">Number Of Bought Products</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td className="text-md px-15 py-3">1</td>
-                    <td className="text-md px-15 py-3">Natnael</td>
-                    <td className="text-md px-15 py-3">Nati</td>
-                    <td className="text-md px-15 py-3">5</td>
-                  </tr>
+                {customers.map((customer) => (
+                    <tr key={customer.id}>
+                        <td className="text-md px-15 py-3">{customer.id}</td>
+                        <td className="text-md px-15 py-3">{customer.fullName}</td>
+                        <td className="text-md px-15 py-3">{customer.username}</td>
+                        <td className="text-md px-15 py-3">{customer.numberOfBoughtProducts}</td>
+                    </tr>
+                ))}
                 </tbody>
             </table>
         </div>
