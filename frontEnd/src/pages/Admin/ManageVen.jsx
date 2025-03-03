@@ -4,6 +4,7 @@ import Header from "../../components/Admin/Header";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
+
 const ManageVen = () => {
   const [vendors, setVendors] = useState([]);
 
@@ -74,9 +75,9 @@ const ManageVen = () => {
                 <tr key={vendor.id}>
                   <td className="text-md px-15 py-3">{vendor.id}</td>
                   <td className="text-md px-15 py-3">
-                    <img src={`../Uploads/vendors/${vendor.image}`} alt={vendor.fullName} className="w-10 h-10 rounded-full" />
+                    <img src={`../src/Uploads/vendors/${vendor.image}`} className="w-10 h-10 rounded-full" />
                   </td>
-                  <td className="text-md px-15 py-3">{vendor.fullName}</td>
+                  <td className="text-md px-15 py-3">{vendor.fullname}</td>
                   <td className="text-md px-15 py-3">{vendor.username}</td>
                   <td className="text-md px-40 py-3">
                     <button className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-700 mx-1">

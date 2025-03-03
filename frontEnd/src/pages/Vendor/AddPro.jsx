@@ -1,7 +1,23 @@
 import Vheader from "./../../components/Vendor/Vheader"
+import {useState} from 'react'
+import {useNvigate} from 'react-router-dom'
+
 
 const AddPro = () => {
+  const [product, setProduct] = useState({
+    name: '',
+    stock: '',
+    image: '',
+    description: '',
+    price: '',
+    category: ''
+  })
+
+  const handleChange = (e)=>{
+    
+  }
   return (
+
     <div className="pt-5 px-5">
       <Vheader/>
 

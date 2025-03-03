@@ -49,6 +49,7 @@ router.post('/', (req, res) => {
         } else {
             if (req.body.password === result[0].password) {
                 req.session.user = result[0];
+                req.session.id = req.body.id;
                 req.session.username = req.body.username; // Store username in session
                 res.json({ status: "login success", role: "admin" });
             } else {

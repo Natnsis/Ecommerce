@@ -1,7 +1,7 @@
 import FooterW from "../components/FooterW"
 import HeaderW from "../components/HeaderW"
 import home from "./../images/home.jpg"
-import s22 from "./../images/s22.jpg"
+import assosa from "./../images/assosa.jpg"
 
 
 const Welcome = () => {
@@ -96,8 +96,8 @@ const Welcome = () => {
                   <h1 className="text-2xl text-center font-extrabold">About Us</h1>
                 </div>
                 <div className="w-full flex shadow-lg p-10 space-x-2  ">
-                    <div className="w-[50%] h-screen">
-                      <img src={s22} alt="" />
+                    <div className="w-[50%] h-fit">
+                      <img src={assosa} alt="" />
                     </div>
                     <div className="w-[50%]">
                         <div>

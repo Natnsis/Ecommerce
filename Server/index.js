@@ -6,6 +6,7 @@ const session = require('express-session');
 const multer = require('multer');
 const path = require('path'); 
 const salt = 10;
+var port = 4000;
 
 //route imports
 const loginRouter = require('./routes/Login')
@@ -43,6 +44,15 @@ const customerStorage = multer.diskStorage({
     },
 });
 
+const productStorage = multer.diskStorage({
+    destination:(req,file,cb)=>{
+        cb(null, path.join(__dirname, '../frontEnd/src/Uploads/products'));
+    },
+    filename:(req,file,cb)=>{
+        cb(null, Date.now() + '-' + file.originalname)
+    }
+})
+
 const vendorStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, path.join(__dirname, '../frontEnd/src/Uploads/vendors'));
@@ -55,11 +65,13 @@ const vendorStorage = multer.diskStorage({
 
 const customerUpload = multer({ storage: customerStorage });
 const vendorUpload = multer({ storage: vendorStorage });
-
+const productUpload = multer({storage: productStorage});
 
 // login routes
 app.use("/login", loginRouter);
 app.use("/listOfCustomers", listOfCustomers);
+
+
 //customer register
 app.post('/register', customerUpload.single('image'), (req, res) => {
     const checkUserQuery = "SELECT * FROM customers WHERE username = ?";
@@ -90,19 +102,20 @@ app.post('/register', customerUpload.single('image'), (req, res) => {
 //admin change password
 app.post('/change-password-admin', (req, res) => {
     const { currentPassword, newPassword, confirmPassword } = req.body;
-
+    res.json(req.session.user)
+    res.send(currentPassword);
     if (newPassword !== confirmPassword) {
         return res.json({ Error: "Passwords do not match" });
     }
 
-    const query = "SELECT password FROM admins WHERE id = ?"; // Adjust the query to match your database schema
-    db.query(query, [req.session.user.id], (err, result) => {
+    const query = "SELECT password FROM admins WHERE id = ?"; 
+    db.query(query, [req.session.id], (err, result) => {
         if (err) return res.json({ Error: "Error fetching current password" });
 
         if (currentPassword !== result[0].password) return res.json({ Error: "Current password is incorrect" });
 
         const updateQuery = "UPDATE admins SET password = ? WHERE id = ?"; // Adjust the query to match your database schema
-        db.query(updateQuery, [newPassword, req.session.user.id], (err, result) => {
+        db.query(updateQuery, [newPassword, req.session.id], (err, result) => {
             if (err) return res.json({ Error: "Error updating password" });
             res.json({ status: "Password changed successfully" });
         });
@@ -110,6 +123,24 @@ app.post('/change-password-admin', (req, res) => {
 });
 
 
+//add products
+app.post('/addProducts', productUpload.single('image'), (req, res) => {
+    const query = "INSERT INTO products(pname, pdescription, stock, price, pimage, category, Vid) VALUES(?)";
+    const values = [
+        req.body.name,
+        req.body.description,
+        req.body.stock,
+        req.body.price,
+        req.file ? req.file.filename : null,
+        req.body.category,
+        req.session.id
+    ];
+
+    db.query(query, [values], (err, result) => {
+        if (err) return res.json({ Error: 'error in adding product' });
+        res.json({ status: 'product added successfully' });
+    });
+});
 
 //add vendors through admin
 app.post('/addVendor', vendorUpload.single('image'), (req, res) => {
@@ -192,8 +223,9 @@ app.get('/session', (req, res) => {
 });
 
 
+app.use(express.static(path.join(__dirname, '../frontEnd/build')));
 //main process
-app.listen(4000, () => {
+app.listen(port, () => {
     console.log('Server is running....');
     if (!db) {
         console.log('Error in connecting to database');

@@ -58,7 +58,7 @@ const Dashboard = () => {
                   {vendors.map((vendor) => (
                 <tr key={vendor.id}>
                   <td className="text-md px-15 py-3">{vendor.id}</td>
-                  <td className="text-md px-15 py-3">{vendor.fullName}</td>
+                  <td className="text-md px-15 py-3">{vendor.fullname}</td>
                     <td className="text-md px-15 py-3">{vendor.username}</td>
                   <td className="text-md px-15 py-3">0</td>
                 </tr>
