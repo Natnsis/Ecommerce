@@ -26,7 +26,7 @@ const Dashboard = () => {
         const fetchVendors = async () => {
             try {
                 const response = await axios.get("http://localhost:4000/vendorlist");
-                console.log(response.data); // Log the vendor data
+                console.log(response.data);
                 setVendors(response.data);
             } catch (err) {
                 console.error("Error fetching vendor list:", err);

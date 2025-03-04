@@ -7,14 +7,18 @@ const multer = require('multer');
 const path = require('path'); 
 const salt = 10;
 var port = 4000;
-
-
-
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',
+    methods: ["GET", "POST"],
+    credentials: true
+}));
 app.use(express.json());
-
+app.use(cookieParser());
+app.use(bodyParser.json());
 
 
 const db = mysql.createConnection({
@@ -28,9 +32,13 @@ const db = mysql.createConnection({
 });
 
 app.use(session({
-    secret:'natnaelSisay1234',
-    resave:false,
-    saveUninitialized:false,
+    secret: 'natnaelSisay1234',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false,
+        maxAge: 1000 * 60 * 60 * 24 
+    }
 }));
 
 const customerStorage = multer.diskStorage({
@@ -83,11 +91,10 @@ app.post('/login', (req, res) => {
                     db.query(query, [req.body.username], (err, result) => {
                         if (err) return res.json({ Error: "error in login" });
                         if (result.length === 0) return res.json({ Error: "username is incorrect" });
-                        bcrypt.compare(req.body.password, result[0].password, (err, isMatch) => { // customer success
+                        bcrypt.compare(req.body.password, result[0].password, (err, isMatch) => {
                             if (err) return res.json({ Error: "error in password" });
                             if (!isMatch) return res.json({ Error: "password is incorrect" });
-                            req.session.user = result[0];
-                            req.session.username = req.body.username; // Store username in session
+                            req.session.user = result[0]; // Store customer session
                             res.json({ status: "login success", role: "customer" });
                         });
                     });
@@ -95,17 +102,16 @@ app.post('/login', (req, res) => {
                     bcrypt.compare(req.body.password, result[0].password, (err, isMatch) => {
                         if (err) return res.json({ Error: "error in password" });
                         if (!isMatch) return res.json({ Error: "password is incorrect" });
-                        req.session.user = result[0];
-                        req.session.username = req.body.username; // Store username in session
-                        res.json({ status: "login success", role: "vendor" });
+                        req.session.user = result[0]; // Store vendor session
+                        console.log(req.session.user);
+                        res.json({ status: "login success", role: "vendor", Info: req.session.user });
+                        
                     });
                 }
             });
         } else {
             if (req.body.password === result[0].password) {
-                req.session.user = result[0];
-                req.session.id = req.body.id;
-                req.session.username = req.body.username; // Store username in session
+                req.session.user = result[0]; // Store admin session
                 res.json({ status: "login success", role: "admin" });
             } else {
                 res.json({ Error: "password is incorrect" });
@@ -113,6 +119,7 @@ app.post('/login', (req, res) => {
         }
     });
 });
+
 
 
 //customer register
@@ -141,6 +148,18 @@ app.post('/register', customerUpload.single('image'), (req, res) => {
         });
     });
 });
+
+//get userInfo
+app.get('/userInfo', (req, res) => {
+    if (req.session.user) {
+        res.json({ user: req.session.user });
+    } else {
+        res.status(401).json({ error: 'Unauthorized' });
+    }
+});
+
+
+
 
 
 //get customers
@@ -178,7 +197,8 @@ app.post('/change-password-admin', (req, res) => {
 
 //add products
 app.post('/addProducts', productUpload.single('image'), (req, res) => {
-    const query = "INSERT INTO products(pname, pdescription, stock, price, pimage, category, Vid) VALUES(?)";
+    const query = "INSERT INTO products (pname, pdescription, stock, price, pimage, category, Vid) VALUES (?)";
+    
     const values = [
         req.body.name,
         req.body.description,
@@ -186,8 +206,10 @@ app.post('/addProducts', productUpload.single('image'), (req, res) => {
         req.body.price,
         req.file ? req.file.filename : null,
         req.body.category,
-        req.session.user.id 
+        req.body.vid
     ];
+
+    console.log(req.session.user.id);
 
     db.query(query, [values], (err, result) => {
         if (err) return res.json({ Error: 'error in adding product' });
@@ -263,17 +285,9 @@ app.put('/updateVendor/:id', vendorUpload.single('image'), (req, res) => {
     });
 });
 
-//list of vendors
 
 
-//get all customers
-app.get('/session', (req, res) => {
-    if (req.session.username) {
-        res.json({ username: req.session.username });
-    } else {
-        res.status(401).json({ Error: "Not logged in" });
-    }
-});
+
 
 
 app.use(express.static(path.join(__dirname, '../frontEnd/build')));

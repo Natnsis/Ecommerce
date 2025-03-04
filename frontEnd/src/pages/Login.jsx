@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate} from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 
 const Login = () => {
@@ -15,7 +15,7 @@ const Login = () => {
   });
 
   const navigate = useNavigate();
-
+  axios.defaults.withCredentials = true;
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -53,7 +53,7 @@ const Login = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:4000/login", credentials);
+      const response = await axios.post("http://localhost:4000/login", credentials, { withCredentials: true });
       console.log(response.data);
       if (response.data.Error) {
         setError((prevError) => ({
@@ -61,7 +61,6 @@ const Login = () => {
           form: response.data.Error,
         }));
       } else {
-        // Handle successful login and redirect based on role
         if (response.data.role === "admin") {
           navigate("/Adash");
         } else if (response.data.role === "vendor") {

@@ -1,5 +1,5 @@
 import Vheader from "./../../components/Vendor/Vheader";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
@@ -10,10 +10,31 @@ const AddPro = () => {
     image: null,
     description: '',
     price: '',
-    category: ''
+    category: '',
+    vid: ''
   });
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/userInfo', { withCredentials: true });
+        if (response.status === 200 && response.data.user) {
+          setProduct((prevData) => ({
+            ...prevData,
+            vid: response.data.user.id
+          }));
+        } else {
+          navigate('/login');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        navigate('/login');
+      }
+    };
+    fetchUserInfo();
+  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -32,10 +53,10 @@ const AddPro = () => {
     formData.append('description', product.description);
     formData.append('price', product.price);
     formData.append('category', product.category);
+    formData.append('vid', product.vid);
 
     try {
-      const response = await axios.post('http://localhost:4000/addProducts', formData);
-      console.log(response.data);
+      const response = await axios.post('http://localhost:4000/addProducts', formData, { withCredentials: true });
       if (response.data.Error) {
         alert("An error occurred couldn't add.");
       } else {
@@ -43,6 +64,7 @@ const AddPro = () => {
         navigate("/Vdash");
       }
     } catch (err) {
+      console.error(err);
       alert("An error occurred couldn't add.");
     }
   };
@@ -57,7 +79,7 @@ const AddPro = () => {
           <center className="space-y-2 text-gray-400">
             <h1 className="text-3xl font-bold text-black">Add Products</h1>
             <form onSubmit={handleAdding}>
-              <label htmlFor="name">Product name: </label>
+              <label htmlFor="name">Product name:  </label>
               <input
                 type="text"
                 name="name"
