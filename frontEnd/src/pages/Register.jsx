@@ -9,7 +9,7 @@ const Register = () => {
     fullName: "",
     image: null,
     email: "",
-  });
+  });//
 
   const [error, setError] = useState({
     username: "",

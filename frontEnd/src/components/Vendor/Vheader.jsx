@@ -1,32 +1,10 @@
-import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { Link } from "react-router-dom";
 
-const Vheader = () => {
-  const [user, setUser] = useState({});
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const response = await axios.get('http://localhost:4000/userInfo', { withCredentials: true });
-        if (response.status === 200 && response.data.user) {
-          setUser(response.data.user);
-        } else {
-          navigate('/login');
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        navigate('/login');
-      }
-    };
-    fetchUserInfo();
-  }, [navigate]);
-
+const Vheader = ({name}) => {
   return (
     <div className="flex justify-between items-center">
       <div>
-        <h1 className="font-extrabold text-4xl capitalize">Welcome {user.fullname}</h1>
+        <h1 className="font-extrabold text-4xl capitalize">Welcome {name}</h1>
       </div>
       <div className="flex justify-between space-x-4">
         <Link className="hover:underline bg-gray-200 px-3 py-1 rounded-lg" to="/Vdash">Dashboard</Link>

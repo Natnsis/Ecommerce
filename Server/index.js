@@ -9,7 +9,6 @@ const salt = 10;
 var port = 4000;
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-
 const app = express();
 app.use(cors({
     origin: 'http://localhost:5173',
@@ -51,10 +50,10 @@ const customerStorage = multer.diskStorage({
 });
 
 const productStorage = multer.diskStorage({
-    destination:(req,file,cb)=>{
+    destination:(req,file,cb) => {
         cb(null, path.join(__dirname, '../frontEnd/src/Uploads/products'));
     },
-    filename:(req,file,cb)=>{
+    filename: (req,file,cb) =>{
         cb(null, Date.now() + '-' + file.originalname)
     }
 })
@@ -159,9 +158,6 @@ app.get('/userInfo', (req, res) => {
 });
 
 
-
-
-
 //get customers
 app.get('/listOfCustomers', (req, res)=>{
     const q = 'SELECT * FROM customers';
@@ -194,28 +190,6 @@ app.post('/change-password-admin', (req, res) => {
     });
 });
 
-
-//add products
-app.post('/addProducts', productUpload.single('image'), (req, res) => {
-    const query = "INSERT INTO products (pname, pdescription, stock, price, pimage, category, Vid) VALUES (?)";
-    
-    const values = [
-        req.body.name,
-        req.body.description,
-        req.body.stock,
-        req.body.price,
-        req.file ? req.file.filename : null,
-        req.body.category,
-        req.body.vid
-    ];
-
-    console.log(req.session.user.id);
-
-    db.query(query, [values], (err, result) => {
-        if (err) return res.json({ Error: 'error in adding product' });
-        res.json({ status: 'product added successfully' });
-    });
-});
 
 //add vendors through admin
 app.post('/addVendor', vendorUpload.single('image'), (req, res) => {
@@ -283,6 +257,28 @@ app.put('/updateVendor/:id', vendorUpload.single('image'), (req, res) => {
             res.json({ status: "Vendor updated successfully" });
         });
     });
+});
+
+
+//add products
+app.post('/addProducts', productUpload.single('image'), (req, res) => {
+        const query = "INSERT INTO products (pname, pdescription, price, pimage, category, stock, Vid) VALUES (?)";
+            const values = [
+                req.body.name,
+                req.body.description,
+                req.body.price,
+                req.file ? req.file.filename : null,
+                req.body.category,
+                req.body.stock,
+                req.body.vid
+            ];
+
+            db.query(query, [values], (err, result) => {
+                if (err) return res.json({ Error: "adding error" });
+                res.json({ status: "Registered successfully" });
+            });
+
+
 });
 
 

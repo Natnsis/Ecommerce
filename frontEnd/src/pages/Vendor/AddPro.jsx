@@ -4,17 +4,39 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const AddPro = () => {
+  const [user, setUser] = useState({});
+  const navigate = useNavigate();
+  
+  
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      try {
+        const response = await axios.get('http://localhost:4000/userInfo', { withCredentials: true });
+        if (response.status === 200 && response.data.user) {
+          setUser(response.data.user);
+        } else {
+          navigate('/login');
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+        navigate('/login');
+      }
+    };
+    fetchUserInfo();
+  }, [navigate]);
+  
+  
   const [product, setProduct] = useState({
     name: '',
     stock: '',
     image: null,
     description: '',
     price: '',
-    category: '',
-    vid: ''
+    category: ''
   });
 
-  const navigate = useNavigate();
+
+      
 
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -22,8 +44,7 @@ const AddPro = () => {
         const response = await axios.get('http://localhost:4000/userInfo', { withCredentials: true });
         if (response.status === 200 && response.data.user) {
           setProduct((prevData) => ({
-            ...prevData,
-            vid: response.data.user.id
+            ...prevData
           }));
         } else {
           navigate('/login');
@@ -46,17 +67,9 @@ const AddPro = () => {
 
   const handleAdding = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('name', product.name);
-    formData.append('stock', product.stock);
-    formData.append('image', product.image);
-    formData.append('description', product.description);
-    formData.append('price', product.price);
-    formData.append('category', product.category);
-    formData.append('vid', product.vid);
 
     try {
-      const response = await axios.post('http://localhost:4000/addProducts', formData, { withCredentials: true });
+      const response = await axios.post('http://localhost:4000/addProducts', product);
       if (response.data.Error) {
         alert("An error occurred couldn't add.");
       } else {
