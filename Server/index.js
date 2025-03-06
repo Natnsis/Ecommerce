@@ -84,7 +84,6 @@ app.post('/login', (req, res) => {
             const query = "SELECT * FROM vendors WHERE username = (?)";
             db.query(query, [req.body.username], (err, result) => {
                 if (err) return res.json({ Error: "error in login" });
-
                 if (result.length === 0) {
                     const query = "SELECT * FROM customers WHERE username = (?)";
                     db.query(query, [req.body.username], (err, result) => {
@@ -93,24 +92,20 @@ app.post('/login', (req, res) => {
                         bcrypt.compare(req.body.password, result[0].password, (err, isMatch) => {
                             if (err) return res.json({ Error: "error in password" });
                             if (!isMatch) return res.json({ Error: "password is incorrect" });
-                            req.session.user = result[0]; // Store customer session
                             res.json({ status: "login success", role: "customer" });
                         });
                     });
                 } else { 
                     bcrypt.compare(req.body.password, result[0].password, (err, isMatch) => {
                         if (err) return res.json({ Error: "error in password" });
-                        if (!isMatch) return res.json({ Error: "password is incorrect" });
-                        req.session.user = result[0]; // Store vendor session
-                        console.log(req.session.user);
-                        res.json({ status: "login success", role: "vendor", Info: req.session.user });
+                        if (!isMatch) return res.json({ Error: "password is incorrect" }); 
+                        res.json({ status: "login success", role: "vendor"});
                         
                     });
                 }
             });
         } else {
             if (req.body.password === result[0].password) {
-                req.session.user = result[0]; // Store admin session
                 res.json({ status: "login success", role: "admin" });
             } else {
                 res.json({ Error: "password is incorrect" });
@@ -148,14 +143,6 @@ app.post('/register', customerUpload.single('image'), (req, res) => {
     });
 });
 
-//get userInfo
-app.get('/userInfo', (req, res) => {
-    if (req.session.user) {
-        res.json({ user: req.session.user });
-    } else {
-        res.status(401).json({ error: 'Unauthorized' });
-    }
-});
 
 
 //get customers
@@ -262,7 +249,7 @@ app.put('/updateVendor/:id', vendorUpload.single('image'), (req, res) => {
 
 //add products
 app.post('/addProducts', productUpload.single('image'), (req, res) => {
-        const query = "INSERT INTO products (pname, pdescription, price, pimage, category, stock, Vid) VALUES (?)";
+        const query = "INSERT INTO products (pname, pdescription, price, pimage, category, stock) VALUES (?)";
             const values = [
                 req.body.name,
                 req.body.description,
@@ -270,7 +257,6 @@ app.post('/addProducts', productUpload.single('image'), (req, res) => {
                 req.file ? req.file.filename : null,
                 req.body.category,
                 req.body.stock,
-                req.body.vid
             ];
 
             db.query(query, [values], (err, result) => {
@@ -287,6 +273,7 @@ app.post('/addProducts', productUpload.single('image'), (req, res) => {
 
 
 app.use(express.static(path.join(__dirname, '../frontEnd/build')));
+
 //main process
 app.listen(port, () => {
     console.log('Server is running....');

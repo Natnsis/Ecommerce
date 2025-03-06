@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 
-const Vheader = ({name}) => {
+const Vheader = () => {
   return (
     <div className="flex justify-between items-center">
       <div>
