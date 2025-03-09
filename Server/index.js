@@ -6,13 +6,13 @@ const session = require('express-session');
 const multer = require('multer');
 const path = require('path'); 
 const salt = 10;
-var port = 4000;
+
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const app = express();
 app.use(cors({
     origin: 'http://localhost:5173',
-    methods: ["GET", "POST"],
+    methods: ["GET", "POST","DELETE","PUT"],
     credentials: true
 }));
 app.use(express.json());
@@ -50,12 +50,12 @@ const customerStorage = multer.diskStorage({
 });
 
 const productStorage = multer.diskStorage({
-    destination:(req,file,cb) => {
+    destination: (req, file, cb) => {
         cb(null, path.join(__dirname, '../frontEnd/src/Uploads/products'));
     },
-    filename: (req,file,cb) =>{
-        cb(null, Date.now() + '-' + file.originalname)
-    }
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + '-' + file.originalname);
+    },
 })
 
 const vendorStorage = multer.diskStorage({
@@ -102,8 +102,7 @@ app.post('/login', (req, res) => {
                         if (err) return res.json({ Error: "error in password" });
                         if (!isMatch) return res.json({ Error: "password is incorrect" });
                         req.session.user = result[0]; // Store vendor session
-                        console.log(req.session.user);
-                        res.json({ status: "login success", role: "vendor", Info: req.session.user });
+                        res.json({ status: "login success", role: "vendor"});
                         
                     });
                 }
@@ -116,6 +115,17 @@ app.post('/login', (req, res) => {
                 res.json({ Error: "password is incorrect" });
             }
         }
+    });
+});
+
+//logout
+app.post('/logout', (req, res) => {
+    req.session.destroy((err) => {
+        if (err) {
+            return res.status(500).json({ Error: 'Failed to logout' });
+        }
+        res.clearCookie('connect.sid'); 
+        res.json({ status: 'Logout successful' });
     });
 });
 
@@ -162,6 +172,16 @@ app.get('/userInfo', (req, res) => {
 app.get('/listOfCustomers', (req, res)=>{
     const q = 'SELECT * FROM customers';
     db.query(q, (err, result)=>{
+        if(err) return res.json({Error:'error fetching customers'})
+        res.json(result);
+    })
+})
+
+//get products
+app.get('/listOfProducts', (req, res)=>{
+    console.log("Vendor ID:", req.session?.user?.id);
+    const q = 'SELECT * FROM products WHERE Vid = (?)';
+    db.query(q,[res.session.user.id], (err, result)=>{
         if(err) return res.json({Error:'error fetching customers'})
         res.json(result);
     })
@@ -228,6 +248,19 @@ app.get('/vendorlist', (req, res) => {
     });
 });
 
+//list of products
+app.get('/listOfProducts', (req, res) => {
+    if (!req.session.user || !req.session.user.id) {
+        return res.status(401).json({ Error: 'Unauthorized: No session found' });
+    }
+
+    const query = 'SELECT * FROM products WHERE Vid = ?';
+    db.query(query, [req.session.user.id], (err, result) => {
+        if (err) return res.json({ Error: 'error fetching products' });
+        res.json(result);
+    });
+});
+
 
 //delete vendor
 app.delete('/deleteVendor/:id', (req, res) => {
@@ -262,33 +295,29 @@ app.put('/updateVendor/:id', vendorUpload.single('image'), (req, res) => {
 
 //add products
 app.post('/addProducts', productUpload.single('image'), (req, res) => {
-        const query = "INSERT INTO products (pname, pdescription, price, pimage, category, stock, Vid) VALUES (?)";
-            const values = [
-                req.body.name,
-                req.body.description,
-                req.body.price,
-                req.file ? req.file.filename : null,
-                req.body.category,
-                req.body.stock,
-                req.body.vid
-            ];
+    const query = "INSERT INTO products (pname, pdescription, price, category, stock, Vid, image) VALUES (?,?,?,?,?,?,?)";
+    const values = [
+        req.body.name,
+        req.body.description,
+        req.body.price,
+        req.body.category,
+        req.body.stock,
+        req.session.user.id,
+        req.file ? req.file.filename : null
+    ];
 
-            db.query(query, [values], (err, result) => {
-                if (err) return res.json({ Error: "adding error" });
-                res.json({ status: "Registered successfully" });
-            });
-
-
+    db.query(query, values, (err, result) => {
+        if (err) return res.json({ Error: "adding error" });
+        res.json({ status: "Product added successfully" });
+    });
 });
 
 
 
-
-
-
 app.use(express.static(path.join(__dirname, '../frontEnd/build')));
+
 //main process
-app.listen(port, () => {
+app.listen(4000, () => {
     console.log('Server is running....');
     if (!db) {
         console.log('Error in connecting to database');

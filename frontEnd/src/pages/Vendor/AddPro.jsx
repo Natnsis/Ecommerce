@@ -1,31 +1,12 @@
 import Vheader from "./../../components/Vendor/Vheader";
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
 const AddPro = () => {
-  const [user, setUser] = useState({});
   const navigate = useNavigate();
-  
-  
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const response = await axios.get('http://localhost:4000/userInfo', { withCredentials: true });
-        if (response.status === 200 && response.data.user) {
-          setUser(response.data.user);
-        } else {
-          navigate('/login');
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        navigate('/login');
-      }
-    };
-    fetchUserInfo();
-  }, [navigate]);
-  
-  
+
+
   const [product, setProduct] = useState({
     name: '',
     stock: '',
@@ -34,28 +15,6 @@ const AddPro = () => {
     price: '',
     category: ''
   });
-
-
-      
-
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      try {
-        const response = await axios.get('http://localhost:4000/userInfo', { withCredentials: true });
-        if (response.status === 200 && response.data.user) {
-          setProduct((prevData) => ({
-            ...prevData
-          }));
-        } else {
-          navigate('/login');
-        }
-      } catch (error) {
-        console.error('Error fetching user data:', error);
-        navigate('/login');
-      }
-    };
-    fetchUserInfo();
-  }, [navigate]);
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -67,9 +26,16 @@ const AddPro = () => {
 
   const handleAdding = async (e) => {
     e.preventDefault();
+    const formData = new FormData();
+    formData.append('name', product.name);
+    formData.append('stock', product.stock);
+    formData.append('image', product.image);
+    formData.append('description', product.description);
+    formData.append('price', product.price);
+    formData.append('category', product.category);
 
     try {
-      const response = await axios.post('http://localhost:4000/addProducts', product);
+      const response = await axios.post('http://localhost:4000/addProducts', formData, { withCredentials: true });
       if (response.data.Error) {
         alert("An error occurred couldn't add.");
       } else {
@@ -84,7 +50,7 @@ const AddPro = () => {
 
   return (
     <div className="pt-5 px-5">
-      <Vheader />
+      <Vheader/>
 
       {/* form */}
       <div className="flex justify-center items-center mt-10">

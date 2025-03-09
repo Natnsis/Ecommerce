@@ -70,7 +70,6 @@ const AddVen = () => {
 
     try {
       const response = await axios.post("http://localhost:4000/addVendor", data);
-      console.log(response.data);
       if (response.data.Error) {
         setError((prevError) => ({
           ...prevError,

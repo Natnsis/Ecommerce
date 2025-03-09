@@ -22,7 +22,9 @@ const ManageVen = () => {
   }, []);
 
   const handleDelete = async (id) => {
+    console.log(vendors)
     try {
+      console.log(id)
       await axios.delete(`http://localhost:4000/deleteVendor/${id}`);
       setVendors(vendors.filter((vendor) => vendor.id !== id));
     } catch (err) {

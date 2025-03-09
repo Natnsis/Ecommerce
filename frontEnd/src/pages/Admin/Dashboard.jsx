@@ -26,7 +26,6 @@ const Dashboard = () => {
         const fetchVendors = async () => {
             try {
                 const response = await axios.get("http://localhost:4000/vendorlist");
-                console.log(response.data);
                 setVendors(response.data);
             } catch (err) {
                 console.error("Error fetching vendor list:", err);
@@ -42,10 +41,10 @@ const Dashboard = () => {
       <Count/>
 
       {/* list of vendors */}
-      <div className="pt-5 px-10 rounded-lg h-[100vh] overflow-scroll shadow-2xl">
+      <div className="pt-5 px-10 rounded-lg h-[100vh] overflow-scroll shadow-2xl flex items-center">
         <h1 className="text-center font-extrabold text-2xl">List of vendors</h1>
         <div className="overflow-x-auto w-full flex justify-center mt-10 shadow-2xl h-fit">
-            <table className="w-auto">
+            <table className="w-full"> 
                 <thead>
                   <tr className="border border-solid border-l-0 border-r-0 text-center ">
                     <th className="text-md px-15 py-3 ">Id</th>
