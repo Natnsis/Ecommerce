@@ -41,7 +41,7 @@ const Dashboard = () => {
       <Count/>
 
       {/* list of vendors */}
-      <div className="pt-5 px-10 rounded-lg h-[100vh] overflow-scroll shadow-2xl flex items-center">
+      <div className="pt-5 px-10 rounded-lg h-[100vh] overflow-scroll shadow-2xl flex-col items-center">
         <h1 className="text-center font-extrabold text-2xl">List of vendors</h1>
         <div className="overflow-x-auto w-full flex justify-center mt-10 shadow-2xl h-fit">
             <table className="w-full"> 

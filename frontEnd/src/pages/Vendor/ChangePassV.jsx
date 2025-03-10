@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Vheader from "../../components/Vendor/Vheader";
+import axios from "axios"
 
 const ChangePassV = () => {
   const [formData, setFormData] = useState({
@@ -61,7 +62,6 @@ const ChangePassV = () => {
 
     try {
       const response = await axios.post("http://localhost:4000/change-password", formData);
-      console.log(response.data);
       if (response.data.Error) {
         setError((prevError) => ({
           ...prevError,

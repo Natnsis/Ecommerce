@@ -84,7 +84,6 @@ app.post('/login', (req, res) => {
             const query = "SELECT * FROM vendors WHERE username = (?)";
             db.query(query, [req.body.username], (err, result) => {
                 if (err) return res.json({ Error: "error in login" });
-
                 if (result.length === 0) {
                     const query = "SELECT * FROM customers WHERE username = (?)";
                     db.query(query, [req.body.username], (err, result) => {
@@ -137,9 +136,7 @@ app.post('/register', customerUpload.single('image'), (req, res) => {
     db.query(checkUserQuery, [req.body.username], (err, result) => {
         if (err) return res.json({ Error: "error in checking username" });
         if (result.length > 0) return res.json({ Error: "username already exists" });
-
-        const query = "INSERT INTO customers (username, password, fullName, image, email) VALUES (?)";
-        
+        const query = "INSERT INTO customers (username, password, fullName, image, email) VALUES (?)"; 
         bcrypt.hash(req.body.password, salt, (err, hash) => {
             if (err) return res.json({ Error: "unable to hash password" });
             const values = [
@@ -179,9 +176,9 @@ app.get('/listOfCustomers', (req, res)=>{
 
 //get products
 app.get('/listOfProducts', (req, res)=>{
-    console.log("Vendor ID:", req.session?.user?.id);
+   if(!req.session.user) return res.send("unauthorized user!")
     const q = 'SELECT * FROM products WHERE Vid = (?)';
-    db.query(q,[res.session.user.id], (err, result)=>{
+    db.query(q,[req.session.user.id.toString()], (err, result)=>{
         if(err) return res.json({Error:'error fetching customers'})
         res.json(result);
     })
@@ -248,18 +245,6 @@ app.get('/vendorlist', (req, res) => {
     });
 });
 
-//list of products
-app.get('/listOfProducts', (req, res) => {
-    if (!req.session.user || !req.session.user.id) {
-        return res.status(401).json({ Error: 'Unauthorized: No session found' });
-    }
-
-    const query = 'SELECT * FROM products WHERE Vid = ?';
-    db.query(query, [req.session.user.id], (err, result) => {
-        if (err) return res.json({ Error: 'error fetching products' });
-        res.json(result);
-    });
-});
 
 
 //delete vendor
@@ -268,6 +253,15 @@ app.delete('/deleteVendor/:id', (req, res) => {
     db.query(query, [req.params.id], (err, result) => {
         if (err) return res.json({ Error: "error in deleting vendor" });
         res.json({ status: "Vendor deleted successfully" });
+    });
+});
+
+//delete product
+app.delete('/deleteProduct/:id', (req, res) => {
+    const query = "DELETE FROM products WHERE pid = ?";
+    db.query(query, [req.params.id], (err, result) => {
+        if (err) return res.json({ Error: "error in deleting product" });
+        res.json({ status: "product deleted successfully" });
     });
 });
 

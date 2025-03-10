@@ -4,6 +4,7 @@ import Vfooter from "../../components/Vendor/Vfooter";
 import Vheader from "../../components/Vendor/Vheader";
 import { useState, useEffect } from "react";
 import axios from "axios";
+import {Link } from "react-router-dom"
 
 const DashboardV = () => {
   const [products, setProducts] = useState([]);
@@ -25,6 +26,16 @@ const DashboardV = () => {
     fetchProducts();
   }, []); 
 
+  const handleDelete = async (id) => {
+    try {
+      console.log(id)
+      await axios.delete(`http://localhost:4000/deleteProduct/${id}`);
+      setProducts(products.filter((product) => product.id !== id));
+    } catch (err) {
+      console.error("Error deleting vendor:", err);
+    }
+  };
+
   return (
     <div className="px-5 pt-5">
       <Vheader />
@@ -44,6 +55,7 @@ const DashboardV = () => {
                 <th className="py-3 px-6 text-left">Price</th>
                 <th className="py-3 px-6 text-left">Category</th>
                 <th className="py-3 px-6 text-left">In Stock</th>
+                <th className="py-3 px-6 text-left">Action</th>
               </tr>
             </thead>
             <tbody className="text-gray-600 text-sm font-light">
@@ -54,6 +66,18 @@ const DashboardV = () => {
                   <td className="py-3 px-6 text-left">{product.price}</td>
                   <td className="py-3 px-6 text-left">{product.category}</td>
                   <td className="py-3 px-6 text-left">{product.stock}</td>
+                  <td className="py-3 px-6 text-left">
+                    <button className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-700 mx-1">
+                      <Link to={`/updateVendor/${product.pid}`}>Update</Link>
+                    </button>
+                    <button
+                      className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-700 mx-1"
+                      onClick={() => handleDelete(product.pid)}
+                    >
+                      Delete
+                    </button>
+                  </td>
+                  <td></td>
                 </tr>
               ))}
             </tbody>
