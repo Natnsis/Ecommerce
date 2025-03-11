@@ -1,7 +1,13 @@
 import { Link } from "react-router-dom";
 import logo from "./../../images/logo.jpg";
+import { useState } from "react";
 
 const Cheader = () => {
+  const [dropdownVisible, setDropdownVisible] = useState(false);
+
+  const toggleDropdown = () => {
+    setDropdownVisible(!dropdownVisible);
+  };
 
   return (
     <div id="top" className="mb-5 bg-sky-300 p-5 rounded-lg ">
@@ -35,10 +41,33 @@ const Cheader = () => {
           </select>
         </div>
 
-        <div className="flex space-x-2">
-          <button to="/account" className="bg-white rounded-full w-10 h-10 px-2">
+        <div className="relative flex space-x-2">
+          <button
+            className="bg-white rounded-full w-10 h-10 px-2"
+            onClick={toggleDropdown}
+          >
             img
           </button>
+          {dropdownVisible && (
+            <div
+              className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg"
+            >
+              <Link
+                to="/account"
+                className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                onClick={toggleDropdown}
+              >
+                Account
+              </Link>
+              <Link
+                to="/login"
+                className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                onClick={toggleDropdown}
+              >
+                Logout
+              </Link>
+            </div>
+          )}
         </div>
       </div>
 

@@ -16,6 +16,7 @@ import Cart from "./pages/Customer/Cart"
 import Account from "./pages/Customer/Account"
 import UpdateVen from "./pages/Admin/UpdateVen"
 import UpdatePro from "./pages/Vendor/UpdatePro"
+import Detail from "./pages/Customer/Detail"
 
 
 
@@ -40,6 +41,7 @@ const App = () => {
         <Route path="/account" element={<Account/>}/>
         <Route path="/updateVendor/:id" element={<UpdateVen/>}/>
         <Route path="/updateProduct/:id" element={<UpdatePro/>}/>
+        <Route path="/detail/:id" element={<Detail/>}/>
 
         
       </Routes>

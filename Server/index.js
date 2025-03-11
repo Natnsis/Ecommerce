@@ -184,6 +184,16 @@ app.get('/listOfProducts', (req, res)=>{
     })
 })
 
+
+//get products for customer
+app.get('/listofpoducts', (req, res)=>{
+     const q = 'SELECT * FROM products';
+     db.query(q, (err, result)=>{
+         if(err) return res.json({Error:'error fetching products'})
+         res.json(result);
+     })
+ })
+
 //admin change password
 app.post('/change-password-admin', (req, res) => {
     const { currentPassword, newPassword, confirmPassword } = req.body;
@@ -357,6 +367,31 @@ app.put('/changeStock/:id', (req, res) => {
     });
 });
 
+
+
+//recently added products
+app.get('/recentProducts', (req, res) => {
+    const query = "SELECT * FROM products ORDER BY pid DESC LIMIT 10";
+    db.query(query, (err, result) => {
+        if (err) {
+            console.error('Error fetching recent products:', err);
+            return res.json({ Error: "error fetching recent products" });
+        }
+        res.json(result);
+    });
+});
+
+//full info about product(detail page)
+app.get('/productDetail/:id', (req, res) => {
+    const query = "SELECT * FROM products WHERE pid = ?";
+    db.query(query, [req.params.id], (err, result) => {
+        if (err) {
+            console.error('Error fetching product details:', err);
+            return res.json({ Error: "error fetching product details" });
+        }
+        res.json(result[0]);
+    });
+});
 
 
 app.use(express.static(path.join(__dirname, '../frontEnd/build')));
