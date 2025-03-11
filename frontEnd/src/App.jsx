@@ -16,6 +16,7 @@ import Feedback from "./pages/Customer/Feedback"
 import Cart from "./pages/Customer/Cart"
 import Account from "./pages/Customer/Account"
 import UpdateVen from "./pages/Admin/UpdateVen"
+import UpdatePro from "./pages/Vendor/UpdatePro"
 
 
 
@@ -31,7 +32,6 @@ const App = () => {
         <Route path="/manageVen" element={<ManageVen/>}/>
         <Route path="/addVen" element={<AddVen/>}/>
         <Route path="/Vdash" element={<DashboardV/>}/>
-        <Route path="/out" element={<Outofstock/>}/>
         <Route path="/addPro" element={<AddPro/>}/>
         <Route path="/changeV" element={<ChangePassV/>}/>
         <Route path="/Cdash" element={<Cdash/>}/>
@@ -40,6 +40,8 @@ const App = () => {
         <Route path="/cart" element={<Cart/>}/>
         <Route path="/account" element={<Account/>}/>
         <Route path="/updateVendor/:id" element={<UpdateVen/>}/>
+        <Route path="/updateProduct/:id" element={<UpdatePro/>}/>
+
         
       </Routes>
     </Router>

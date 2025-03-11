@@ -25,7 +25,6 @@ const Vheader = () => {
       <div className="flex justify-between space-x-4">
         <Link className="hover:underline bg-gray-200 px-3 py-1 rounded-lg" to="/Vdash">Dashboard</Link>
         <Link className="hover:underline bg-gray-200 px-3 py-1 rounded-lg" to="/addPro">Add Products</Link>
-        <Link className="hover:underline bg-gray-200 px-3 py-1 rounded-lg" to="/out">Products out of Stock</Link>
         <Link className="hover:underline bg-gray-200 px-3 py-1 rounded-lg" to="/changeV">Change Password</Link>
       </div>
       <div className="border border-zinc-500 hover:bg-zinc-500 hover:text-white font-bold px-3 py-1">

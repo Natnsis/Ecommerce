@@ -179,7 +179,7 @@ app.get('/listOfProducts', (req, res)=>{
    if(!req.session.user) return res.send("unauthorized user!")
     const q = 'SELECT * FROM products WHERE Vid = (?)';
     db.query(q,[req.session.user.id.toString()], (err, result)=>{
-        if(err) return res.json({Error:'error fetching customers'})
+        if(err) return res.json({Error:'error fetching products'})
         res.json(result);
     })
 })
@@ -283,6 +283,35 @@ app.put('/updateVendor/:id', vendorUpload.single('image'), (req, res) => {
             if (err) return res.json({ Error: "error in updating vendor" });
             res.json({ status: "Vendor updated successfully" });
         });
+    });
+});
+
+
+//update product
+app.put('/updateProduct/:id', productUpload.single('image'), (req, res) => {
+    if (!req.session.user || !req.session.user.id) {
+        return res.status(401).json({ Error: 'Unauthorized: No session found' });
+    }
+
+    const query = "UPDATE products SET pname = ?, pdescription = ?, price = ?, category = ?, stock = ?, image = ? WHERE pid = ?";
+    const values = [
+        req.body.name,
+        req.body.description,
+        req.body.price,
+        req.body.category,
+        req.body.stock,
+        req.file ? req.file.filename : null,
+        req.params.id
+    ];
+
+    console.log('Updating product with values:', values);
+
+    db.query(query, values, (err, result) => {
+        if (err) {
+            console.error('Error updating product:', err);
+            return res.json({ Error: "error in updating product" });
+        }
+        res.json({ status: "Product updated successfully" });
     });
 });
 

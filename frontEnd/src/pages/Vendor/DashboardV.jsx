@@ -4,10 +4,11 @@ import Vfooter from "../../components/Vendor/Vfooter";
 import Vheader from "../../components/Vendor/Vheader";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import {Link } from "react-router-dom"
+import { Link } from "react-router-dom"
 
 const DashboardV = () => {
   const [products, setProducts] = useState([]);
+
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -28,13 +29,13 @@ const DashboardV = () => {
 
   const handleDelete = async (id) => {
     try {
-      console.log(id)
-      await axios.delete(`http://localhost:4000/deleteProduct/${id}`);
-      setProducts(products.filter((product) => product.id !== id));
+        await axios.delete(`http://localhost:4000/deleteProduct/${id}`);
+        setProducts(products.filter((product) => product.id !== id));
+        window.location.reload(); //reloading after the delete did its job!!!!!
     } catch (err) {
-      console.error("Error deleting vendor:", err);
+        console.error("Error deleting vendor:", err);
     }
-  };
+};
 
   return (
     <div className="px-5 pt-5">
@@ -56,6 +57,8 @@ const DashboardV = () => {
                 <th className="py-3 px-6 text-left">Category</th>
                 <th className="py-3 px-6 text-left">In Stock</th>
                 <th className="py-3 px-6 text-left">Action</th>
+                <th className="py-3 px-6 text-left">IN Stock</th>
+                
               </tr>
             </thead>
             <tbody className="text-gray-600 text-sm font-light">
@@ -68,7 +71,7 @@ const DashboardV = () => {
                   <td className="py-3 px-6 text-left">{product.stock}</td>
                   <td className="py-3 px-6 text-left">
                     <button className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-700 mx-1">
-                      <Link to={`/updateVendor/${product.pid}`}>Update</Link>
+                      <Link to={`/updateProduct/${product.pid}`}>Update</Link>
                     </button>
                     <button
                       className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-700 mx-1"
@@ -77,7 +80,14 @@ const DashboardV = () => {
                       Delete
                     </button>
                   </td>
-                  <td></td>
+                  <td>
+                    <input type="number" className="bg-gray-50 border border-gray-300 w-20" />
+                    <button
+                    className="bg-green-500 text-white px-3 py-1 rounded-lg hover:bg-green-700 mx-1"
+                    >
+                      Add
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>

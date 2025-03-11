@@ -1,23 +1,7 @@
-import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios";
 import logo from "./../../images/logo.jpg";
 
 const Cheader = () => {
-  const [username, setUsername] = useState("");
-
-  useEffect(() => {
-    const fetchUsername = async () => {
-      try {
-        const response = await axios.get("http://localhost:4000/session");
-        setUsername(response.data.username);
-      } catch (err) {
-        console.error("Error fetching session data:", err);
-      }
-    };
-
-    fetchUsername();
-  }, []);
 
   return (
     <div id="top" className="mb-5 bg-sky-300 p-5 rounded-lg ">
@@ -52,10 +36,9 @@ const Cheader = () => {
         </div>
 
         <div className="flex space-x-2">
-          <h1 className="text-amber-200 font-bold text-2xl">{username || "Name..."}</h1>
-          <Link to="/account" className="bg-white rounded-full w-10 h-10 px-2">
+          <button to="/account" className="bg-white rounded-full w-10 h-10 px-2">
             img
-          </Link>
+          </button>
         </div>
       </div>
 

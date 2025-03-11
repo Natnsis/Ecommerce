@@ -1,11 +1,11 @@
-import Vheader from "./../../components/Vendor/Vheader";
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import Vheader from "../../components/Vendor/Vheader";
+import { useState, useEffect } from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
-const AddPro = () => {
+const UpdatePro = () => {
   const navigate = useNavigate();
-
+  const { id } = useParams();
 
   const [product, setProduct] = useState({
     name: '',
@@ -16,6 +16,26 @@ const AddPro = () => {
     category: ''
   });
 
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        const response = await axios.get(`http://localhost:4000/getProduct/${id}`, { withCredentials: true });
+        setProduct({
+          name: response.data.pname,
+          stock: response.data.stock,
+          image: null,
+          description: response.data.pdescription,
+          price: response.data.price,
+          category: response.data.category
+        });
+      } catch (err) {
+        console.error("Error fetching product details:", err);
+      }
+    };
+
+    fetchProduct();
+  }, [id]);
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
     setProduct((prevData) => ({
@@ -24,9 +44,7 @@ const AddPro = () => {
     }));
   };
 
-  
-
-  const handleAdding = async (e) => {
+  const handleUpdate = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append('name', product.name);
@@ -37,30 +55,28 @@ const AddPro = () => {
     formData.append('category', product.category);
 
     try {
-      const response = await axios.post('http://localhost:4000/addProducts', formData, { withCredentials: true });
+      const response = await axios.put(`http://localhost:4000/updateProduct/${id}`, formData, { withCredentials: true });
       if (response.data.Error) {
-        alert("An error occurred couldn't add.");
+        alert("Error came from backend");
       } else {
-        alert("Product added successfully");
+        alert("Product updated successfully");
         navigate("/Vdash");
       }
     } catch (err) {
-      console.error(err);
-      alert("An error occurred couldn't add.");
+      console.log(err);
     }
   };
 
   return (
     <div className="pt-5 px-5">
-      <Vheader/>
-
+      <Vheader />
       {/* form */}
       <div className="flex justify-center items-center mt-10">
         <div className="border border-gray-200 p-5 w-[60%] h-fit">
           <center className="space-y-2 text-gray-400">
-            <h1 className="text-3xl font-bold text-black">Add Products</h1>
-            <form onSubmit={handleAdding}>
-              <label htmlFor="name">Product name:  </label>
+            <h1 className="text-3xl font-bold text-black">Update Product</h1>
+            <form onSubmit={handleUpdate}>
+              <label htmlFor="name">Product name: </label>
               <input
                 type="text"
                 name="name"
@@ -121,13 +137,14 @@ const AddPro = () => {
                 <option value="Tools">Tools</option>
                 <option value="Food">Food</option>
                 <option value="Detergents">Detergents</option>
+                <option value="others">Others</option>
               </select><br />
 
               <button
                 type="submit"
                 className="hover:border-black hover:border hover:bg-white hover:text-black px-3 py-1 rounded-sm bg-black text-white"
               >
-                Add
+                Update
               </button>
             </form>
           </center>
@@ -137,4 +154,4 @@ const AddPro = () => {
   );
 };
 
-export default AddPro;
+export default UpdatePro;
