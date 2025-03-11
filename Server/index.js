@@ -304,6 +304,8 @@ app.put('/updateProduct/:id', productUpload.single('image'), (req, res) => {
         req.params.id
     ];
 
+
+
     console.log('Updating product with values:', values);
 
     db.query(query, values, (err, result) => {
@@ -332,6 +334,26 @@ app.post('/addProducts', productUpload.single('image'), (req, res) => {
     db.query(query, values, (err, result) => {
         if (err) return res.json({ Error: "adding error" });
         res.json({ status: "Product added successfully" });
+    });
+});
+
+
+//change stock
+app.put('/changeStock/:id', (req, res) => {
+    if (!req.session.user || !req.session.user.id) {
+        return res.status(401).json({ Error: 'Unauthorized: No session found' });
+    }
+
+    const { stockChange } = req.body;
+    const query = "UPDATE products SET stock = stock + ? WHERE pid = ?";
+    const values = [stockChange, req.params.id];
+
+    db.query(query, values, (err, result) => {
+        if (err) {
+            console.error('Error updating stock:', err);
+            return res.json({ Error: "error in updating stock" });
+        }
+        res.json({ status: "Stock updated successfully" });
     });
 });
 

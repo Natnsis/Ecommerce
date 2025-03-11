@@ -4,11 +4,11 @@ import Vfooter from "../../components/Vendor/Vfooter";
 import Vheader from "../../components/Vendor/Vheader";
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 
 const DashboardV = () => {
   const [products, setProducts] = useState([]);
-
+  const [stockChanges, setStockChanges] = useState({});
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -25,17 +25,44 @@ const DashboardV = () => {
     };
 
     fetchProducts();
-  }, []); 
+  }, []);
 
   const handleDelete = async (id) => {
     try {
-        await axios.delete(`http://localhost:4000/deleteProduct/${id}`);
-        setProducts(products.filter((product) => product.id !== id));
-        window.location.reload(); //reloading after the delete did its job!!!!!
+      await axios.delete(`http://localhost:4000/deleteProduct/${id}`);
+      setProducts(products.filter((product) => product.id !== id));
+      window.location.reload(); //reloading after the delete did its job!!!!!
     } catch (err) {
-        console.error("Error deleting vendor:", err);
+      console.error("Error deleting vendor:", err);
     }
-};
+  };
+
+  const handleStockChange = (e, id) => {
+    const { value } = e.target;
+    setStockChanges((prev) => ({
+      ...prev,
+      [id]: value,
+    }));
+  };
+
+  const handleStockUpdate = async (id) => {
+    const change = parseInt(stockChanges[id], 10);
+    if (isNaN(change)) {
+      alert("Please enter a valid number");
+      return;
+    }
+
+    try {
+      await axios.put(`http://localhost:4000/changeStock/${id}`, { stockChange: change }, { withCredentials: true });
+      setProducts(products.map((product) => (product.pid === id ? { ...product, stock: product.stock + change } : product)));
+      setStockChanges((prev) => ({
+        ...prev,
+        [id]: "",
+      }));
+    } catch (err) {
+      console.error("Error updating stock:", err);
+    }
+  };
 
   return (
     <div className="px-5 pt-5">
@@ -57,13 +84,12 @@ const DashboardV = () => {
                 <th className="py-3 px-6 text-left">Category</th>
                 <th className="py-3 px-6 text-left">In Stock</th>
                 <th className="py-3 px-6 text-left">Action</th>
-                <th className="py-3 px-6 text-left">IN Stock</th>
-                
+                <th className="py-3 px-6 text-left">Update Stock</th>
               </tr>
             </thead>
             <tbody className="text-gray-600 text-sm font-light">
               {products.map((product) => (
-                <tr key={product.id} className="border-b border-gray-200 hover:bg-gray-100">
+                <tr key={product.pid} className="border-b border-gray-200 hover:bg-gray-100">
                   <td className="py-3 px-6 text-left whitespace-nowrap">{product.pid}</td>
                   <td className="py-3 px-6 text-left">{product.pname}</td>
                   <td className="py-3 px-6 text-left">{product.price}</td>
@@ -80,10 +106,16 @@ const DashboardV = () => {
                       Delete
                     </button>
                   </td>
-                  <td>
-                    <input type="number" className="bg-gray-50 border border-gray-300 w-20" />
+                  <td className="py-3 px-6 text-left">
+                    <input
+                      type="number"
+                      className="bg-gray-50 border border-gray-300 w-20"
+                      value={stockChanges[product.pid] || ""}
+                      onChange={(e) => handleStockChange(e, product.pid)}
+                    />
                     <button
-                    className="bg-green-500 text-white px-3 py-1 rounded-lg hover:bg-green-700 mx-1"
+                      className="bg-green-500 text-white px-3 py-1 rounded-lg hover:bg-green-700 mx-1"
+                      onClick={() => handleStockUpdate(product.pid)}
                     >
                       Add
                     </button>
