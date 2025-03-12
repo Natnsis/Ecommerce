@@ -46,7 +46,7 @@ const DashboardV = () => {
   };
 
   const handleStockUpdate = async (id) => {
-    const change = parseInt(stockChanges[id], 10);
+    const change = parseInt(stockChanges[id]);
     if (isNaN(change)) {
       alert("Please enter a valid number");
       return;
@@ -54,7 +54,7 @@ const DashboardV = () => {
 
     try {
       await axios.put(`http://localhost:4000/changeStock/${id}`, { stockChange: change }, { withCredentials: true });
-      setProducts(products.map((product) => (product.pid === id ? { ...product, stock: product.stock + change } : product)));
+      setProducts(products.map((product) => (product.pid === id ? { ...product, stock: parseInt(product.stock) + change } : product)));
       setStockChanges((prev) => ({
         ...prev,
         [id]: "",

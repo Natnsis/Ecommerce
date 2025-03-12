@@ -70,7 +70,7 @@ const ChangePass = () => {
         }));
       } else {
         alert("Password changed successfully");
-        // Handle successful password change (e.g., show success message)
+        
       }
     } catch (err) {
       setError((prevError) => ({

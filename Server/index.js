@@ -197,20 +197,15 @@ app.get('/listofpoducts', (req, res)=>{
 //admin change password
 app.post('/change-password-admin', (req, res) => {
     const { currentPassword, newPassword, confirmPassword } = req.body;
-    res.json(req.session.user)
-    res.send(currentPassword);
-    if (newPassword !== confirmPassword) {
-        return res.json({ Error: "Passwords do not match" });
-    }
 
-    const query = "SELECT password FROM admins WHERE id = ?"; 
-    db.query(query, [req.session.id], (err, result) => {
+    const query = "SELECT * FROM admins WHERE id = ?"; 
+    db.query(query, [req.session.user.id.toString()], (err, result) => {
         if (err) return res.json({ Error: "Error fetching current password" });
 
         if (currentPassword !== result[0].password) return res.json({ Error: "Current password is incorrect" });
 
-        const updateQuery = "UPDATE admins SET password = ? WHERE id = ?"; // Adjust the query to match your database schema
-        db.query(updateQuery, [newPassword, req.session.id], (err, result) => {
+        const updateQuery = "UPDATE admins SET password = ? WHERE id = ?"; 
+        db.query(updateQuery, [newPassword, req.session.user.id], (err, result) => {
             if (err) return res.json({ Error: "Error updating password" });
             res.json({ status: "Password changed successfully" });
         });
