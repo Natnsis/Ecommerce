@@ -210,7 +210,6 @@ app.post('/logout', (req, res) => {
 });
 
 
-
 //customer register
 app.post('/register', customerUpload.single('image'), (req, res) => {
     const checkUserQuery = "SELECT * FROM customers WHERE username = ?";
@@ -247,13 +246,24 @@ app.get('/userInfo', (req, res) => {
 
 
 //get customers
-app.get('/listOfCustomers', (req, res)=>{
-    const q = 'SELECT * FROM customers';
-    db.query(q, (err, result)=>{
-        if(err) return res.json({Error:'error fetching customers'})
+app.get('/listOfCustomers', (req, res) => {
+    const query = `
+        SELECT 
+            c.id, 
+            c.fullName, 
+            c.username, 
+            COALESCE((SELECT COUNT(*) FROM transactions t WHERE t.customer_id = c.id), 0) AS transaction_count
+        FROM customers c
+    `;
+    db.query(query, (err, result) => {
+        if (err) {
+            console.error("Error fetching customers with transaction count:", err);
+            return res.json({ Error: 'Error fetching customers' });
+        }
+        console.log("Fetched customers with transaction count:", result); // Log the result
         res.json(result);
-    })
-})
+    });
+});
 
 //get products
 app.get('/listOfProducts', (req, res)=>{
@@ -275,7 +285,8 @@ app.get('/listofpoducts', (req, res)=>{
      })
  })
 
-//admin change password
+
+//change password for admin
 app.post('/change-password-admin', (req, res) => {
     const { currentPassword, newPassword, confirmPassword } = req.body;
 
@@ -291,6 +302,95 @@ app.post('/change-password-admin', (req, res) => {
             res.json({ status: "Password changed successfully" });
         });
     });
+});
+
+
+//change password for vendors
+app.post("/change-password-vendor", (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!req.session.user) {
+        return res.json({ Error: "Unauthorized user!" });
+    }
+
+    const vendorId = req.session.user.id;
+
+    const query = "SELECT password FROM vendors WHERE id = ?";
+    db.query(query, [vendorId], (err, result) => {
+        if (err) {
+            console.error("Error fetching vendor password:", err);
+            return res.json({ Error: "Error fetching vendor password" });
+        }
+
+        if (result.length === 0) {
+            return res.json({ Error: "Vendor not found" });
+        }
+
+        const hashedPassword = result[0].password;
+
+        bcrypt.compare(currentPassword, hashedPassword, (err, isMatch) => {
+            if (err) {
+                console.error("Error comparing passwords:", err);
+                return res.json({ Error: "Error comparing passwords" });
+            }
+
+            if (!isMatch) {
+                return res.json({ Error: "Current password is incorrect" });
+            }
+
+            bcrypt.hash(newPassword, 10, (err, hash) => {
+                if (err) {
+                    console.error("Error hashing new password:", err);
+                    return res.json({ Error: "Error hashing new password" });
+                }
+
+                const updateQuery = "UPDATE vendors SET password = ? WHERE id = ?";
+                db.query(updateQuery, [hash, vendorId], (err, result) => {
+                    if (err) {
+                        console.error("Error updating password:", err);
+                        return res.json({ Error: "Error updating password" });
+                    }
+
+                    console.log("Password updated successfully for vendor:", vendorId);
+                    res.json({ status: "Password changed successfully" });
+                });
+            });
+        });
+    });
+});
+
+
+app.get("/counts", (req, res) => {
+    const queries = {
+        customers: "SELECT COUNT(*) AS count FROM customers",
+        products: "SELECT COUNT(*) AS count FROM products",
+        vendors: "SELECT COUNT(*) AS count FROM vendors",
+        transactions: "SELECT COUNT(*) AS count FROM transactions",
+    };
+
+    const counts = {};
+
+    const promises = Object.keys(queries).map((key) => {
+        return new Promise((resolve, reject) => {
+            db.query(queries[key], (err, result) => {
+                if (err) {
+                    console.error(`Error fetching ${key} count:`, err);
+                    return reject(err);
+                }
+                counts[key] = result[0].count; 
+                resolve();
+            });
+        });
+    });
+
+    Promise.all(promises)
+        .then(() => {
+            res.json(counts); // Send the counts as a JSON response
+        })
+        .catch((error) => {
+            console.error("Error fetching counts:", error);
+            res.status(500).json({ error: "Failed to fetch counts" });
+        });
 });
 
 
@@ -324,13 +424,22 @@ app.post('/addVendor', vendorUpload.single('image'), (req, res) => {
 
 //get all vendors
 app.get('/vendorlist', (req, res) => {
-    const query = "SELECT * FROM vendors";
+    const query = `
+        SELECT 
+            v.id, 
+            v.fullname, 
+            v.username, 
+            (SELECT COUNT(*) FROM products p WHERE p.Vid = v.id) AS product_count
+        FROM vendors v
+    `;
     db.query(query, (err, result) => {
-        if (err) return res.json({ Error: "error in fetching vendor list" });
-        res.json(result);
+        if (err) {
+            console.error("Error fetching vendor list:", err);
+            return res.json({ Error: "Error in fetching vendor list" });
+        }
+        res.json(result); // Send the result with product counts
     });
 });
-
 
 
 //delete vendor

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Vheader from "../../components/Vendor/Vheader";
-import axios from "axios"
+import axios from "axios";
 
 const ChangePassV = () => {
   const [formData, setFormData] = useState({
@@ -16,6 +16,8 @@ const ChangePassV = () => {
     form: "",
   });
 
+  const [successMessage, setSuccessMessage] = useState("");
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevData) => ({
@@ -26,6 +28,7 @@ const ChangePassV = () => {
       ...prevError,
       [name]: "",
     }));
+    setSuccessMessage(""); // Clear success message on input change
   };
 
   const handleSubmit = async (e) => {
@@ -61,14 +64,19 @@ const ChangePassV = () => {
     }
 
     try {
-      const response = await axios.post("http://localhost:4000/change-password", formData);
+      const response = await axios.post("http://localhost:4000/change-password-vendor", formData);
       if (response.data.Error) {
         setError((prevError) => ({
           ...prevError,
           form: response.data.Error,
         }));
       } else {
-        // Handle successful password change (e.g., show success message)
+        setSuccessMessage("Password changed successfully!"); // Show success message
+        setFormData({
+          currentPassword: "",
+          newPassword: "",
+          confirmPassword: "",
+        }); // Clear form fields
       }
     } catch (err) {
       setError((prevError) => ({
@@ -81,7 +89,7 @@ const ChangePassV = () => {
   return (
     <div className="pt-5 px-5">
       <Vheader />
-      {/* change password form */}
+      {/* Change password form */}
       <div className="flex justify-center items-center h-[80vh] mt-10">
         <div className="rounded-lg shadow-2xl w-[60%] h-fit p-5">
           <center className="space-y-3">
@@ -124,6 +132,7 @@ const ChangePassV = () => {
                 Change
               </button>
               <p className="text-red-500">{error.form}</p>
+              <p className="text-green-500">{successMessage}</p>
             </form>
           </center>
         </div>

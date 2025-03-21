@@ -8,15 +8,15 @@ const Success = () => {
   };
 
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-100">
-      <div className="bg-white p-10 rounded-lg shadow-lg text-center space-y-6">
-        <h1 className="text-3xl font-bold text-green-600">Payment Successful!</h1>
-        <p className="text-gray-700">
+    <div className="flex justify-center items-center h-screen bg-gradient-to-r from-green-100 to-blue-100">
+      <div className="bg-white p-10 rounded-lg shadow-xl text-center space-y-6">
+        <h1 className="text-4xl font-bold text-green-600">Payment Successful!</h1>
+        <p className="text-gray-700 text-lg">
           Thank you for your purchase. Your order has been placed successfully.
         </p>
         <button
           onClick={handleGoHome}
-          className="bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600"
+          className="bg-blue-500 text-white px-5 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
         >
           Go to Home Page
         </button>

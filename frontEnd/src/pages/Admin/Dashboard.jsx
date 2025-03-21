@@ -59,7 +59,7 @@ const Dashboard = () => {
                   <td className="text-md px-15 py-3">{vendor.id}</td>
                   <td className="text-md px-15 py-3">{vendor.fullname}</td>
                     <td className="text-md px-15 py-3">{vendor.username}</td>
-                  <td className="text-md px-15 py-3">0</td>
+                  <td className="text-md px-15 py-3">{vendor.product_count}</td>
                 </tr>
               ))}
                 </tbody>
@@ -86,7 +86,7 @@ const Dashboard = () => {
                         <td className="text-md px-15 py-3">{customer.id}</td>
                         <td className="text-md px-15 py-3">{customer.fullName}</td>
                         <td className="text-md px-15 py-3">{customer.username}</td>
-                        <td className="text-md px-15 py-3">{customer.numberOfBoughtProducts}</td>
+                        <td className="text-md px-15 py-3">{customer.transaction_count}</td>
                     </tr>
                 ))}
                 </tbody>

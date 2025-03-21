@@ -28,7 +28,7 @@ const Detail = () => {
     if (existingProduct) {
       existingProduct.quantity += 1;
     } else {
-      cart.push({ ...product, quantity: 1 }); 
+      cart.push({ ...product, quantity: 1 });
     }
 
     localStorage.setItem("cart", JSON.stringify(cart));
@@ -36,7 +36,7 @@ const Detail = () => {
   };
 
   if (!product) {
-    return <div>Loading...</div>;
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
   }
 
   const imageUrl = `../src/Uploads/products/${product.image}`;
@@ -44,34 +44,45 @@ const Detail = () => {
   return (
     <div className="pt-5 px-5">
       <Cheader />
-      <div className="h-[80vh] w-full flex justify-center items-center">
-        <div className="bg-white w-[75%] h-auto border border-gray-300 space-y-6 rounded-lg p-10 shadow-lg">
-          <div className="flex w-full space-x-6">
-            <div className="w-[50%]">
-              <img src={imageUrl} alt="Product" className="w-40 rounded-lg" />
+      <div className="h-auto w-full flex justify-center items-center">
+        <div className="bg-white w-full max-w-4xl border border-gray-300 space-y-6 rounded-lg p-10 shadow-lg">
+          <div className="flex flex-col md:flex-row w-full space-y-6 md:space-y-0 md:space-x-6">
+            {/* Product Image */}
+            <div className="w-full md:w-[50%] flex justify-center">
+              <img src={imageUrl} alt="Product" className="w-60 h-60 object-cover rounded-lg" />
             </div>
-            <div className="w-[50%] space-y-4">
+
+            {/* Product Details */}
+            <div className="w-full md:w-[50%] space-y-4">
               <h2 className="text-2xl font-bold text-gray-800">{product.pname}</h2>
-              <p className="text-lg text-gray-600">{product.price} Birr</p>
+              <p className="text-lg text-gray-600 font-semibold">{product.price} Birr</p>
               <div className="bg-blue-100 p-4 rounded-lg">
                 <p className="text-gray-700">{product.pdescription}</p>
               </div>
             </div>
           </div>
+
+          {/* Description Section */}
           <div className="bg-blue-100 p-4 rounded-lg">
             <h3 className="text-xl font-semibold text-gray-800">Description</h3>
             <p className="text-gray-700">{product.pdescription}</p>
           </div>
+
+          {/* Add to Cart Button */}
           <div className="flex justify-center">
             <button
               onClick={addToCart}
-              className="bg-green-200 hover:bg-green-500 rounded-lg shadow-2xl px-5 py-1"
+              className="bg-green-500 text-white hover:bg-green-600 rounded-lg shadow-lg px-5 py-2 transition duration-300"
             >
               Add to Cart
             </button>
           </div>
+
+          {/* Seller Information */}
           <div className="w-full text-center">
-            <h3 className="text-lg font-semibold text-gray-800">Seller&apos;s Identity: {product.sellerName}</h3>
+            <h3 className="text-lg font-semibold text-gray-800">
+              Seller&apos;s Identity: {product.sellerName}
+            </h3>
           </div>
         </div>
       </div>

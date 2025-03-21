@@ -4,7 +4,6 @@ import Header from "../../components/Admin/Header";
 import { Link } from "react-router-dom";
 import axios from "axios";
 
-
 const ManageVen = () => {
   const [vendors, setVendors] = useState([]);
 
@@ -22,9 +21,7 @@ const ManageVen = () => {
   }, []);
 
   const handleDelete = async (id) => {
-    console.log(vendors)
     try {
-      console.log(id)
       await axios.delete(`http://localhost:4000/deleteVendor/${id}`);
       setVendors(vendors.filter((vendor) => vendor.id !== id));
     } catch (err) {
@@ -33,60 +30,64 @@ const ManageVen = () => {
   };
 
   return (
-    <div className="px-10 pt-10">
+    <div className="px-10 pt-10 min-h-screen flex flex-col">
       <Header />
 
-      {/* vendor header */}
-      <div className="flex justify-between items-center mt-5">
+      {/* Vendor Header */}
+      <div className="flex flex-col md:flex-row justify-between items-center mt-5 space-y-5 md:space-y-0">
         <div>
-          <h1 className="text-4xl font-extrabold">Vendors</h1>
+          <h1 className="text-4xl font-extrabold text-gray-800">Vendors</h1>
         </div>
-        <div>
+        <div className="flex items-center space-x-3">
           <input
             type="text"
             placeholder="Search..."
-            className="border-amber-300 border-3 rounded-2xl px-5"
+            className="border border-amber-300 rounded-2xl px-5 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400"
           />
-          <button className="bg-amber-300 rounded-lg hover:bg-white hover:border px-3 py-1 mx-5">
-            search
+          <button className="bg-amber-300 rounded-lg hover:bg-white hover:border hover:border-amber-400 px-3 py-2 transition duration-300">
+            Search
           </button>
         </div>
         <div>
-          <button className="bg-amber-300 rounded-lg hover:bg-white hover:border px-3 py-1 mx-5">
+          <button className="bg-amber-300 rounded-lg hover:bg-white hover:border hover:border-amber-400 px-3 py-2 transition duration-300">
             <Link to="/addVen">Add Vendors</Link>
           </button>
         </div>
       </div>
 
-      {/* vendor List */}
-      <div className="rounded-lg mt-10 h-screen p-10 shadow-2xl">
-        <h1 className="text-center text-2xl font-extrabold">All available Vendors</h1>
-        <div className="overflow-x-auto w-full flex justify-center mt-10 shadow-2xl h-fit">
-          <table className="w-auto">
+      {/* Vendor List */}
+      <div className="rounded-lg mt-10 p-10 shadow-2xl bg-white flex-grow">
+        <h1 className="text-center text-2xl font-extrabold text-gray-800">All Available Vendors</h1>
+        <div className="overflow-x-auto w-full flex justify-center mt-10">
+          <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border border-solid border-l-0 border-r-0 ">
-                <th className="text-md px-15 py-3 ">id</th>
-                <th className="text-md px-15 py-3 ">image</th>
-                <th className="text-md px-15 py-3 ">Full Name</th>
-                <th className="text-md px-15 py-3 ">Username</th>
-                <th className="text-md px-40 py-3 ">Action</th>
+              <tr className="border-b border-gray-300">
+                <th className="text-md px-5 py-3">ID</th>
+                <th className="text-md px-5 py-3">Image</th>
+                <th className="text-md px-5 py-3">Full Name</th>
+                <th className="text-md px-5 py-3">Username</th>
+                <th className="text-md px-5 py-3">Action</th>
               </tr>
             </thead>
             <tbody>
               {vendors.map((vendor) => (
-                <tr key={vendor.id}>
-                  <td className="text-md px-15 py-3">{vendor.id}</td>
-                  <td className="text-md px-15 py-3">
-                    <img src={`../src/Uploads/vendors/${vendor.image}`} className="w-10 h-10 rounded-full" />
+                <tr key={vendor.id} className="hover:bg-gray-100">
+                  <td className="text-md px-5 py-3">{vendor.id}</td>
+                  <td className="text-md px-5 py-3">
+                    <img
+                      src={`http://localhost:4000/uploads/vendors/${vendor.image}`}
+                      alt="Vendor"
+                      className="w-10 h-10 rounded-full object-cover"
+                    />
                   </td>
-                  <td className="text-md px-15 py-3">{vendor.fullname}</td>
-                  <td className="text-md px-15 py-3">{vendor.username}</td>
-                  <td className="text-md px-40 py-3">
-                    <button className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-700 mx-1">
+                  <td className="text-md px-5 py-3">{vendor.fullname}</td>
+                  <td className="text-md px-5 py-3">{vendor.username}</td>
+                  <td className="text-md px-5 py-3 flex space-x-2">
+                    <button className="bg-blue-500 text-white px-3 py-1 rounded-lg hover:bg-blue-700 transition duration-300">
                       <Link to={`/updateVendor/${vendor.id}`}>Update</Link>
                     </button>
                     <button
-                      className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-700 mx-1"
+                      className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-700 transition duration-300"
                       onClick={() => handleDelete(vendor.id)}
                     >
                       Delete
@@ -99,9 +100,7 @@ const ManageVen = () => {
         </div>
       </div>
 
-      <div>
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 };

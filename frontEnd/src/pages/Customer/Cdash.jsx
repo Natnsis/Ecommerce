@@ -22,41 +22,64 @@ const Cdash = () => {
   }, []);
 
   return (
-    <div className="pt-5 px-5 ">
+    <div className="pt-5 px-5">
       <Cheader />
-      <div className="" id="home">
-        {/* mini start */}
-        <div className="flex justify-between p-5 bg-sky-50 border border-gray-200 rounded-lg w-[100%]">
-          <div className=" w-[50%]">
-            <h1 className="text-center font-extrabold text-3xl">Ecommerce For Assosa City</h1>
-            <p className="w-[90%] text-gray-500 my-2">
-              Welcome to Assosa&apos;s online marketplace! Discover a vibrant selection of local goods, handmade crafts, and everyday essentials, all from the comfort of your home. Support your community businesses and enjoy the convenience of doorstep delivery in Assosa city. Browse our curated categories and find unique treasures today!
+
+      {/* Home Section */}
+      <div id="home" className="mb-10">
+        <div className="flex flex-col md:flex-row justify-between items-center p-5 bg-sky-50 border border-gray-200 rounded-lg">
+          <div className="w-full md:w-[50%]">
+            <h1 className="text-center font-extrabold text-3xl">
+              Ecommerce For Assosa City
+            </h1>
+            <p className="w-[90%] text-gray-500 my-2 mx-auto">
+              Welcome to Assosa&apos;s online marketplace! Discover a vibrant
+              selection of local goods, handmade crafts, and everyday
+              essentials, all from the comfort of your home. Support your
+              community businesses and enjoy the convenience of doorstep
+              delivery in Assosa city. Browse our curated categories and find
+              unique treasures today!
             </p>
             <div className="flex justify-center mt-10">
-              <button className="bg-sky-800 px-3 py-1 rounded-lg text-white hover:bg-white hover:text-black hover:border-gray-200">Contact The Creators</button>
+              <button className="bg-sky-800 px-3 py-1 rounded-lg text-white hover:bg-white hover:text-black hover:border-gray-200">
+                Contact The Creators
+              </button>
             </div>
           </div>
-          <div className="flex justify-center w-[50%]  p-2">
-            <img className="h-50 rounded-lg" src={home} alt="" />
+          <div className="flex justify-center w-full md:w-[50%] p-2">
+            <img className="h-50 rounded-lg" src={home} alt="Ecommerce" />
           </div>
         </div>
-
-        
       </div>
 
-      {/* recently added */}
-      <div id="recent" className="h-fit bg-gradient-to-r from-sky-100 to-sky-0 border border-gray-100 my-10 p-5 ">
+      {/* Recently Added Products */}
+      <div
+        id="recent"
+        className="h-fit bg-gradient-to-r from-sky-100 to-sky-0 border border-gray-100 my-10 p-5"
+      >
         <div>
-          <h1 className="text-center text-4xl font-bold text-gray-600">Recently Added Products</h1>
+          <h1 className="text-center text-4xl font-bold text-gray-600">
+            Recently Added Products
+          </h1>
         </div>
-        {/* Products */}
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {recentProducts.map((product) => (
             <Link to={`/detail/${product.pid}`} key={product.pid}>
               <div className="bg-white p-5 rounded-lg shadow-lg">
-                <img src={`../src/Uploads/products/${product.image}`} className="w-full h-40 object-cover rounded-lg" alt={product.pname} />
-                <h1 className="text-lg font-bold capitalize mt-4">{product.pname}</h1>
-                <p className="mt-2">Price: <span className="bg-emerald-100 px-1 text-emerald-500 rounded font-bold">{product.price} Birr</span></p>
+                <img
+                  src={`../src/Uploads/products/${product.image}`}
+                  className="w-full h-40 object-cover rounded-lg"
+                  alt={product.pname}
+                />
+                <h1 className="text-lg font-bold capitalize mt-4">
+                  {product.pname}
+                </h1>
+                <p className="mt-2">
+                  Price:{" "}
+                  <span className="bg-emerald-100 px-1 text-emerald-500 rounded font-bold">
+                    {product.price} Birr
+                  </span>
+                </p>
                 <button className="bg-sky-800 px-3 py-1 rounded-lg text-white hover:bg-white hover:text-black hover:border-gray-500 hover:border mt-5">
                   Buy
                 </button>
@@ -66,29 +89,41 @@ const Cdash = () => {
         </div>
       </div>
 
-      {/* most bought */}
-      <div id="most" className="h-fit bg-gradient-to-r from-sky-0 to-sky-100 border border-gray-100 my-10 p-5 ">
+      {/* Most Bought Products */}
+      <div
+        id="most"
+        className="h-fit bg-gradient-to-r from-sky-0 to-sky-100 border border-gray-100 my-10 p-5"
+      >
         <div>
-          <h1 className="text-center text-4xl font-bold text-gray-600">Most Bought Products</h1>
+          <h1 className="text-center text-4xl font-bold text-gray-600">
+            Most Bought Products
+          </h1>
         </div>
-        {/* Products */}
-        <div className="mt-10">
-          {/* card1 */}
-          <button>
-            <div className="bg-white p-5  rounded-lg ">
-              <center>
-                <img src={home} className="w-60" />
-                <h1 className="text-lg font-bold capitalize">product1</h1>
-                <p className="">Price: <span className="bg-emerald-100 px-1 text-emerald-500 rounded font-bold">1500Birr</span></p>
-                <button className="bg-sky-800 px-3 py-1 rounded-lg text-white hover:bg-white hover:text-black hover:border-gray-500 hover:border mt-5">
-                  Buy
-                </button>
-              </center>
-            </div>
-          </button>
+        <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {/* Example Product */}
+          <div className="bg-white p-5 rounded-lg shadow-lg">
+            <center>
+              <img src={home} className="w-60 h-40 object-cover rounded-lg" alt="Product" />
+              <h1 className="text-lg font-bold capitalize mt-4">Product 1</h1>
+              <p className="mt-2">
+                Price:{" "}
+                <span className="bg-emerald-100 px-1 text-emerald-500 rounded font-bold">
+                  1500 Birr
+                </span>
+              </p>
+              <button className="bg-sky-800 px-3 py-1 rounded-lg text-white hover:bg-white hover:text-black hover:border-gray-500 hover:border mt-5">
+                Buy
+              </button>
+            </center>
+          </div>
         </div>
-        <div className=" flex justify-center mt-10">
-          <a href="#home" className="px-[45%] bg-sky-800 text-white hover:bg-white hover:text-black hover:border hover:border-gray-400">Back To Top</a>
+        <div className="flex justify-center mt-10">
+          <a
+            href="#home"
+            className="px-[45%] bg-sky-800 text-white hover:bg-white hover:text-black hover:border hover:border-gray-400 rounded-lg py-2"
+          >
+            Back To Top
+          </a>
         </div>
       </div>
 

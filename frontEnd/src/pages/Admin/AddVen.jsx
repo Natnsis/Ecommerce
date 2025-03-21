@@ -88,70 +88,66 @@ const AddVen = () => {
   };
 
   return (
-    <div className="px-10 pt-10">
+    <div className="px-5 pt-5">
       <Header />
-      <div className="flex justify-between items-center px-20 pt-10">
+      <div className="flex flex-col md:flex-row justify-between items-center px-5 pt-5">
         <div>
-          <h1 className="text-3xl font-extrabold">Add New Vendors</h1>
+          <h1 className="text-3xl font-extrabold text-gray-800">Add New Vendors</h1>
         </div>
         <div>
-          <button className="bg-amber-300 px-3 py-1 hover:border hover:bg-white rounded-lg">
+          <button className="bg-amber-300 px-4 py-2 hover:border hover:bg-white hover:text-amber-400 rounded-lg transition duration-300">
             <Link to="/manageVen">Go Back</Link>
           </button>
         </div>
       </div>
-      <div className="flex mt-15 justify-center items-center ">
-        <div className="px-10 py-5 shadow-2xl rounded-lg space-y-2">
+      <div className="flex mt-10 justify-center items-center">
+        <div className="px-10 py-8 shadow-2xl rounded-lg space-y-4 bg-white w-full max-w-lg">
           <form onSubmit={handleAdding}>
             <input
-              className="border border-amber-300 px-5 py-1 text-center rounded-lg w-full mb-2"
+              className="border border-gray-300 px-5 py-2 text-center rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-amber-400"
               type="text"
               placeholder="Enter Full Name"
               name="fullName"
               value={vendor.fullName}
               onChange={handleChange}
             />
-            <br />
             <p className="text-center text-red-500">{error.fullName}</p>
 
             <input
-              className="border border-amber-300 px-5 py-1 text-center rounded-lg w-full mb-2"
+              className="border border-gray-300 px-5 py-2 text-center rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-amber-400"
               type="text"
               placeholder="Enter Username"
               name="username"
               value={vendor.username}
               onChange={handleChange}
             />
-            <br />
             <p className="text-center text-red-500">{error.username}</p>
 
             <input
-              className="border border-amber-300 px-5 py-1 text-center rounded-lg w-full mb-2"
+              className="border border-gray-300 px-5 py-2 text-center rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-amber-400"
               type="password"
               placeholder="Enter Password"
               name="password"
               value={vendor.password}
               onChange={handleChange}
             />
-            <br />
             <p className="text-center text-red-500">{error.password}</p>
 
-            <p className="text-center">Enter image of vendor</p>
+            <p className="text-center font-semibold text-gray-700">Upload Vendor Image</p>
             <input
-              className="hover:bg-black hover:text-white px-3 border mb-2"
+              className="hover:bg-black hover:text-white px-3 py-2 border border-gray-300 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-amber-400"
               type="file"
               name="image"
               onChange={handleChange}
             />
-            <br />
             <p className="text-center text-red-500">{error.image}</p>
 
             <div className="flex justify-center">
               <button
-                className="bg-amber-300 px-3 py-1 hover:border hover:bg-white rounded-lg"
+                className="bg-amber-400 text-white px-5 py-2 rounded-lg hover:bg-white hover:text-amber-400 hover:border hover:border-amber-400 transition duration-300"
                 type="submit"
               >
-                Add
+                Add Vendor
               </button>
             </div>
             <p className="text-red-500 text-center">{error.form}</p>

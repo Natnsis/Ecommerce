@@ -9,7 +9,7 @@ const Register = () => {
     fullName: "",
     image: null,
     email: "",
-  });//
+  });
 
   const [error, setError] = useState({
     username: "",
@@ -34,7 +34,7 @@ const Register = () => {
     }));
   };
 
-  const handleRegistrtion = async (e) => {
+  const handleRegistration = async (e) => {
     e.preventDefault();
     let hasError = false;
     const newError = {
@@ -88,7 +88,6 @@ const Register = () => {
           form: response.data.Error,
         }));
       } else {
-        // Handle successful registration and redirect to login page
         navigate("/login");
       }
     } catch (err) {
@@ -101,15 +100,15 @@ const Register = () => {
 
   return (
     <div className="w-screen h-screen flex justify-center items-center bg-gradient-to-r from-blue-300 to-gray-100">
-      <div className="w-85 bg-white h-fit rounded-2xl px-5 py-5">
-        <div className="my-5">
-          <h1 className="font-extrabold text-3xl text-center">Registration</h1>
+      <div className="w-full max-w-md bg-white rounded-2xl px-8 py-10 shadow-lg">
+        <div className="mb-8">
+          <h1 className="font-extrabold text-3xl text-center text-gray-800">Registration</h1>
         </div>
-        <form onSubmit={handleRegistrtion} className="space-y-2">
+        <form onSubmit={handleRegistration} className="space-y-4">
           <input
             type="text"
             name="username"
-            className="w-70 border px-5 py-1 rounded text-center"
+            className="w-full border border-gray-300 px-5 py-2 rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-300"
             placeholder="Enter username"
             value={customer.username}
             onChange={handleChange}
@@ -119,7 +118,7 @@ const Register = () => {
           <input
             type="password"
             name="password"
-            className="w-70 border px-5 py-1 rounded text-center"
+            className="w-full border border-gray-300 px-5 py-2 rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-300"
             placeholder="Enter Password"
             value={customer.password}
             onChange={handleChange}
@@ -129,18 +128,18 @@ const Register = () => {
           <input
             type="text"
             name="fullName"
-            className="w-70 border px-5 py-1 rounded text-center"
+            className="w-full border border-gray-300 px-5 py-2 rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-300"
             placeholder="Enter Full Name"
             value={customer.fullName}
             onChange={handleChange}
           />
           <p className="text-red-500 text-center">{error.fullName}</p>
 
-          <label className="text-center w-full">Select your profile image</label>
+          <label className="text-center w-full block text-gray-600">Select your profile image</label>
           <input
             type="file"
             name="image"
-            className="cursor-pointer border px-3 rounded-lg hover:bg-blue-300"
+            className="cursor-pointer border border-gray-300 px-3 py-2 rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-blue-300"
             onChange={handleChange}
           />
           <p className="text-red-500 text-center">{error.image}</p>
@@ -148,28 +147,28 @@ const Register = () => {
           <input
             type="email"
             name="email"
-            className="w-70 border px-5 py-1 rounded text-center"
+            className="w-full border border-gray-300 px-5 py-2 rounded-lg text-center focus:outline-none focus:ring-2 focus:ring-blue-300"
             placeholder="Enter Email"
             value={customer.email}
             onChange={handleChange}
           />
           <p className="text-red-500 text-center">{error.email}</p>
 
-          <div className="w-full flex justify-center my-3">
+          <div className="w-full flex justify-center mt-6">
             <button
               type="submit"
-              className="bg-blue-300 rounded px-3 py-1 hover:bg-white hover:border"
+              className="bg-blue-300 text-white px-5 py-2 rounded-lg hover:bg-white hover:text-blue-300 hover:border hover:border-blue-300 transition duration-300"
             >
               Register
             </button>
           </div>
-          <p className="text-red-500 text-center">{error.form}</p>
+          <p className="text-red-500 text-center mt-3">{error.form}</p>
         </form>
-        <div>
-          <p className="text-center">
-            You already have an account?{" "}
+        <div className="mt-6">
+          <p className="text-center text-gray-600">
+            Already have an account?{" "}
             <Link to="/login">
-              <span className="text-blue-300 hover:text-red-300">Login Here</span>
+              <span className="text-blue-500 hover:text-red-500 transition duration-300">Login Here</span>
             </Link>
           </p>
         </div>
