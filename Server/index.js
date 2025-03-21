@@ -49,6 +49,49 @@ app.post("/create-checkout-session", async (req, res) => {
     const { cartItems } = req.body;
 
     try {
+        const transactionPromises = cartItems.map((item) => {
+            return new Promise((resolve, reject) => {
+                const restValue = "SELECT Vid FROM products WHERE pid = ?";
+                db.query(restValue, [item.pid], (err, data) => {
+                    if (err) {
+                        console.error("Error fetching vendor_id:", err);
+                        return reject(err);
+                    }
+
+                    if (data.length === 0) {
+                        return reject(new Error(`Product with pid ${item.pid} not found`));
+                    }
+
+                    const vendor_id = data[0].Vid;
+
+                    // Insert transaction into the database
+                    const query = `
+                        INSERT INTO transactions (customer_id, vendor_id, product_id, product_name, quantity, total_price)
+                        VALUES (?, ?, ?, ?, ?, ?)
+                    `;
+                    const values = [
+                        req.session.user.id, 
+                        vendor_id,
+                        item.pid, 
+                        item.pname, 
+                        item.quantity,
+                        item.price * item.quantity, 
+                    ];
+
+                    db.query(query, values, (err, result) => {
+                        if (err) {
+                            console.error("Error inserting transaction:", err);
+                            return reject(err);
+                        }
+                        console.log("Transaction inserted successfully:", result);
+                        resolve();
+                    });
+                });
+            });
+        });
+
+        await Promise.all(transactionPromises);
+
         // Map cart items to Stripe line items
         const lineItems = cartItems.map((item) => ({
             price_data: {
@@ -56,7 +99,7 @@ app.post("/create-checkout-session", async (req, res) => {
                 product_data: {
                     name: item.pname,
                 },
-                unit_amount: item.price * 100, 
+                unit_amount: item.price * 100, // Convert price to cents
             },
             quantity: item.quantity,
         }));
@@ -70,7 +113,7 @@ app.post("/create-checkout-session", async (req, res) => {
             cancel_url: "http://localhost:5173/cancel",
         });
 
-        res.json({ url: session.url });
+        res.json({ url: session.url }); 
     } catch (error) {
         console.error("Error creating checkout session:", error);
         res.status(500).json({ error: "Failed to create checkout session" });
