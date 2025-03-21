@@ -24,19 +24,53 @@ const Search = () => {
     <div className="px-5 pt-5">
       <CsearchHead />
 
-      {/* search div */}
-      <div>
-        <div className="flex items-center justify-center space-x-3">
-          <input
-            type="text"
-            className="border text-center border-gray-200 text-lg rounded px-3 w-[50%] h-[10vh]"
-            placeholder="search here..."
-          />
-        </div>
-      </div>
+      <div className="flex justify-between p-5 space-x-10">
+        {/* left side */}
+          <div className="flex-col justify-between space-y-4 mt-10">
+              {/* search div */}
+              <div>
+                <div className="flex justify-center items-center border-gray-100">
+                  <input
+                    type="text"
+                    className="border text-center border-gray-200 text-lg rounded px-3"
+                    placeholder="search here..."
+                  />
+                </div>
+              </div>
+
+              {/* categoris and price */}
+            <div className="w-fit bg-sky-50 border border-gray-100 p-5 flex-col h-fit rounded-lg">
+              <div>
+                <h1 className="text-center font-extrabold text-2xl mb-5">Customization</h1>
+              </div>
+              <div className="flex space-x-2 mb-3">
+                <h1 className="text-md font-bold">Categorie</h1>
+                <select className="border rounded-md bg-white px-3 py-1 " id="">
+                  <option value=""></option>
+                  <option value="">Cloths</option>
+                  <option value="">Luxury</option>
+                  <option value="">Accessories</option>
+                  <option value="">Electronics</option>
+                  <option value="">Tools</option>
+                  <option value="">Food</option>
+                  <option value="">Detergents</option>
+                  <option value="">Others</option>
+                </select>
+              </div>
+              <div className="flex space-x-2 mb-3">
+                <h1 className="text-md font-bold">Price</h1>
+                <select className="border rounded-md bg-white px-3 py-1 " id="">
+                  <option value=""></option>
+                  <option value="">1-500birr</option>
+                  <option value="">500-1000birr</option>
+                  <option value="">1000 &gt;</option>
+                </select>
+              </div>
+            </div>
+          </div>
 
       {/* products */}
-      <div className="h-screen p-5 bg-sky-50 mt-10 rounded-2xl">
+      <div className="h-screen p-5 bg-sky-50  rounded-2xl">
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
           {products.map((product) => (
             <Link to={`/detail/${product.pid}`} key={product.pid} className="bg-white p-5 rounded-lg shadow-lg">
@@ -54,13 +88,15 @@ const Search = () => {
                   </span>
                 </p>
                 <button className="bg-sky-800 px-3 py-1 rounded-lg text-white hover:bg-white hover:text-black hover:border-gray-500 hover:border mt-5">
-                  Buy
+                  Check
                 </button>
               </center>
             </Link>
           ))}
         </div>
       </div>
+      </div>
+
 
       <Cfooter />
     </div>

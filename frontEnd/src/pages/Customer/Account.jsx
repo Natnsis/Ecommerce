@@ -2,9 +2,21 @@ import CaccountHead from "../../components/Customer/CaccountHead"
 import Cfooter from "./../../components/Customer/Cfooter"
 import home from "./../../images/home.jpg"
 import {Link} from "react-router-dom"
+import {useState, useEffect} from "react"
+import axios from "axios"
 
-
+///TODO:finish the update customer info
 const Account = () => {
+  const [customerInfo, setCustomerInfo] = useState([]);
+  const [newInfo, setNewInfo] = useState([]);
+
+  useEffect(()=>{
+    const info =  axios.get("http://localhost:4000/userinfo");
+    setCustomerInfo(info);
+  }, []);
+
+  
+
   return (
     <div className="px-5 pt-5">
       <CaccountHead/>
@@ -15,11 +27,11 @@ const Account = () => {
           <div className="bg-white rounded w-[40%] h-[60vh] py-5">
             <center>
               <label >Current Image:</label>
-              <img src={home} alt="" />
+              <img src={`../src/Uploads/customers/${customerInfo.image}`} alt="" />
               <label >Current UserName</label>
-              <h1>example username</h1>
+              <h1>{customerInfo.username}</h1>
               <label >Current Password</label>
-              <h1>ExamplePassword</h1>
+              <h1>{customerInfo.password}</h1>
             </center>
 
           </div>

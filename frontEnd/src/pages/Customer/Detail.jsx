@@ -5,8 +5,8 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 
 const Detail = () => {
-  const { id } = useParams();
   const [product, setProduct] = useState(null);
+  const { id } = useParams();
 
   useEffect(() => {
     const fetchProductDetail = async () => {
@@ -20,6 +20,20 @@ const Detail = () => {
 
     fetchProductDetail();
   }, [id]);
+
+  const addToCart = () => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    const existingProduct = cart.find((item) => item.pid === product.pid);
+
+    if (existingProduct) {
+      existingProduct.quantity += 1;
+    } else {
+      cart.push({ ...product, quantity: 1 }); 
+    }
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+    alert("Product added to cart!");
+  };
 
   if (!product) {
     return <div>Loading...</div>;
@@ -47,6 +61,14 @@ const Detail = () => {
           <div className="bg-blue-100 p-4 rounded-lg">
             <h3 className="text-xl font-semibold text-gray-800">Description</h3>
             <p className="text-gray-700">{product.pdescription}</p>
+          </div>
+          <div className="flex justify-center">
+            <button
+              onClick={addToCart}
+              className="bg-green-200 hover:bg-green-500 rounded-lg shadow-2xl px-5 py-1"
+            >
+              Add to Cart
+            </button>
           </div>
           <div className="w-full text-center">
             <h3 className="text-lg font-semibold text-gray-800">Seller&apos;s Identity: {product.sellerName}</h3>

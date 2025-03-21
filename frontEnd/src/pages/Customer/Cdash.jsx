@@ -24,9 +24,9 @@ const Cdash = () => {
   return (
     <div className="pt-5 px-5 ">
       <Cheader />
-      <div className="flex justify-between" id="home">
+      <div className="" id="home">
         {/* mini start */}
-        <div className="flex justify-between p-5 bg-sky-50 border border-gray-200 rounded-lg w-[75%]">
+        <div className="flex justify-between p-5 bg-sky-50 border border-gray-200 rounded-lg w-[100%]">
           <div className=" w-[50%]">
             <h1 className="text-center font-extrabold text-3xl">Ecommerce For Assosa City</h1>
             <p className="w-[90%] text-gray-500 my-2">
@@ -41,35 +41,7 @@ const Cdash = () => {
           </div>
         </div>
 
-        {/* categoris and price */}
-        <div className="w-[20%] bg-sky-50 border border-gray-100 p-5 flex-col h-fit rounded-lg">
-          <div>
-            <h1 className="text-center font-extrabold text-2xl mb-5">Customization</h1>
-          </div>
-          <div className="flex space-x-2 mb-3">
-            <h1 className="text-md font-bold">Categorie</h1>
-            <select className="border rounded-md bg-white px-3 py-1 " id="">
-              <option value=""></option>
-              <option value="">Cloths</option>
-              <option value="">Luxury</option>
-              <option value="">Accessories</option>
-              <option value="">Electronics</option>
-              <option value="">Tools</option>
-              <option value="">Food</option>
-              <option value="">Detergents</option>
-              <option value="">Others</option>
-            </select>
-          </div>
-          <div className="flex space-x-2 mb-3">
-            <h1 className="text-md font-bold">Price</h1>
-            <select className="border rounded-md bg-white px-3 py-1 " id="">
-              <option value=""></option>
-              <option value="">1-500birr</option>
-              <option value="">500-1000birr</option>
-              <option value="">1000 &gt;</option>
-            </select>
-          </div>
-        </div>
+        
       </div>
 
       {/* recently added */}

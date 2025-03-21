@@ -40,6 +40,44 @@ app.use(session({
     }
 }));
 
+
+///TODO: stripe part
+const Stripe = require("stripe");
+const stripe = Stripe("sk_test_51R4n1KIhmXx65X8FzdRHVx2kOBAXXUusGu3CNhl24ZIRjgMScuDe3tIktdUWxYWyllsVpVsWfZB4imrX9dScYV2e00HWl0wXOD");
+
+app.post("/create-checkout-session", async (req, res) => {
+    const { cartItems } = req.body;
+
+    try {
+        // Map cart items to Stripe line items
+        const lineItems = cartItems.map((item) => ({
+            price_data: {
+                currency: "usd",
+                product_data: {
+                    name: item.pname,
+                },
+                unit_amount: item.price * 100, 
+            },
+            quantity: item.quantity,
+        }));
+
+        // Create a Stripe checkout session
+        const session = await stripe.checkout.sessions.create({
+            payment_method_types: ["card"],
+            mode: "payment",
+            line_items: lineItems,
+            success_url: "http://localhost:5173/success",
+            cancel_url: "http://localhost:5173/cancel",
+        });
+
+        res.json({ url: session.url });
+    } catch (error) {
+        console.error("Error creating checkout session:", error);
+        res.status(500).json({ error: "Failed to create checkout session" });
+    }
+});
+
+
 const customerStorage = multer.diskStorage({
     destination: (req, file, cb) => {
         cb(null, path.join(__dirname, '../frontEnd/src/Uploads/customers'));
@@ -390,6 +428,13 @@ app.get('/productDetail/:id', (req, res) => {
 
 
 app.use(express.static(path.join(__dirname, '../frontEnd/build')));
+
+
+
+
+
+
+
 
 //main process
 app.listen(4000, () => {
