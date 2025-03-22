@@ -21,18 +21,18 @@ const Detail = () => {
     fetchProductDetail();
   }, [id]);
 
-  const addToCart = () => {
-    const cart = JSON.parse(localStorage.getItem("cart")) || [];
-    const existingProduct = cart.find((item) => item.pid === product.pid);
-
-    if (existingProduct) {
-      existingProduct.quantity += 1;
-    } else {
-      cart.push({ ...product, quantity: 1 });
+  const addToCart = async () => {
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/save-cart",
+        { cartItems: [{ ...product, quantity: 1 }] }, // Send the product with quantity
+        { withCredentials: true }
+      );
+      alert(response.data.message || "Product added to cart!");
+    } catch (error) {
+      console.error("Error adding product to cart:", error);
+      alert("Failed to add product to cart. Please try again.");
     }
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-    alert("Product added to cart!");
   };
 
   if (!product) {

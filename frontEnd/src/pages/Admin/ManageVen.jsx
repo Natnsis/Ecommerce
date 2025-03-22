@@ -29,6 +29,8 @@ const ManageVen = () => {
     }
   };
 
+ console.log(vendors.image)
+
   return (
     <div className="px-10 pt-10 min-h-screen flex flex-col">
       <Header />
@@ -75,7 +77,7 @@ const ManageVen = () => {
                   <td className="text-md px-5 py-3">{vendor.id}</td>
                   <td className="text-md px-5 py-3">
                     <img
-                      src={`http://localhost:4000/uploads/vendors/${vendor.image}`}
+                      src={`../src/Uploads/vendors/${vendor.image}`}
                       alt="Vendor"
                       className="w-10 h-10 rounded-full object-cover"
                     />

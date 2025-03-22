@@ -46,53 +46,53 @@ const Stripe = require("stripe");
 const stripe = Stripe("sk_test_51R4n1KIhmXx65X8FzdRHVx2kOBAXXUusGu3CNhl24ZIRjgMScuDe3tIktdUWxYWyllsVpVsWfZB4imrX9dScYV2e00HWl0wXOD");
 
 app.post("/create-checkout-session", async (req, res) => {
+    if (!req.session.user || !req.session.user.id) {
+        return res.status(401).json({ error: "Unauthorized: No session found" });
+    }
+
     const { cartItems } = req.body;
 
     try {
+        console.log("Session user:", req.session.user);
+        console.log("Received cartItems:", cartItems);
+
+        if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
+            return res.status(400).json({ error: "Invalid cart items" });
+        }
+
         const transactionPromises = cartItems.map((item) => {
             return new Promise((resolve, reject) => {
-                const restValue = "SELECT Vid FROM products WHERE pid = ?";
-                db.query(restValue, [item.pid], (err, data) => {
+                if (!item.Vid) {
+                    console.error(`Vendor ID is missing for product with pid ${item.pid}`);
+                    return reject(new Error(`Vendor ID is missing for product with pid ${item.pid}`));
+                }
+
+                const query = `
+                    INSERT INTO transactions (customer_id, vendor_id, product_id, product_name, quantity, total_price)
+                    VALUES (?, ?, ?, ?, ?, ?)
+                `;
+                const values = [
+                    req.session.user.id,
+                    item.Vid,
+                    item.pid,
+                    item.pname,
+                    item.quantity,
+                    item.price * item.quantity,
+                ];
+
+                db.query(query, values, (err, result) => {
                     if (err) {
-                        console.error("Error fetching vendor_id:", err);
+                        console.error("Error inserting transaction:", err);
                         return reject(err);
                     }
-
-                    if (data.length === 0) {
-                        return reject(new Error(`Product with pid ${item.pid} not found`));
-                    }
-
-                    const vendor_id = data[0].Vid;
-
-                    // Insert transaction into the database
-                    const query = `
-                        INSERT INTO transactions (customer_id, vendor_id, product_id, product_name, quantity, total_price)
-                        VALUES (?, ?, ?, ?, ?, ?)
-                    `;
-                    const values = [
-                        req.session.user.id, 
-                        vendor_id,
-                        item.pid, 
-                        item.pname, 
-                        item.quantity,
-                        item.price * item.quantity, 
-                    ];
-
-                    db.query(query, values, (err, result) => {
-                        if (err) {
-                            console.error("Error inserting transaction:", err);
-                            return reject(err);
-                        }
-                        console.log("Transaction inserted successfully:", result);
-                        resolve();
-                    });
+                    console.log("Transaction inserted successfully:", result);
+                    resolve();
                 });
             });
         });
 
         await Promise.all(transactionPromises);
 
-        // Map cart items to Stripe line items
         const lineItems = cartItems.map((item) => ({
             price_data: {
                 currency: "usd",
@@ -104,7 +104,8 @@ app.post("/create-checkout-session", async (req, res) => {
             quantity: item.quantity,
         }));
 
-        // Create a Stripe checkout session
+        console.log("Stripe line items:", lineItems);
+
         const session = await stripe.checkout.sessions.create({
             payment_method_types: ["card"],
             mode: "payment",
@@ -113,12 +114,83 @@ app.post("/create-checkout-session", async (req, res) => {
             cancel_url: "http://localhost:5173/cancel",
         });
 
-        res.json({ url: session.url }); 
+        res.json({ url: session.url });
     } catch (error) {
         console.error("Error creating checkout session:", error);
         res.status(500).json({ error: "Failed to create checkout session" });
     }
 });
+
+
+//save cart
+app.post("/save-cart", async (req, res) => {
+    if (!req.session.user || !req.session.user.id) {
+        return res.status(401).json({ error: "Unauthorized: No session found" });
+    }
+
+    const userId = req.session.user.id;
+    const { cartItems } = req.body;
+
+    if (!cartItems || !Array.isArray(cartItems)) {
+        return res.status(400).json({ error: "Invalid request: cartItems is required and must be an array" });
+    }
+
+    try {
+        console.log("Received cartItems:", cartItems);
+        console.log("User ID:", userId);
+
+        const query = `
+            INSERT INTO carts (user_id, cart_items)
+            VALUES (?, ?)
+            ON DUPLICATE KEY UPDATE cart_items = VALUES(cart_items)
+        `;
+        const values = [userId, JSON.stringify(cartItems)];
+
+        db.query(query, values, (err, result) => {
+            if (err) {
+                console.error("Error saving cart to database:", err);
+                return res.status(500).json({ error: "Failed to save cart to database" });
+            }
+            console.log("Cart saved successfully:", result);
+            res.json({ message: "Cart saved successfully" });
+        });
+    } catch (error) {
+        console.error("Error saving cart:", error);
+        res.status(500).json({ error: "Failed to save cart" });
+    }
+});
+
+//retrieve cart
+app.get("/get-cart", async (req, res) => {
+    if (!req.session.user || !req.session.user.id) {
+        return res.status(401).json({ error: "Unauthorized: No session found" });
+    }
+
+    const userId = req.session.user.id; // Use the logged-in user's ID
+
+    try {
+        const query = `SELECT cart_items FROM carts WHERE user_id = ?`;
+        db.query(query, [userId], (err, result) => {
+            if (err) {
+                console.error("Error retrieving cart:", err);
+                return res.status(500).json({ error: "Failed to retrieve cart" });
+            }
+
+            if (result.length === 0) {
+                return res.json({ cartItems: [] }); // Return empty cart if no data
+            }
+
+            res.json({ cartItems: JSON.parse(result[0].cart_items) });
+        });
+    } catch (error) {
+        console.error("Error retrieving cart:", error);
+        res.status(500).json({ error: "Failed to retrieve cart" });
+    }
+});
+
+
+
+
 
 
 const customerStorage = multer.diskStorage({
@@ -429,6 +501,7 @@ app.get('/vendorlist', (req, res) => {
             v.id, 
             v.fullname, 
             v.username, 
+            image,
             (SELECT COUNT(*) FROM products p WHERE p.Vid = v.id) AS product_count
         FROM vendors v
     `;
