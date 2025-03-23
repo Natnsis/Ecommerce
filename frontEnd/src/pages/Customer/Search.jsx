@@ -6,12 +6,17 @@ import { Link } from "react-router-dom";
 
 const Search = () => {
   const [products, setProducts] = useState([]);
+  const [filteredProducts, setFilteredProducts] = useState([]);
+  const [search, setSearch] = useState("");
+  const [selectedCategory, setSelectedCategory] = useState("");
+  const [selectedPriceRange, setSelectedPriceRange] = useState("");
 
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get("http://localhost:4000/listofpoducts");
         setProducts(response.data);
+        setFilteredProducts(response.data); // Initialize filtered products
       } catch (err) {
         console.error("Error fetching products:", err);
       }
@@ -19,6 +24,35 @@ const Search = () => {
 
     fetchProducts();
   }, []);
+
+  const handleFilter = () => {
+    let filtered = products;
+
+    // Filter by category
+    if (selectedCategory) {
+      filtered = filtered.filter((product) => product.category === selectedCategory);
+    }
+
+    // Filter by price range
+    if (selectedPriceRange) {
+      filtered = filtered.filter((product) => {
+        const price = parseFloat(product.price);
+        if (selectedPriceRange === "1-500") return price >= 1 && price <= 500;
+        if (selectedPriceRange === "500-1000") return price > 500 && price <= 1000;
+        if (selectedPriceRange === "1000+") return price > 1000;
+        return true;
+      });
+    }
+
+    // Filter by search term
+    if (search) {
+      filtered = filtered.filter((product) =>
+        product.pname.toLowerCase().includes(search.toLowerCase())
+      );
+    }
+
+    setFilteredProducts(filtered);
+  };
 
   return (
     <div className="px-5 pt-5">
@@ -34,6 +68,8 @@ const Search = () => {
                 type="text"
                 className="border text-center border-gray-200 text-lg rounded px-3 py-2 w-full md:w-auto"
                 placeholder="Search here..."
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
               />
             </div>
           </div>
@@ -45,7 +81,11 @@ const Search = () => {
             </div>
             <div className="flex space-x-2 mb-3">
               <h1 className="text-md font-bold">Category</h1>
-              <select className="border rounded-md bg-white px-3 py-1">
+              <select
+                className="border rounded-md bg-white px-3 py-1"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+              >
                 <option value="">All</option>
                 <option value="Cloths">Cloths</option>
                 <option value="Luxury">Luxury</option>
@@ -59,12 +99,24 @@ const Search = () => {
             </div>
             <div className="flex space-x-2 mb-3">
               <h1 className="text-md font-bold">Price</h1>
-              <select className="border rounded-md bg-white px-3 py-1">
+              <select
+                className="border rounded-md bg-white px-3 py-1"
+                value={selectedPriceRange}
+                onChange={(e) => setSelectedPriceRange(e.target.value)}
+              >
                 <option value="">All</option>
                 <option value="1-500">1-500 Birr</option>
                 <option value="500-1000">500-1000 Birr</option>
                 <option value="1000+">1000+ Birr</option>
               </select>
+            </div>
+            <div className="flex justify-center">
+              <button
+                onClick={handleFilter}
+                className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+              >
+                Search
+              </button>
             </div>
           </div>
         </div>
@@ -72,7 +124,7 @@ const Search = () => {
         {/* Products Section */}
         <div className="w-full h-auto p-5 bg-sky-50 rounded-2xl">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-            {products.map((product) => (
+            {filteredProducts.map((product) => (
               <Link
                 to={`/detail/${product.pid}`}
                 key={product.pid}

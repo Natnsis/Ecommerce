@@ -18,6 +18,8 @@ import UpdateVen from "./pages/Admin/UpdateVen"
 import UpdatePro from "./pages/Vendor/UpdatePro"
 import Detail from "./pages/Customer/Detail"
 import Success from "./pages/Customer/Success"
+import FeedbackInfo from "./components/Admin/FeedbackInfo"
+import Details from "./components/Admin/Details"
 
 
 
@@ -45,6 +47,9 @@ const App = () => {
         <Route path="/updateProduct/:id" element={<UpdatePro/>}/>
         <Route path="/detail/:id" element={<Detail/>}/>
         <Route path="/success" element={<Success/>}/>
+        <Route path="/feedbackInfo" element={<FeedbackInfo/>}/>
+        <Route path="/details/:id" element={<Details/>}/>
+
 
         
       </Routes>

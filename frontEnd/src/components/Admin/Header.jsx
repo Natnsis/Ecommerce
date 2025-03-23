@@ -29,7 +29,7 @@ const Header = () => {
         <Link to="/manageVen" className="hover:text-amber-400 hover:underline transition duration-300">
           Manage Vendors
         </Link>
-        <Link className="hover:text-amber-400 hover:underline transition duration-300">
+        <Link to="/feedbackInfo" className="hover:text-amber-400 hover:underline transition duration-300">
           Check Feedbacks
         </Link>
         <Link to="/change" className="hover:text-amber-400 hover:underline transition duration-300">

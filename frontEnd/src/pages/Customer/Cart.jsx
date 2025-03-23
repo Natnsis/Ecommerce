@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // Import useNavigate
 import axios from "axios";
 
 const Cart = () => {
     const [cart, setCart] = useState([]);
+    const navigate = useNavigate(); // Initialize useNavigate
 
     // Fetch cart from the backend when the component loads
     useEffect(() => {
@@ -49,6 +51,11 @@ const Cart = () => {
         }
     };
 
+    // Handle navigation back to Cdash
+    const handleGoBack = () => {
+        navigate("/Cdash"); // Navigate to the Cdash page
+    };
+
     return (
         <div className="p-5">
             <h1 className="text-2xl font-bold mb-5 text-center">Your Cart</h1>
@@ -84,6 +91,14 @@ const Cart = () => {
                     </div>
                 </div>
             )}
+            <div className="flex justify-center mt-5">
+                <button
+                    onClick={handleGoBack}
+                    className="bg-gray-500 text-white px-5 py-2 rounded-lg hover:bg-gray-700 transition duration-300"
+                >
+                    Go Back
+                </button>
+            </div>
         </div>
     );
 };

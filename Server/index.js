@@ -41,6 +41,8 @@ app.use(session({
 }));
 
 
+
+
 ///TODO: stripe part
 const Stripe = require("stripe");
 const stripe = Stripe("sk_test_51R4n1KIhmXx65X8FzdRHVx2kOBAXXUusGu3CNhl24ZIRjgMScuDe3tIktdUWxYWyllsVpVsWfZB4imrX9dScYV2e00HWl0wXOD");
@@ -121,6 +123,45 @@ app.post("/create-checkout-session", async (req, res) => {
     }
 });
 
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, path.join(__dirname, "uploads/customers"));
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + path.extname(file.originalname));
+    },
+  });
+  const upload = multer({ storage });
+  
+  app.post("/updateUser", upload.single("image"), async (req, res) => {
+    if (!req.session.user || !req.session.user.id) {
+      return res.status(401).json({ error: "Unauthorized: No session found" });
+    }
+  
+    const userId = req.session.user.id;
+    const { username, password } = req.body;
+    const image = req.file ? req.file.filename : null;
+  
+    try {
+      const query = `
+        UPDATE customers 
+        SET username = ?, password = ?, image = COALESCE(?, image)
+        WHERE id = ?
+      `;
+      db.query(query, [username, password, image, userId], (err, result) => {
+        if (err) {
+          console.error("Error updating user info:", err);
+          return res.status(500).json({ error: "Failed to update user info" });
+        }
+  
+        res.json({ message: "User info updated successfully" });
+      });
+    } catch (error) {
+      console.error("Error updating user info:", error);
+      res.status(500).json({ error: "Failed to update user info" });
+    }
+  });
 
 //save cart
 app.post("/save-cart", async (req, res) => {
@@ -315,6 +356,34 @@ app.get('/userInfo', (req, res) => {
         res.status(401).json({ error: 'Unauthorized' });
     }
 });
+
+//user-info for account frontEnd
+app.get("/user-info", async (req, res) => {
+    if (!req.session.user || !req.session.user.id) {
+      return res.status(401).json({ error: "Unauthorized: No session found" });
+    }
+  
+    const userId = req.session.user.id;
+  
+    try {
+      const query = "SELECT username, password, image FROM customers WHERE id = ?";
+      db.query(query, [userId], (err, result) => {
+        if (err) {
+          console.error("Error fetching user info:", err);
+          return res.status(500).json({ error: "Failed to fetch user info" });
+        }
+  
+        if (result.length === 0) {
+          return res.status(404).json({ error: "User not found" });
+        }
+  
+        res.json(result[0]);
+      });
+    } catch (error) {
+      console.error("Error fetching user info:", error);
+      res.status(500).json({ error: "Failed to fetch user info" });
+    }
+  });
 
 
 //get customers
@@ -651,10 +720,262 @@ app.get('/productDetail/:id', (req, res) => {
     });
 });
 
+//count in vendor dashboard
+app.get("/vendor-stats", async (req, res) => {
+    if (!req.session.user || !req.session.user.id) {
+      return res.status(401).json({ error: "Unauthorized: No session found" });
+    }
+  
+    const vendorId = req.session.user.id;
+  
+    try {
+      // Query to count the number of products for the vendor
+      const productCountQuery = "SELECT COUNT(*) AS productCount FROM products WHERE vid = ?";
+      const productCountResult = await new Promise((resolve, reject) => {
+        db.query(productCountQuery, [vendorId], (err, result) => {
+          if (err) reject(err);
+          else resolve(result[0].productCount);
+        });
+      });
+  
+      const soldCountQuery = "SELECT COUNT(*) AS soldCount FROM transactions WHERE vendor_id = ?";
+      const soldCountResult = await new Promise((resolve, reject) => {
+        db.query(soldCountQuery, [vendorId], (err, result) => {
+          if (err) reject(err);
+          else resolve(result[0].soldCount);
+        });
+      });
+  
+      const profitQuery = "SELECT SUM(total_price) AS totalProfit FROM transactions WHERE vendor_id = ?";
+      const profitResult = await new Promise((resolve, reject) => {
+        db.query(profitQuery, [vendorId], (err, result) => {
+          if (err) reject(err);
+          else resolve(result[0].totalProfit || 0); 
+        });
+      });
+  
+      res.json({
+        productCount: productCountResult,
+        soldCount: soldCountResult,
+        totalProfit: profitResult,
+      });
+    } catch (error) {
+      console.error("Error fetching vendor stats:", error);
+      res.status(500).json({ error: "Failed to fetch vendor stats" });
+    }
+  });
+
+  //vendor cards for customers showing
+  app.get("/vendor-latest-transactions", async (req, res) => {
+    if (!req.session.user || !req.session.user.id) {
+      return res.status(401).json({ error: "Unauthorized: No session found" });
+    }
+  
+    const vendorId = req.session.user.id;
+  
+    try {
+      const query = `
+        SELECT 
+          t.transaction_date, 
+          t.product_name, 
+          c.username, 
+          c.image AS logo, 
+          c.email 
+        FROM transactions t
+        JOIN customers c ON t.customer_id = c.id
+        WHERE t.vendor_id = ?
+        ORDER BY t.transaction_date DESC
+        LIMIT 3
+      `;
+  
+      db.query(query, [vendorId], (err, results) => {
+        if (err) {
+          console.error("Error fetching latest transactions:", err);
+          return res.status(500).json({ error: "Failed to fetch latest transactions" });
+        }
+        res.json(results);
+      });
+    } catch (error) {
+      console.error("Error fetching latest transactions:", error);
+      res.status(500).json({ error: "Failed to fetch latest transactions" });
+    }
+  });
+
+  //customer most bought
+  app.get("/most-bought-products", async (req, res) => {
+    try {
+      const query = `
+        SELECT 
+          p.pid, 
+          p.pname, 
+          p.price, 
+          p.image, 
+          COUNT(t.product_id) AS transaction_count
+        FROM transactions t
+        JOIN products p ON t.product_id = p.pid
+        GROUP BY t.product_id
+        ORDER BY transaction_count DESC
+        LIMIT 8
+      `;
+  
+      db.query(query, (err, results) => {
+        if (err) {
+          console.error("Error fetching most bought products:", err);
+          return res.status(500).json({ error: "Failed to fetch most bought products" });
+        }
+        res.json(results);
+      });
+    } catch (error) {
+      console.error("Error fetching most bought products:", error);
+      res.status(500).json({ error: "Failed to fetch most bought products" });
+    }
+  });
+
+  //filter products in search page of customers
+  app.get("/filter-products", async (req, res) => {
+    const { category, search } = req.query;
+  
+    try {
+      let query = "SELECT * FROM products WHERE 1=1";
+      const params = [];
+  
+      if (category) {
+        query += " AND category = ?";
+        params.push(category);
+      }
+  
+      if (search) {
+        query += " AND pname LIKE ?";
+        params.push(`%${search}%`);
+      }
+  
+      db.query(query, params, (err, results) => {
+        if (err) {
+          console.error("Error filtering products:", err);
+          return res.status(500).json({ error: "Failed to filter products" });
+        }
+        res.json(results);
+      });
+    } catch (error) {
+      console.error("Error filtering products:", error);
+      res.status(500).json({ error: "Failed to filter products" });
+    }
+  });
+
+
+
+////FEEDBACK PART
+app.post("/submit-feedback", async (req, res) => {
+    if (!req.session.user || !req.session.user.id) {
+      return res.status(401).json({ error: "Unauthorized: No session found" });
+    }
+  
+    const uid = req.session.user.id; // Get user ID from session
+    const { issue, info } = req.body; // Get issue and info from the request body
+    const date = new Date(); // Get the current date
+  
+    if (!issue || !info) {
+      return res.status(400).json({ error: "Issue and info are required" });
+    }
+  
+    try {
+      const query = `
+        INSERT INTO feedback (uid, issue, info, date)
+        VALUES (?, ?, ?, ?)
+      `;
+      const values = [uid, issue, info, date];
+  
+      db.query(query, values, (err, result) => {
+        if (err) {
+          console.error("Error saving feedback:", err);
+          return res.status(500).json({ error: "Failed to save feedback" });
+        }
+        res.json({ message: "Feedback submitted successfully" });
+      });
+    } catch (error) {
+      console.error("Error submitting feedback:", error);
+      res.status(500).json({ error: "Failed to submit feedback" });
+    }
+  });
+
+  app.get("/feedback-list", async (req, res) => {
+    const query = `
+      SELECT f.id, f.issue, f.uid, f.status, c.username
+      FROM feedback f
+      JOIN customers c ON f.uid = c.id
+    `;
+  
+    db.query(query, (err, results) => {
+      if (err) {
+        console.error("Error fetching feedback list:", err);
+        return res.status(500).json({ error: "Failed to fetch feedback list" });
+      }
+      res.json(results);
+    });
+  });
+
+  app.put("/update-feedback-status/:id", async (req, res) => {
+    const { id } = req.params; 
+    const { status } = req.body; 
+  
+    if (!['pending', 'done'].includes(status)) {
+      return res.status(400).json({ error: "Invalid status value" });
+    }
+  
+    const query = "UPDATE feedback SET status = ? WHERE id = ?";
+    db.query(query, ["fixed", id], (err, result) => {
+      if (err) {
+        console.error("Error updating feedback status:", err);
+        return res.status(500).json({ error: "Failed to update feedback status" });
+      }
+  
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ error: "Feedback not found" });
+      }
+  
+      res.json({ message: "Feedback status updated successfully" });
+    });
+  });
+
+  app.delete("/remove-feedback/:id", async (req, res) => {
+    const { id } = req.params;
+  
+    const query = "DELETE FROM feedback WHERE id = ?";
+    db.query(query, [id], (err, result) => {
+      if (err) {
+        console.error("Error removing feedback:", err);
+        return res.status(500).json({ error: "Failed to remove feedback" });
+      }
+      res.json({ message: "Feedback removed successfully" });
+    });
+  });
+
+  app.get("/feedback-detail/:id", async (req, res) => {
+    const { id } = req.params;
+  
+    const query = `
+      SELECT f.id, f.issue, f.info, f.status, c.username
+      FROM feedback f
+      JOIN customers c ON f.uid = c.id
+      WHERE f.id = ?
+    `;
+  
+    db.query(query, [id], (err, result) => {
+      if (err) {
+        console.error("Error fetching feedback detail:", err);
+        return res.status(500).json({ error: "Failed to fetch feedback detail" });
+      }
+  
+      if (result.length === 0) {
+        return res.status(404).json({ error: "Feedback not found" });
+      }
+  
+      res.json(result[0]);
+    });
+  });
+
 
 app.use(express.static(path.join(__dirname, '../frontEnd/build')));
-
-
 
 
 

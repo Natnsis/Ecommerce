@@ -12,11 +12,10 @@ const Account = () => {
     image: null,
   });
 
-  ///TODO:fix info
   useEffect(() => {
     const fetchCustomerInfo = async () => {
       try {
-        const response = await axios.get("http://localhost:4000/userinfo", { withCredentials: true });
+        const response = await axios.get("http://localhost:4000/user-info", { withCredentials: true });
         setCustomerInfo(response.data);
       } catch (error) {
         console.error("Error fetching customer info:", error);
@@ -76,8 +75,6 @@ const Account = () => {
               />
               <label className="block font-bold mb-2">Current Username:</label>
               <h1 className="text-gray-700 mb-4">{customerInfo.username}</h1>
-              <label className="block font-bold mb-2">Current Password:</label>
-              <h1 className="text-gray-700">{customerInfo.password}</h1>
             </center>
           </div>
 

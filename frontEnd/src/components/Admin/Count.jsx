@@ -13,7 +13,7 @@ const Count = () => {
     const fetchCounts = async () => {
       try {
         const response = await axios.get("http://localhost:4000/counts");
-        setCounts(response.data); // Update the counts state with the fetched data
+        setCounts(response.data); 
       } catch (error) {
         console.error("Error fetching counts:", error);
       }

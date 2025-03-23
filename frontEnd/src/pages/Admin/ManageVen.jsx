@@ -40,16 +40,7 @@ const ManageVen = () => {
         <div>
           <h1 className="text-4xl font-extrabold text-gray-800">Vendors</h1>
         </div>
-        <div className="flex items-center space-x-3">
-          <input
-            type="text"
-            placeholder="Search..."
-            className="border border-amber-300 rounded-2xl px-5 py-2 focus:outline-none focus:ring-2 focus:ring-amber-400"
-          />
-          <button className="bg-amber-300 rounded-lg hover:bg-white hover:border hover:border-amber-400 px-3 py-2 transition duration-300">
-            Search
-          </button>
-        </div>
+        
         <div>
           <button className="bg-amber-300 rounded-lg hover:bg-white hover:border hover:border-amber-400 px-3 py-2 transition duration-300">
             <Link to="/addVen">Add Vendors</Link>

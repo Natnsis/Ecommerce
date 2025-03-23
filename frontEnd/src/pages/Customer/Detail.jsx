@@ -57,7 +57,7 @@ const Detail = () => {
               <h2 className="text-2xl font-bold text-gray-800">{product.pname}</h2>
               <p className="text-lg text-gray-600 font-semibold">{product.price} Birr</p>
               <div className="bg-blue-100 p-4 rounded-lg">
-                <p className="text-gray-700">{product.pdescription}</p>
+                <p className="text-gray-700">{product.category}</p>
               </div>
             </div>
           </div>
