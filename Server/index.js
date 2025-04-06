@@ -48,79 +48,55 @@ const Stripe = require("stripe");
 const stripe = Stripe("sk_test_51R4n1KIhmXx65X8FzdRHVx2kOBAXXUusGu3CNhl24ZIRjgMScuDe3tIktdUWxYWyllsVpVsWfZB4imrX9dScYV2e00HWl0wXOD");
 
 app.post("/create-checkout-session", async (req, res) => {
-    if (!req.session.user || !req.session.user.id) {
-        return res.status(401).json({ error: "Unauthorized: No session found" });
-    }
+  if (!req.session.user || !req.session.user.id) {
+      return res.status(401).json({ error: "Unauthorized: No session found" });
+  }
 
-    const { cartItems } = req.body;
+  const { cartItems } = req.body;
 
-    try {
-        console.log("Session user:", req.session.user);
-        console.log("Received cartItems:", cartItems);
+  try {
+      // Validate cart items
+      if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
+          return res.status(400).json({ error: "Invalid cart items" });
+      }
 
-        if (!cartItems || !Array.isArray(cartItems) || cartItems.length === 0) {
-            return res.status(400).json({ error: "Invalid cart items" });
-        }
+      // Check if all items are already paid
+      const unpaidItems = cartItems.filter((item) => !item.payed);
+      if (unpaidItems.length === 0) {
+          console.log("All items are already paid. No need to redirect to Stripe.");
+          return res.json({ message: "All items are already paid." });
+      }
 
-        const transactionPromises = cartItems.map((item) => {
-            return new Promise((resolve, reject) => {
-                if (!item.Vid) {
-                    console.error(`Vendor ID is missing for product with pid ${item.pid}`);
-                    return reject(new Error(`Vendor ID is missing for product with pid ${item.pid}`));
-                }
+      // Prepare Stripe line items for unpaid items
+      const lineItems = unpaidItems.map((item) => ({
+          price_data: {
+              currency: "usd",
+              product_data: {
+                  name: item.pname,
+              },
+              unit_amount: Math.round(item.price * 100), // Convert price to cents
+          },
+          quantity: item.quantity,
+      }));
 
-                const query = `
-                    INSERT INTO transactions (customer_id, vendor_id, product_id, product_name, quantity, total_price)
-                    VALUES (?, ?, ?, ?, ?, ?)
-                `;
-                const values = [
-                    req.session.user.id,
-                    item.Vid,
-                    item.pid,
-                    item.pname,
-                    item.quantity,
-                    item.price * item.quantity,
-                ];
+      console.log("Line items prepared for Stripe:", lineItems); // Debugging log
 
-                db.query(query, values, (err, result) => {
-                    if (err) {
-                        console.error("Error inserting transaction:", err);
-                        return reject(err);
-                    }
-                    console.log("Transaction inserted successfully:", result);
-                    resolve();
-                });
-            });
-        });
+      // Create Stripe checkout session
+      const session = await stripe.checkout.sessions.create({
+          payment_method_types: ["card"],
+          mode: "payment",
+          line_items: lineItems,
+          success_url: "http://localhost:5173/success",
+          cancel_url: "http://localhost:5173/cancel",
+      });
 
-        await Promise.all(transactionPromises);
+      console.log("Stripe session created:", session); // Debugging log
 
-        const lineItems = cartItems.map((item) => ({
-            price_data: {
-                currency: "usd",
-                product_data: {
-                    name: item.pname,
-                },
-                unit_amount: item.price * 100, // Convert price to cents
-            },
-            quantity: item.quantity,
-        }));
-
-        console.log("Stripe line items:", lineItems);
-
-        const session = await stripe.checkout.sessions.create({
-            payment_method_types: ["card"],
-            mode: "payment",
-            line_items: lineItems,
-            success_url: "http://localhost:5173/success",
-            cancel_url: "http://localhost:5173/cancel",
-        });
-
-        res.json({ url: session.url });
-    } catch (error) {
-        console.error("Error creating checkout session:", error);
-        res.status(500).json({ error: "Failed to create checkout session" });
-    }
+      res.json({ url: session.url });
+  } catch (error) {
+      console.error("Error creating checkout session:", error);
+      res.status(500).json({ error: "Failed to create checkout session" });
+  }
 });
 
 
@@ -163,75 +139,108 @@ const storage = multer.diskStorage({
     }
   });
 
-//save cart
-app.post("/save-cart", async (req, res) => {
-    if (!req.session.user || !req.session.user.id) {
-        return res.status(401).json({ error: "Unauthorized: No session found" });
-    }
-
-    const userId = req.session.user.id;
-    const { cartItems } = req.body;
-
-    if (!cartItems || !Array.isArray(cartItems)) {
-        return res.status(400).json({ error: "Invalid request: cartItems is required and must be an array" });
-    }
+//sellers identity
+app.get("/vendorDetail/:Vid", async (req, res) => {
+    const { Vid } = req.params;
 
     try {
-        console.log("Received cartItems:", cartItems);
-        console.log("User ID:", userId);
-
-        const query = `
-            INSERT INTO carts (user_id, cart_items)
-            VALUES (?, ?)
-            ON DUPLICATE KEY UPDATE cart_items = VALUES(cart_items)
-        `;
-        const values = [userId, JSON.stringify(cartItems)];
-
-        db.query(query, values, (err, result) => {
+        const query = "SELECT username FROM vendors WHERE id = ?";
+        db.query(query, [Vid], (err, result) => {
             if (err) {
-                console.error("Error saving cart to database:", err);
-                return res.status(500).json({ error: "Failed to save cart to database" });
+                console.error("Error fetching vendor details:", err);
+                return res.status(500).json({ error: "Failed to fetch vendor details" });
             }
-            console.log("Cart saved successfully:", result);
-            res.json({ message: "Cart saved successfully" });
+
+            if (result.length === 0) {
+                return res.status(404).json({ error: "Vendor not found" });
+            }
+
+            res.json(result[0]);
         });
     } catch (error) {
-        console.error("Error saving cart:", error);
-        res.status(500).json({ error: "Failed to save cart" });
+        console.error("Error fetching vendor details:", error);
+        res.status(500).json({ error: "Failed to fetch vendor details" });
     }
+});
+
+
+//save cart
+app.post("/save-cart", async (req, res) => {
+  if (!req.session.user || !req.session.user.id) {
+      return res.status(401).json({ error: "Unauthorized: No session found" });
+  }
+
+  const userId = req.session.user.id;
+  const { pid, quantity } = req.body;
+
+  if (!pid || !quantity) {
+      return res.status(400).json({ error: "Invalid request: pid and quantity are required" });
+  }
+
+  try {
+      const query = "SELECT * FROM carts WHERE user_id = ? AND pid = ?";
+      db.query(query, [userId, pid], (err, result) => {
+          if (err) {
+              console.error("Error checking cart:", err);
+              return res.status(500).json({ error: "Failed to check cart" });
+          }
+
+          if (result.length > 0) {
+              const updateQuery = "UPDATE carts SET quantity = quantity + ? WHERE user_id = ? AND pid = ?";
+              db.query(updateQuery, [quantity, userId, pid], (err) => {
+                  if (err) {
+                      console.error("Error updating cart:", err);
+                      return res.status(500).json({ error: "Failed to update cart" });
+                  }
+                  res.json({ message: "Cart updated successfully" });
+              });
+          } else {
+              const insertQuery = "INSERT INTO carts (user_id, pid, quantity) VALUES (?, ?, ?)";
+              db.query(insertQuery, [userId, pid, quantity], (err) => {
+                  if (err) {
+                      console.error("Error adding to cart:", err);
+                      return res.status(500).json({ error: "Failed to add to cart" });
+                  }
+                  res.json({ message: "Product added to cart successfully" });
+              });
+          }
+      });
+  } catch (error) {
+      console.error("Error saving cart:", error);
+      res.status(500).json({ error: "Failed to save cart" });
+  }
 });
 
 //retrieve cart
 app.get("/get-cart", async (req, res) => {
-    if (!req.session.user || !req.session.user.id) {
-        return res.status(401).json({ error: "Unauthorized: No session found" });
-    }
+  if (!req.session.user || !req.session.user.id) {
+      return res.status(401).json({ error: "Unauthorized: No session found" });
+  }
 
-    const userId = req.session.user.id; // Use the logged-in user's ID
+  const userId = req.session.user.id;
 
-    try {
-        const query = `SELECT cart_items FROM carts WHERE user_id = ?`;
-        db.query(query, [userId], (err, result) => {
-            if (err) {
-                console.error("Error retrieving cart:", err);
-                return res.status(500).json({ error: "Failed to retrieve cart" });
-            }
+  try {
+      const query = `
+          SELECT DISTINCT c.pid, c.quantity, p.pname, p.price, p.image, p.Vid, 
+                 COALESCE(t.payed, FALSE) AS payed
+          FROM carts c
+          JOIN products p ON c.pid = p.pid
+          LEFT JOIN transactions t ON c.user_id = t.customer_id AND c.pid = t.product_id
+          WHERE c.user_id = ?
+      `;
+      db.query(query, [userId], (err, result) => {
+          if (err) {
+              console.error("Error retrieving cart:", err);
+              return res.status(500).json({ error: "Failed to retrieve cart" });
+          }
 
-            if (result.length === 0) {
-                return res.json({ cartItems: [] }); // Return empty cart if no data
-            }
-
-            res.json({ cartItems: JSON.parse(result[0].cart_items) });
-        });
-    } catch (error) {
-        console.error("Error retrieving cart:", error);
-        res.status(500).json({ error: "Failed to retrieve cart" });
-    }
+          res.json({ cartItems: result });
+      });
+  } catch (error) {
+      console.error("Error retrieving cart:", error);
+      res.status(500).json({ error: "Failed to retrieve cart" });
+  }
 });
-
-
-
-
 
 
 const customerStorage = multer.diskStorage({
@@ -385,6 +394,28 @@ app.get("/user-info", async (req, res) => {
     }
   });
 
+
+  //profile name and image
+app.get("/customerProfile", (req, res) => {
+    if (!req.session.user || !req.session.user.id) {
+      return res.status(401).json({ error: "Unauthorized" });
+    }
+  
+    const userId = req.session.user.id;
+    const query = "SELECT username FROM customers WHERE id = ?";
+    db.query(query, [userId], (err, result) => {
+      if (err) {
+        console.error("Error fetching customer details:", err);
+        return res.status(500).json({ error: "Failed to fetch customer details" });
+      }
+  
+      if (result.length === 0) {
+        return res.status(404).json({ error: "Customer not found" });
+      }
+  
+      res.json({ username: result[0].username });
+    });
+  });
 
 //get customers
 app.get('/listOfCustomers', (req, res) => {
@@ -915,15 +946,16 @@ app.post("/submit-feedback", async (req, res) => {
   });
 
   app.put("/update-feedback-status/:id", async (req, res) => {
-    const { id } = req.params; 
-    const { status } = req.body; 
+    const { id } = req.params;
+    const { status } = req.body;
   
-    if (!['pending', 'done'].includes(status)) {
+    // Validate the status value
+    if (!["pending", "fixed"].includes(status)) {
       return res.status(400).json({ error: "Invalid status value" });
     }
   
     const query = "UPDATE feedback SET status = ? WHERE id = ?";
-    db.query(query, ["fixed", id], (err, result) => {
+    db.query(query, [status, id], (err, result) => {
       if (err) {
         console.error("Error updating feedback status:", err);
         return res.status(500).json({ error: "Failed to update feedback status" });
@@ -937,6 +969,7 @@ app.post("/submit-feedback", async (req, res) => {
     });
   });
 
+  
   app.delete("/remove-feedback/:id", async (req, res) => {
     const { id } = req.params;
   

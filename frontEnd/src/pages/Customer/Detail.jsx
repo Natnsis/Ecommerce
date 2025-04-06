@@ -6,6 +6,7 @@ import axios from "axios";
 
 const Detail = () => {
   const [product, setProduct] = useState(null);
+  const [vendor, setVendor] = useState(null); // State to store vendor details
   const { id } = useParams();
 
   useEffect(() => {
@@ -13,6 +14,12 @@ const Detail = () => {
       try {
         const response = await axios.get(`http://localhost:4000/productDetail/${id}`);
         setProduct(response.data);
+
+        // Fetch vendor details using Vid from the product
+        if (response.data.Vid) {
+          const vendorResponse = await axios.get(`http://localhost:4000/vendorDetail/${response.data.Vid}`);
+          setVendor(vendorResponse.data);
+        }
       } catch (err) {
         console.error("Error fetching product details:", err);
       }
@@ -23,9 +30,10 @@ const Detail = () => {
 
   const addToCart = async () => {
     try {
+      // Send the product ID and quantity to the backend
       const response = await axios.post(
         "http://localhost:4000/save-cart",
-        { cartItems: [{ ...product, quantity: 1 }] }, // Send the product with quantity
+        { pid: product.pid, quantity: 1 }, // Increment quantity by 1
         { withCredentials: true }
       );
       alert(response.data.message || "Product added to cart!");
@@ -83,6 +91,11 @@ const Detail = () => {
             <h3 className="text-lg font-semibold text-gray-800">
               Seller&apos;s Identity: {product.sellerName}
             </h3>
+            {vendor && (
+              <p className="text-gray-600">
+                Vendor Username: <span className="font-semibold">{vendor.username}</span>
+              </p>
+            )}
           </div>
         </div>
       </div>

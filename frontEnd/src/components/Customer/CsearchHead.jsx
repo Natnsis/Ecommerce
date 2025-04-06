@@ -1,8 +1,10 @@
 import { Link } from "react-router-dom";
 import logo from "./../../images/logo.jpg";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext";
 
 const CsearchHead = () => {
+  const { translations, toggleLanguage } = useContext(LanguageContext); // Access translations and toggleLanguage
   const [dropdownVisible, setDropdownVisible] = useState(false);
 
   const toggleDropdown = () => {
@@ -28,17 +30,21 @@ const CsearchHead = () => {
         {/* Buttons Section */}
         <div className="flex flex-wrap justify-center space-x-5">
           <button className="bg-gray-700 px-5 py-1 text-center rounded text-white hover:bg-white hover:text-black hover:border">
-            <Link to="/search">Search</Link>
+            <Link to="/search">{translations.search}</Link>
           </button>
           <button className="bg-gray-700 px-5 py-1 text-center rounded text-white hover:bg-white hover:text-black hover:border">
-            <Link to="/feedback">Send Feedback</Link>
+            <Link to="/feedback">{translations.sendFeedback}</Link>
           </button>
         </div>
 
         {/* Language Selector */}
         <div className="flex items-center space-x-2">
-          <h1 className="font-bold text-2xl">Language</h1>
-          <select name="language" className="bg-white px-3 rounded-sm">
+          <h1 className="font-bold text-2xl">{translations.language}</h1>
+          <select
+            name="language"
+            className="bg-white px-3 rounded-sm"
+            onChange={(e) => toggleLanguage(e.target.value)} // Change language on selection
+          >
             <option value="en">English</option>
             <option value="am">Amharic</option>
           </select>
@@ -46,7 +52,7 @@ const CsearchHead = () => {
 
         {/* User Info Section */}
         <div className="relative flex items-center space-x-2">
-          <h1 className="text-amber-200 font-bold text-2xl">Name...</h1>
+          <h1 className="text-amber-200 font-bold text-2xl">{translations.name}</h1>
           <button
             className="bg-white rounded-full w-10 h-10 px-2"
             onClick={toggleDropdown}
@@ -60,14 +66,14 @@ const CsearchHead = () => {
                 className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                 onClick={toggleDropdown}
               >
-                Account
+                {translations.account}
               </Link>
               <Link
                 to="/login"
                 className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
                 onClick={toggleDropdown}
               >
-                Logout
+                {translations.logout}
               </Link>
             </div>
           )}
@@ -77,10 +83,10 @@ const CsearchHead = () => {
       {/* Navigation Links */}
       <div className="flex items-center justify-center space-x-10 mt-5">
         <Link to="/Cdash" className="font-bold hover:underline">
-          Home
+          {translations.home}
         </Link>
         <Link to="/cart" className="font-bold hover:underline">
-          Cart
+          {translations.cart}
         </Link>
       </div>
     </div>

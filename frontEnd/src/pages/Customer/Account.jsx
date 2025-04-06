@@ -1,10 +1,12 @@
 import CaccountHead from "../../components/Customer/CaccountHead";
 import Cfooter from "./../../components/Customer/Cfooter";
 import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import axios from "axios";
+import { LanguageContext } from "../../context/LanguageContext";
 
 const Account = () => {
+  const { translations } = useContext(LanguageContext); // Access translations
   const [customerInfo, setCustomerInfo] = useState({});
   const [newInfo, setNewInfo] = useState({
     username: "",
@@ -46,14 +48,14 @@ const Account = () => {
         withCredentials: true,
       });
       if (response.status === 200) {
-        alert("Information updated successfully!");
+        alert(translations.updateSuccess); // Use translation for success message
         window.location.reload();
       } else {
-        alert("Failed to update information.");
+        alert(translations.updateFailed); // Use translation for failure message
       }
     } catch (error) {
       console.error("Error updating customer info:", error);
-      alert("An error occurred while updating information.");
+      alert(translations.updateError); // Use translation for error message
     }
   };
 
@@ -67,13 +69,13 @@ const Account = () => {
           {/* Current Info Section */}
           <div className="bg-white rounded-lg w-full md:w-[40%] p-5 shadow-lg">
             <center>
-              <label className="block font-bold mb-2">Current Image:</label>
+              <label className="block font-bold mb-2">{translations.currentImage}:</label>
               <img
                 src={`../src/Uploads/customers/${customerInfo.image}`}
-                alt="Current"
+                alt={translations.currentImage}
                 className="w-32 h-32 object-cover rounded-full mb-4"
               />
-              <label className="block font-bold mb-2">Current Username:</label>
+              <label className="block font-bold mb-2">{translations.currentUsername}:</label>
               <h1 className="text-gray-700 mb-4">{customerInfo.username}</h1>
             </center>
           </div>
@@ -81,40 +83,40 @@ const Account = () => {
           {/* Update Info Section */}
           <div className="bg-white rounded-lg w-full md:w-[40%] p-5 shadow-lg">
             <center className="space-y-4">
-              <label className="block font-bold">New Image:</label>
+              <label className="block font-bold">{translations.newImage}:</label>
               <input
                 type="file"
                 name="image"
                 className="border px-3 py-2 rounded-lg w-full"
                 onChange={handleChange}
               />
-              <label className="block font-bold">New Username:</label>
+              <label className="block font-bold">{translations.newUsername}:</label>
               <input
                 type="text"
                 name="username"
                 className="border px-3 py-2 rounded-lg w-full"
-                placeholder="Enter new username"
+                placeholder={translations.enterNewUsername}
                 onChange={handleChange}
               />
-              <label className="block font-bold">New Password:</label>
+              <label className="block font-bold">{translations.newPassword}:</label>
               <input
                 type="password"
                 name="password"
                 className="border px-3 py-2 rounded-lg w-full"
-                placeholder="Enter new password"
+                placeholder={translations.enterNewPassword}
                 onChange={handleChange}
               />
               <button
                 className="bg-sky-600 text-white px-5 py-2 rounded-lg hover:bg-sky-700 transition duration-300"
                 onClick={handleUpdate}
               >
-                Update
+                {translations.update}
               </button>
               <Link
                 to="/Cdash"
                 className="bg-gray-500 text-white px-5 py-2 rounded-lg hover:bg-gray-600 transition duration-300"
               >
-                Go Back
+                {translations.goBack}
               </Link>
             </center>
           </div>

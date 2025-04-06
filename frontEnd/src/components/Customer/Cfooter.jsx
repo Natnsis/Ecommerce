@@ -1,10 +1,16 @@
+import { useContext } from "react";
+import { LanguageContext } from "../../context/LanguageContext";
 
 const Cfooter = () => {
-  return (
-    <div className="bg-sky-700 py-5 text-white rounded-lg felx-col space-y-1">
-      <p className="text-center"> copyright &copy; 2025 cs-collage-assosa-university</p>
-    </div>
-  )
-}
+  const { translations } = useContext(LanguageContext); // Access translations
 
-export default Cfooter
+  return (
+    <div className="bg-sky-700 py-5 text-white rounded-lg flex-col space-y-1">
+      <p className="text-center">
+        {translations.copyright} &copy; 2025 {translations.university}
+      </p>
+    </div>
+  );
+};
+
+export default Cfooter;

@@ -1,8 +1,27 @@
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect } from "react";
 import axios from "axios";
 
 const Header = () => {
   const navigate = useNavigate();
+
+  // Function to check if the user is authorized
+  const checkAuthorization = async () => {
+    try {
+      const response = await axios.get("http://localhost:4000/userInfo", { withCredentials: true });
+      if (!response.data.user) {
+        throw new Error("Unauthorized");
+      }
+    } catch (error) {
+      alert("You are not authorized. Redirecting to login page.");
+      navigate("/login");
+    }
+  };
+
+  // Run the authorization check when the component mounts
+  useEffect(() => {
+    checkAuthorization();
+  }, []);
 
   const handleLogout = async () => {
     try {

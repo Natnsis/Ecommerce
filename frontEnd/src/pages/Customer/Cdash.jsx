@@ -1,10 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import Cheader from "../../components/Customer/Cheader";
 import Cfooter from "../../components/Customer/Cfooter";
+import { LanguageContext } from "../../context/LanguageContext";
 
 const Cdash = () => {
+  const { translations } = useContext(LanguageContext); // Access translations
   const [recentProducts, setRecentProducts] = useState([]);
   const [mostBoughtProducts, setMostBoughtProducts] = useState([]);
 
@@ -42,7 +44,7 @@ const Cdash = () => {
       >
         <div>
           <h1 className="text-center text-4xl font-bold text-gray-600">
-            Recently Added Products
+            {translations.recentlyAddedProducts}
           </h1>
         </div>
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -58,13 +60,13 @@ const Cdash = () => {
                   {product.pname}
                 </h1>
                 <p className="mt-2">
-                  Price:{" "}
+                  {translations.price}:{" "}
                   <span className="bg-emerald-100 px-1 text-emerald-500 rounded font-bold">
-                    {product.price} Birr
+                    {product.price} {translations.currency}
                   </span>
                 </p>
                 <button className="bg-sky-800 px-3 py-1 rounded-lg text-white hover:bg-white hover:text-black hover:border-gray-500 hover:border mt-5">
-                  Show Detail
+                  {translations.showDetail}
                 </button>
               </div>
             </Link>
@@ -79,7 +81,7 @@ const Cdash = () => {
       >
         <div>
           <h1 className="text-center text-4xl font-bold text-gray-600">
-            Most Bought Products
+            {translations.mostBoughtProducts}
           </h1>
         </div>
         <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
@@ -95,13 +97,13 @@ const Cdash = () => {
                   {product.pname}
                 </h1>
                 <p className="mt-2">
-                  Price:{" "}
+                  {translations.price}:{" "}
                   <span className="bg-emerald-100 px-1 text-emerald-500 rounded font-bold">
-                    {product.price} Birr
+                    {product.price} {translations.currency}
                   </span>
                 </p>
                 <button className="bg-sky-800 px-3 py-1 rounded-lg text-white hover:bg-white hover:text-black hover:border-gray-500 hover:border mt-5">
-                  Show Detail
+                  {translations.showDetail}
                 </button>
               </div>
             </Link>
