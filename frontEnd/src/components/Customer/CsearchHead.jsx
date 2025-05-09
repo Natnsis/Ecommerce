@@ -1,15 +1,48 @@
 import { Link } from "react-router-dom";
 import logo from "./../../images/logo.jpg";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect, useRef } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
+import axios from "axios";
 
 const CsearchHead = () => {
   const { translations, toggleLanguage } = useContext(LanguageContext); // Access translations and toggleLanguage
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [customerInfo, setCustomerInfo] = useState({}); // State for customer info
+  const dropdownRef = useRef(null); // Reference for the dropdown
 
   const toggleDropdown = () => {
-    setDropdownVisible(!dropdownVisible);
+    setDropdownVisible((prev) => !prev);
   };
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setDropdownVisible(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, []);
+
+  // Fetch customer info
+  useEffect(() => {
+    const fetchCustomerInfo = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/user-info", {
+          withCredentials: true,
+        });
+        setCustomerInfo(response.data);
+      } catch (error) {
+        console.error("Error fetching customer info:", error);
+      }
+    };
+
+    fetchCustomerInfo();
+  }, []);
 
   return (
     <div id="top" className="mb-5 bg-sky-300 p-5 rounded-lg">
@@ -51,13 +84,23 @@ const CsearchHead = () => {
         </div>
 
         {/* User Info Section */}
-        <div className="relative flex items-center space-x-2">
-          <h1 className="text-amber-200 font-bold text-2xl">{translations.name}</h1>
+        <div className="relative flex items-center space-x-2" ref={dropdownRef}>
+          <h1 className="text-amber-200 font-bold text-2xl">
+            {translations.name}
+          </h1>
           <button
             className="bg-white rounded-full w-10 h-10 px-2"
             onClick={toggleDropdown}
           >
-            img
+            {customerInfo.image ? (
+              <img
+                src={`../src/Uploads/customers/${customerInfo.image}`}
+                alt={translations.currentImage}
+                className="w-full h-full object-cover rounded-full"
+              />
+            ) : (
+              <span className="text-gray-500">Img</span>
+            )}
           </button>
           {dropdownVisible && (
             <div className="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-lg shadow-lg">

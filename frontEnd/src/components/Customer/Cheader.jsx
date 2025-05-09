@@ -1,62 +1,17 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import logo from "./../../images/logo.jpg";
-import { useState, useEffect, useRef, useContext } from "react";
-import axios from "axios";
+import { useState, useContext, useEffect, useRef } from "react";
 import { LanguageContext } from "../../context/LanguageContext";
+import axios from "axios";
 
-const Cheader = () => {
+const CsearchHead = () => {
   const { translations, toggleLanguage } = useContext(LanguageContext); // Access translations and toggleLanguage
   const [dropdownVisible, setDropdownVisible] = useState(false);
-  const [profileImage, setProfileImage] = useState(null); // State to store the profile image
-  const navigate = useNavigate();
-  const dropdownRef = useRef(null);
-
-  // Function to check if the user is authorized
-  const checkAuthorization = async () => {
-    try {
-      const response = await axios.get("http://localhost:4000/userInfo", { withCredentials: true });
-      if (!response.data.user) {
-        throw new Error("Unauthorized");
-      }
-    } catch (error) {
-      alert("You are not authorized. Redirecting to login page.");
-      navigate("/login");
-    }
-  };
-
-  // Function to fetch the user's profile image
-  const fetchProfileImage = async () => {
-    try {
-      const response = await axios.get("http://localhost:4000/customerProfile", { withCredentials: true });
-      if (response.data.image) {
-        setProfileImage(`http://localhost:4000/uploads/customers/${response.data.image}`);
-      }
-    } catch (error) {
-      console.error("Error fetching profile image:", error);
-    }
-  };
-
-  // Run the authorization check and fetch profile image when the component mounts
-  useEffect(() => {
-    checkAuthorization();
-    fetchProfileImage();
-  }, []);
+  const [customerInfo, setCustomerInfo] = useState({}); // State for customer info
+  const dropdownRef = useRef(null); // Reference for the dropdown
 
   const toggleDropdown = () => {
-    setDropdownVisible(!dropdownVisible);
-  };
-
-  const handleLogout = async () => {
-    try {
-      const response = await axios.post("http://localhost:4000/logout", {}, { withCredentials: true });
-      if (response.status === 200) {
-        navigate("/login");
-      } else {
-        console.error("Failed to logout");
-      }
-    } catch (error) {
-      console.error("Error during logout:", error);
-    }
+    setDropdownVisible((prev) => !prev);
   };
 
   // Close dropdown when clicking outside
@@ -71,6 +26,22 @@ const Cheader = () => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
+  }, []);
+
+  // Fetch customer info
+  useEffect(() => {
+    const fetchCustomerInfo = async () => {
+      try {
+        const response = await axios.get("http://localhost:4000/user-info", {
+          withCredentials: true,
+        });
+        setCustomerInfo(response.data);
+      } catch (error) {
+        console.error("Error fetching customer info:", error);
+      }
+    };
+
+    fetchCustomerInfo();
   }, []);
 
   return (
@@ -114,15 +85,18 @@ const Cheader = () => {
 
         {/* User Info Section */}
         <div className="relative flex items-center space-x-2" ref={dropdownRef}>
+          <h1 className="text-amber-200 font-bold text-2xl">
+            {translations.name}
+          </h1>
           <button
             className="bg-white rounded-full w-10 h-10 px-2"
             onClick={toggleDropdown}
           >
-            {profileImage ? (
+            {customerInfo.image ? (
               <img
-                src={profileImage}
-                alt="Profile"
-                className="rounded-full w-full h-full object-cover"
+                src={`../src/Uploads/customers/${customerInfo.image}`}
+                alt={translations.currentImage}
+                className="w-full h-full object-cover rounded-full"
               />
             ) : (
               <span className="text-gray-500">Img</span>
@@ -137,15 +111,13 @@ const Cheader = () => {
               >
                 {translations.account}
               </Link>
-              <button
-                className="block w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100"
-                onClick={() => {
-                  toggleDropdown();
-                  handleLogout();
-                }}
+              <Link
+                to="/login"
+                className="block px-4 py-2 text-gray-800 hover:bg-gray-100"
+                onClick={toggleDropdown}
               >
                 {translations.logout}
-              </button>
+              </Link>
             </div>
           )}
         </div>
@@ -156,12 +128,6 @@ const Cheader = () => {
         <Link to="/Cdash" className="font-bold hover:underline">
           {translations.home}
         </Link>
-        <a href="#recent" className="font-bold hover:underline">
-          {translations.recentlyAdded}
-        </a>
-        <a href="#most" className="font-bold hover:underline">
-          {translations.mostBought}
-        </a>
         <Link to="/cart" className="font-bold hover:underline">
           {translations.cart}
         </Link>
@@ -170,4 +136,4 @@ const Cheader = () => {
   );
 };
 
-export default Cheader;
+export default CsearchHead;
