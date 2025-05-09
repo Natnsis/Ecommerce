@@ -69,6 +69,29 @@ app.post("/create-checkout-session", async (req, res) => {
       return res.json({ message: "All items are already paid." });
     }
 
+    // Validate stock for each unpaid item
+    for (const item of unpaidItems) {
+      const stockCheckQuery = "SELECT stock FROM products WHERE pid = ?";
+      const [result] = await new Promise((resolve, reject) => {
+        db.query(stockCheckQuery, [item.pid], (err, result) => {
+          if (err) reject(err);
+          else resolve(result);
+        });
+      });
+
+      if (result.stock === 0) {
+        return res.status(400).json({
+          error: `Product "${item.pname}" is out of stock.`,
+        });
+      }
+
+      if (result.stock < item.quantity) {
+        return res.status(400).json({
+          error: `Insufficient stock for product "${item.pname}". Available: ${result.stock}, Requested: ${item.quantity}`,
+        });
+      }
+    }
+
     // Prepare Stripe line items for unpaid items
     const lineItems = unpaidItems.map((item) => ({
       price_data: {
@@ -118,6 +141,26 @@ app.post("/create-checkout-session", async (req, res) => {
       }
 
       console.log("Transaction saved successfully.");
+    });
+
+    // Update stock in the products table
+    const stockUpdateQuery = `
+      UPDATE products
+      SET stock = stock - ?
+      WHERE pid = ?
+    `;
+
+    unpaidItems.forEach((item) => {
+      db.query(stockUpdateQuery, [item.quantity, item.pid], (err, result) => {
+        if (err) {
+          console.error(
+            `Error updating stock for product ID ${item.pid}:`,
+            err
+          );
+        } else {
+          console.log(`Stock updated for product ID ${item.pid}`);
+        }
+      });
     });
 
     res.json({ url: session.url });
@@ -208,38 +251,66 @@ app.post("/save-cart", async (req, res) => {
   }
 
   try {
-    const query = "SELECT * FROM carts WHERE user_id = ? AND pid = ?";
-    db.query(query, [userId, pid], (err, result) => {
+    // Check if the product is already purchased
+    const checkTransactionQuery = `
+      SELECT * FROM transactions 
+      WHERE customer_id = ? AND product_id = ? AND payed = 1
+    `;
+    db.query(checkTransactionQuery, [userId, pid], (err, result) => {
       if (err) {
-        console.error("Error checking cart:", err);
-        return res.status(500).json({ error: "Failed to check cart" });
+        console.error("Error checking transactions:", err);
+        return res.status(500).json({ error: "Failed to check transactions" });
       }
 
       if (result.length > 0) {
-        const updateQuery =
-          "UPDATE carts SET quantity = quantity + ? WHERE user_id = ? AND pid = ?";
-        db.query(updateQuery, [quantity, userId, pid], (err) => {
-          if (err) {
-            console.error("Error updating cart:", err);
-            return res.status(500).json({ error: "Failed to update cart" });
-          }
-          res.json({ message: "Cart updated successfully" });
-        });
-      } else {
-        const insertQuery =
-          "INSERT INTO carts (user_id, pid, quantity) VALUES (?, ?, ?)";
-        db.query(insertQuery, [userId, pid, quantity], (err) => {
-          if (err) {
-            console.error("Error adding to cart:", err);
-            return res.status(500).json({ error: "Failed to add to cart" });
-          }
-          res.json({ message: "Product added to cart successfully" });
-        });
+        // Product is already purchased
+        return res
+          .status(400)
+          .json({ error: "This product has already been purchased." });
       }
+
+      // Check if the product is already in the cart
+      const checkCartQuery =
+        "SELECT * FROM carts WHERE user_id = ? AND pid = ?";
+      db.query(checkCartQuery, [userId, pid], (err, cartResult) => {
+        if (err) {
+          console.error("Error checking cart:", err);
+          return res.status(500).json({ error: "Failed to check cart" });
+        }
+
+        if (cartResult.length > 0) {
+          // Update the quantity in the cart
+          const updateCartQuery = `
+            UPDATE carts 
+            SET quantity = quantity + ? 
+            WHERE user_id = ? AND pid = ?
+          `;
+          db.query(updateCartQuery, [quantity, userId, pid], (err) => {
+            if (err) {
+              console.error("Error updating cart:", err);
+              return res.status(500).json({ error: "Failed to update cart" });
+            }
+            return res.json({ message: "Cart updated successfully." });
+          });
+        } else {
+          // Add the product to the cart
+          const addToCartQuery = `
+            INSERT INTO carts (user_id, pid, quantity) 
+            VALUES (?, ?, ?)
+          `;
+          db.query(addToCartQuery, [userId, pid, quantity], (err) => {
+            if (err) {
+              console.error("Error adding to cart:", err);
+              return res.status(500).json({ error: "Failed to add to cart" });
+            }
+            return res.json({ message: "Product added to cart successfully." });
+          });
+        }
+      });
     });
   } catch (error) {
-    console.error("Error saving cart:", error);
-    res.status(500).json({ error: "Failed to save cart" });
+    console.error("Error in /save-cart:", error);
+    res.status(500).json({ error: "An unexpected error occurred." });
   }
 });
 
