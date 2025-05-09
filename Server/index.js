@@ -63,8 +63,9 @@ app.post("/create-checkout-session", async (req, res) => {
     }
 
     // Check if all items are already paid
-    const unpaidItems = cartItems.filter((item) => !item.payed);
+    const unpaidItems = cartItems.filter((item) => item.payed === 0);
     if (unpaidItems.length === 0) {
+      console.log("All items are already paid. No need to redirect to Stripe.");
       return res.json({ message: "All items are already paid." });
     }
 
@@ -80,6 +81,8 @@ app.post("/create-checkout-session", async (req, res) => {
       quantity: item.quantity,
     }));
 
+    console.log("Line items prepared for Stripe:", lineItems); // Debugging log
+
     // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
@@ -89,26 +92,33 @@ app.post("/create-checkout-session", async (req, res) => {
       cancel_url: "http://localhost:5173/cancel",
     });
 
-    // Update the cart status to 'paid' after successful payment
-    const updateCartStatus = `
-      UPDATE carts
-      SET payed = TRUE
-      WHERE user_id = ? AND pid IN (?)
+    console.log("Stripe session created:", session); // Debugging log
+
+    // Save transaction details
+    const transactionQuery = `
+      INSERT INTO transactions (customer_id, vendor_id, product_id, product_name, quantity, total_price, transaction_date, payed)
+      VALUES ?
     `;
 
-    const productIds = unpaidItems.map((item) => item.pid); // Get product IDs of unpaid items
-    db.query(
-      updateCartStatus,
-      [req.session.user.id, productIds],
-      (err, result) => {
-        if (err) {
-          console.error("Error updating cart status:", err);
-          return res
-            .status(500)
-            .json({ error: "Failed to update cart status" });
-        }
+    const transactionValues = unpaidItems.map((item) => [
+      req.session.user.id, // customer_id
+      item.Vid, // vendor_id
+      item.pid, // product_id
+      item.pname, // product_name
+      item.quantity, // quantity
+      item.price * item.quantity, // total_price
+      new Date(), // transaction_date
+      1, // payed (1 for true)
+    ]);
+
+    db.query(transactionQuery, [transactionValues], (err, result) => {
+      if (err) {
+        console.error("Error saving transaction:", err);
+        return res.status(500).json({ error: "Failed to save transaction" });
       }
-    );
+
+      console.log("Transaction saved successfully.");
+    });
 
     res.json({ url: session.url });
   } catch (error) {
@@ -243,13 +253,21 @@ app.get("/get-cart", async (req, res) => {
 
   try {
     const query = `
-          SELECT DISTINCT c.pid, c.quantity, p.pname, p.price, p.image, p.Vid, 
-                 COALESCE(t.payed, FALSE) AS payed
-          FROM carts c
-          JOIN products p ON c.pid = p.pid
-          LEFT JOIN transactions t ON c.user_id = t.customer_id AND c.pid = t.product_id
-          WHERE c.user_id = ?
-      `;
+      SELECT DISTINCT 
+        c.pid, 
+        c.quantity, 
+        p.pname, 
+        p.price, 
+        p.image, 
+        p.Vid, 
+        COALESCE(
+          (SELECT 1 FROM transactions t WHERE t.customer_id = c.user_id AND t.product_id = c.pid LIMIT 1), 
+          0
+        ) AS payed
+      FROM carts c
+      JOIN products p ON c.pid = p.pid
+      WHERE c.user_id = ?
+    `;
     db.query(query, [userId], (err, result) => {
       if (err) {
         console.error("Error retrieving cart:", err);
