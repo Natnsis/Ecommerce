@@ -17,9 +17,7 @@ const FooterW = () => {
               Home
             </a>
             <br />
-            <a href="#products" className="hover:text-blue-400 hover:underline">
-              Products
-            </a>
+
             <br />
             <a href="#about" className="hover:text-blue-400 hover:underline">
               About
@@ -34,7 +32,9 @@ const FooterW = () => {
 
         {/* Third Section */}
         <div>
-          <h1 className="text-2xl font-bold capitalize">Visit Developer&apos;s Media</h1>
+          <h1 className="text-2xl font-bold capitalize">
+            Visit Developer&apos;s Media
+          </h1>
           <div className="space-y-2">
             <a href="" className="hover:text-blue-400 hover:underline">
               Github

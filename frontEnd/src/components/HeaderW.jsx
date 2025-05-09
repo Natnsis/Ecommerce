@@ -17,9 +17,7 @@ const HeaderW = () => {
         <a href="#home" className="hover:text-blue-400 hover:underline">
           Home
         </a>
-        <a href="#products" className="hover:text-blue-400 hover:underline">
-          Products
-        </a>
+
         <a href="#about" className="hover:text-blue-400 hover:underline">
           About
         </a>
