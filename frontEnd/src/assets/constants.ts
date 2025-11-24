@@ -105,3 +105,46 @@ export const landingProducts = [
     sale: 5,
   },
 ];
+
+export const bestSelling = [
+  {
+    pfp: "https://picsum.photos/seed/store1/200",
+    name: "Balena Mall",
+    note: "All in one place",
+    products: [
+      { img: "https://picsum.photos/seed/p1/300", price: "234" },
+      { img: "https://picsum.photos/seed/p2/300", price: "199" },
+      { img: "https://picsum.photos/seed/p3/300", price: "420" },
+    ],
+  },
+  {
+    pfp: "https://picsum.photos/seed/store2/200",
+    name: "Alem Store",
+    note: "Quality Products Only",
+    products: [
+      { img: "https://picsum.photos/seed/p4/300", price: "150" },
+      { img: "https://picsum.photos/seed/p5/300", price: "310" },
+      { img: "https://picsum.photos/seed/p6/300", price: "90" },
+    ],
+  },
+  {
+    pfp: "https://picsum.photos/seed/store3/200",
+    name: "Nova Electronics",
+    note: "Latest gadgets & accessories",
+    products: [
+      { img: "https://picsum.photos/seed/p7/300", price: "899" },
+      { img: "https://picsum.photos/seed/p8/300", price: "1299" },
+      { img: "https://picsum.photos/seed/p9/300", price: "499" },
+    ],
+  },
+  {
+    pfp: "https://picsum.photos/seed/store4/200",
+    name: "GreenMart",
+    note: "Fresh supplies every day",
+    products: [
+      { img: "https://picsum.photos/seed/p10/300", price: "30" },
+      { img: "https://picsum.photos/seed/p11/300", price: "45" },
+      { img: "https://picsum.photos/seed/p12/300", price: "20" },
+    ],
+  },
+];
