@@ -6,7 +6,7 @@ const Header = () => {
     <div className="flex px-5 py-1 justify-between items-center border-b">
       <Button className="flex gap-2 items-center" variant="ghost">
         <Smartphone size={20} />
-        <p className="text-sm">Download Gebeya App</p>
+        <p className="text-sm font-primary">Download Gebeya App</p>
       </Button>
 
       <div className="flex items-center">

@@ -3,6 +3,8 @@ import Header from "./components/Header"
 import { Input } from "./components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from './components/ui/select'
 import { ModeToggle } from "./components/mode-toggle"
+import Categories from "./components/Categories"
+import ForYou from "./components/ForYou"
 
 const App = () => {
   return (
@@ -44,6 +46,21 @@ const App = () => {
           <Bell />
         </div>
       </div>
+      <div className="flex px-20 pt-15 justify-between">
+        <div className="flex flex-col gap-5">
+          <h3 className="text-2xl font-secondary-medium">#Big Fasion Sale</h3>
+          <div className="flex flex-col gap-10">
+            <h1 className="text-5xl font-quater">Limited Time Offer!</h1>
+            <h1 className="text-5xl font-quater">Upto 50% Off</h1>
+          </div>
+          <h2 className="text-2xl font-secondary mt-5">Redifine Your Everydary Style</h2>
+        </div>
+        <div>
+          <img src="/home.jpg" className="h-[50vh] w-[40vw]" />
+        </div>
+      </div>
+      <Categories />
+      <ForYou />
     </div>
   )
 }
