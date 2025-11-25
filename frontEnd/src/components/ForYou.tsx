@@ -19,12 +19,14 @@ const ForYou = () => {
       <div className="grid grid-cols-4 mt-5 px-25 border-b">
         {landingProducts.map((p, index) => (
           <div key={index} className="h-[40vh] m-5 border rounded-lg">
-            <img src={p.img} className="w-full h-[15vh]" />
-            <h1>
-              {p.title}
-            </h1>
-            <p>{p.type}</p>
-            <p>Birr:<span className="text-red-400">{p.price}</span></p>
+            <img src={p.img} className="w-full h-[25vh] rounded-lg" />
+            <div className="px-5">
+              <h1 className="font-secondary-extrabold">
+                {p.title}
+              </h1>
+              <p className="font-primary">{p.type}</p>
+              <p className="font-primary">Birr:<span className="text-red-400 font-secondary-extrobold">{p.price}</span></p>
+            </div>
           </div>
         ))}
       </div>
@@ -64,7 +66,9 @@ const ForYou = () => {
         </div>
       </div>
       <div className="h-40">
-        <div className="bg-[url('/footer.jpg')] bg-no-repeat bg-[length:100%_100%] h-40 w-full"></div>
+        <div className="bg-[url('/footer.jpg')] bg-no-repeat bg-[length:100%_100%] h-40 w-full flex justify-center items-center">
+          <h1 className="text-white font-secondary-extrabold font-secondary-extrabold font-secondary-extrabold text-5xl">"<span className="text-gray-400">Let's</span> Shop Beyond Boundaries"</h1>
+        </div>
       </div>
     </div>
   )

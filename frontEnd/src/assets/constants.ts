@@ -14,13 +14,6 @@ export const landingProducts = [
     sale: 15,
   },
   {
-    img: "https://images.unsplash.com/photo-1512499617640-c2f999098c01",
-    title: "Cotton T-Shirt - White",
-    type: "clothing",
-    price: 899,
-    sale: 5,
-  },
-  {
     img: "https://images.unsplash.com/photo-1495107334309-fcf20504a5ab",
     title: "Sleek Running Shoes",
     type: "sports",
@@ -35,34 +28,6 @@ export const landingProducts = [
     sale: 18,
   },
   {
-    img: "https://images.unsplash.com/photo-1606813902995-e1e6c9dc6435",
-    title: "Automatic Coffee Maker",
-    type: "home appliance",
-    price: 3100,
-    sale: 8,
-  },
-  {
-    img: "https://images.unsplash.com/photo-1600180758895-5d3be78a8d4e",
-    title: "Laptop Pro 15\"",
-    type: "electronics",
-    price: 58000,
-    sale: 12,
-  },
-  {
-    img: "https://images.unsplash.com/photo-1581291519195-ef11498d1cf5",
-    title: "Face Moisturizer",
-    type: "beauty",
-    price: 550,
-    sale: 6,
-  },
-  {
-    img: "https://images.unsplash.com/photo-1526045431048-e56f3e0b89a6",
-    title: "Python Programming Book",
-    type: "books",
-    price: 1300,
-    sale: 0,
-  },
-  {
     img: "https://images.unsplash.com/photo-1517849845537-4d257902454a",
     title: "Organic Dog Food",
     type: "pets",
@@ -75,34 +40,6 @@ export const landingProducts = [
     type: "electronics",
     price: 35000,
     sale: 14,
-  },
-  {
-    img: "https://images.unsplash.com/photo-1567532939604-b6b5b0db2600",
-    title: "Power Drill Kit",
-    type: "construction",
-    price: 7200,
-    sale: 7,
-  },
-  {
-    img: "https://images.unsplash.com/photo-1539874754764-5a96559165b3",
-    title: "Baby Soft Blanket",
-    type: "baby & kids",
-    price: 1199,
-    sale: 10,
-  },
-  {
-    img: "https://images.unsplash.com/photo-1553456558-aff63285bdd8",
-    title: "Premium Office Chair",
-    type: "home & office",
-    price: 14999,
-    sale: 15,
-  },
-  {
-    img: "https://images.unsplash.com/photo-1556912167-f556f1f39b50",
-    title: "Non-Stick Cooking Pan",
-    type: "kitchen",
-    price: 999,
-    sale: 5,
   },
 ];
 

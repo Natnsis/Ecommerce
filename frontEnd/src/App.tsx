@@ -5,12 +5,13 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { ModeToggle } from "./components/mode-toggle"
 import Categories from "./components/Categories"
 import ForYou from "./components/ForYou"
+import Footer from "./components/Footer"
 
 const App = () => {
   return (
     <div>
       <Header />
-      <div className="px-5 py-1 flex justify-betweeen items-center border-b">
+      <header className="px-5 py-1 flex justify-betweeen items-center border-b">
         <div className="flex gap-5 items-center mr-30">
           <h1 className="font-quater font-extrabold text-2xl">Gebeya</h1>
         </div>
@@ -45,7 +46,7 @@ const App = () => {
           <ShoppingCart />
           <Bell />
         </div>
-      </div>
+      </header>
       <div className="flex px-20 pt-15 justify-between">
         <div className="flex flex-col gap-5">
           <h3 className="text-2xl font-secondary-medium">#Big Fasion Sale</h3>
@@ -61,7 +62,8 @@ const App = () => {
       </div>
       <Categories />
       <ForYou />
-    </div>
+      <Footer />
+    </div >
   )
 }
 
