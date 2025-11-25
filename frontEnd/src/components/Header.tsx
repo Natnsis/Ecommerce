@@ -1,7 +1,9 @@
 import { Smartphone } from "lucide-react"
 import { Button } from "./ui/button"
+import { useNavigate } from "react-router-dom"
 
 const Header = () => {
+  const navigate = useNavigate()
   return (
     <div className="flex px-5 py-1 justify-between items-center border-b">
       <Button className="flex gap-2 items-center" variant="ghost">
@@ -19,10 +21,10 @@ const Header = () => {
         <Button variant="ghost">
           Contact
         </Button>
-        <Button variant="ghost">
+        <Button variant="ghost" onClick={() => navigate('/register')}>
           Sign Up
         </Button>
-        <Button >
+        <Button onClick={() => navigate('/login')}>
           Login
         </Button>
       </div>

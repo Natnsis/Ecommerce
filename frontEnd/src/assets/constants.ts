@@ -8,7 +8,7 @@ export const landingProducts = [
   },
   {
     img: "https://images.unsplash.com/photo-1517336714731-489689fd1ca8",
-    title: "Noise-Cancelling Headphones",
+    title: "Noise Headphones",
     type: "electronics",
     price: 4200,
     sale: 15,

@@ -18,7 +18,7 @@ const ForYou = () => {
 
       <div className="grid grid-cols-4 mt-5 px-25 border-b">
         {landingProducts.map((p, index) => (
-          <div key={index} className="h-[40vh] m-5 border rounded-lg">
+          <div key={index} className="h-[40vh] m-5 border rounded-lg pb-5">
             <img src={p.img} className="w-full h-[25vh] rounded-lg" />
             <div className="px-5">
               <h1 className="font-secondary-extrabold">
@@ -38,7 +38,7 @@ const ForYou = () => {
         <div className="grid grid-cols-3 px-20 mt-5 w-full">
           <div className="h-[30vh] w-[20vw] col-span-1">
             <img src="/cloths.jpg" />
-            <h1 className="text-secondary-bold text-lg capitalize">
+            <h1 className="font-secondary-bold text-lg capitalize">
               bell mall shop
             </h1>
           </div>
