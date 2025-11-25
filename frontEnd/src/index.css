@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Afacad:ital,wght@0,400..700;1,400..700&family=Boldonse&family=Kedebideri:wght@400;500;600;700;800;900&family=Smooch+Sans:wght@100..900&display=swap');
 
-
 @import "tailwindcss";
 @import "tw-animate-css";
 
@@ -9,7 +8,6 @@
   font-optical-sizing: auto;
   font-style: normal;
 }
-
 
 .font-secondary-regular {
   font-family: "Kedebideri", sans-serif;
@@ -57,7 +55,6 @@
   font-family: "Boldonse", system-ui;
   font-style: normal;
 }
-
 
 @custom-variant dark (&:is(.dark *));
 
