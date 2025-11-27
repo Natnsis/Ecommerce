@@ -1,22 +1,24 @@
 import { LogOut } from "lucide-react"
 import { Button } from "./ui/button"
+import { useNavigate } from "react-router-dom"
 
 const Sidebar = () => {
+  const navigate = useNavigate()
   return (
-    <div className="p-5 flex flex-col justify-between items-center h-screen border-r">
+    <div className="p-5 flex flex-col justify-between items-center h-screen border-r w-60">
       <div>
         <div className="flex flex-col items-center mb-5">
           <h1 className="font-secondary-extrabold text-2xl">Gebeya</h1>
           <img src="/admin.jpg" className="w-20 h-20 rounded-full border my-3" />
           <h1 className="font-quater">Admin</h1>
-          <p className="font-primary text-sm text-center">vendors and overall manager</p>
+          <p className="font-primary text-sm text-center w-40">vendors and overall manager</p>
         </div>
 
         <div className="flex flex-col gap-2 w-full">
-          <Button variant="ghost">Dashboard</Button>
-          <Button variant="ghost">Vendors</Button>
-          <Button variant="ghost">Feedbacks</Button>
-          <Button variant="ghost">Products</Button>
+          <Button variant="ghost" onClick={() => navigate('/adash')}>Dashboard</Button>
+          <Button variant="ghost" onClick={() => navigate('/avendor')}>Vendors</Button>
+          <Button variant="ghost" onClick={() => navigate('/afeedback')}>Feedbacks</Button>
+          <Button variant="ghost" onClick={() => navigate('/aproduct')}>Products</Button>
         </div>
       </div>
 

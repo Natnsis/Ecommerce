@@ -21,7 +21,7 @@ const Login = () => {
           <form className="flex flex-col gap-4">
             <Input placeholder="Username" className="rounded-full" />
             <Input placeholder="Password" className="rounded-full" />
-            <Button className="rounded-full w-full">Login</Button>
+            <Button className="rounded-full w-full">Sign In</Button>
           </form>
           <div className="flex items-center gap-2 mt-2">
             <Separator className="flex-1" />
