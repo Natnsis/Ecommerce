@@ -10,8 +10,7 @@ const Sidebar = () => {
         <div className="flex flex-col items-center mb-5">
           <h1 className="font-secondary-extrabold text-2xl">Gebeya</h1>
           <img src="/admin.jpg" className="w-20 h-20 rounded-full border my-3" />
-          <h1 className="font-quater">Admin</h1>
-          <p className="font-primary text-sm text-center w-40">vendors and overall manager</p>
+          <h1 className="font-quater">Hello, Admin!</h1>
         </div>
 
         <div className="flex flex-col gap-2 w-full">

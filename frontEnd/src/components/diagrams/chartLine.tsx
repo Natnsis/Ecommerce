@@ -7,6 +7,7 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
+import { Card } from "../ui/card";
 
 export const description = "A line chart with dots";
 
@@ -32,10 +33,10 @@ const chartConfig = {
 
 export function ChartLineDots() {
   return (
-    <div className="w-full rounded-lg p-6 bg-white">
+    <Card className="w-full rounded-lg p-6">
       <div className="mb-4">
-        <h2 className="text-xl font-semibold">Line Chart - Dots</h2>
-        <p className="text-sm text-gray-500">January - June 2024</p>
+        <h2 className="text-xl font-semibold">Sales Chart</h2>
+        <p className="text-sm text-gray-500">Monthly update</p>
       </div>
 
       <div className="w-full">
@@ -75,6 +76,6 @@ export function ChartLineDots() {
           </LineChart>
         </ChartContainer>
       </div>
-    </div>
+    </Card>
   );
 }
