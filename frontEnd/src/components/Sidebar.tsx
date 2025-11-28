@@ -17,14 +17,13 @@ const Sidebar = () => {
           <Button variant="ghost" onClick={() => navigate('/adash')}>Dashboard</Button>
           <Button variant="ghost" onClick={() => navigate('/avendor')}>Vendors</Button>
           <Button variant="ghost" onClick={() => navigate('/afeedback')}>Feedbacks</Button>
-          <Button variant="ghost" onClick={() => navigate('/aproduct')}>Products</Button>
         </div>
       </div>
 
-      <div className="flex gap-3 items-center cursor-pointer">
+      <Button className="flex gap-3 items-center cursor-pointer" onClick={() => navigate("/login")}>
         <LogOut size={20} />
         <p>log out</p>
-      </div>
+      </Button>
     </div>
   )
 }

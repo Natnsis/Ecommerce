@@ -85,3 +85,21 @@ export const bestSelling = [
     ],
   },
 ];
+
+export const feedbacks = [
+  { img: "/automotive.jpg", fName: "Minale", lName: "Awoke", time: "05:45pm", notification: "50" },
+  { img: "/beauty.jpg", fName: "Sara", lName: "Bekele", time: "10:12am", notification: "3" },
+  { img: "/cloths.jpg", fName: "Dawit", lName: "Teshome", time: "02:30pm", notification: "12" },
+  { img: "/food.jpg", fName: "Hana", lName: "Wondimu", time: "08:55am", notification: "7" },
+  { img: "/footer.jpg", fName: "Nathan", lName: "Sisay", time: "11:20am", notification: "1" },
+  { img: "/automotive.jpg", fName: "Amanuel", lName: "Tesfaye", time: "04:40pm", notification: "19" },
+  { img: "/beauty.jpg", fName: "Sofia", lName: "Alemu", time: "06:10pm", notification: "4" },
+  { img: "/cloths.jpg", fName: "Lidya", lName: "Kebede", time: "03:03pm", notification: "21" },
+  { img: "/food.jpg", fName: "Biniam", lName: "Getachew", time: "09:45am", notification: "6" },
+  { img: "/footer.jpg", fName: "Kidus", lName: "Abate", time: "01:25pm", notification: "8" },
+  { img: "/automotive.jpg", fName: "Eden", lName: "Fikre", time: "12:05pm", notification: "14" },
+  { img: "/beauty.jpg", fName: "Jonas", lName: "Haile", time: "07:50am", notification: "2" },
+  { img: "/cloths.jpg", fName: "Selam", lName: "Yosef", time: "05:29pm", notification: "9" },
+  { img: "/food.jpg", fName: "Robel", lName: "Mekonnen", time: "02:02pm", notification: "17" },
+  { img: "/footer.jpg", fName: "Betty", lName: "Arega", time: "08:15pm", notification: "5" },
+]

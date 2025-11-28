@@ -10,7 +10,6 @@ import VendorDashboard from './pages/Vendor/VendorDashboard.tsx'
 import CustomerDashboard from './pages/Customer/CustomerDashboard.tsx'
 import NotFound from './NotFound.tsx'
 import ManageVendors from './pages/Admin/ManageVendors.tsx'
-import CheckProducts from './pages/Admin/CheckProducts.tsx'
 import AdminFeedbacks from './pages/Admin/AdminFeedbacks.tsx'
 import AddVendors from './components/AddVendors.tsx'
 
@@ -22,7 +21,6 @@ const router = createBrowserRouter([
   { path: "/vdash", element: <VendorDashboard /> },
   { path: "/cdash", element: <CustomerDashboard /> },
   { path: "/avendor", element: <ManageVendors /> },
-  { path: "/aproduct", element: <CheckProducts /> },
   { path: "/afeedback", element: <AdminFeedbacks /> },
   { path: "/vendorForm", element: <AddVendors /> },
   { path: "*", element: <NotFound /> }
