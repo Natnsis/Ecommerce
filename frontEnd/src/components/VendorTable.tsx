@@ -33,6 +33,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useNavigate } from "react-router-dom"
 
 const data: Payment[] = [
   {
@@ -166,6 +167,7 @@ export const columns: ColumnDef<Payment>[] = [
 ]
 
 export function VendorsTable() {
+  const navigate = useNavigate();
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -230,6 +232,7 @@ export function VendorsTable() {
               })}
           </DropdownMenuContent>
         </DropdownMenu>
+        <Button className="ml-5" onClick={() => navigate('/vendorForm')}>Add</Button>
       </div>
       <div className="overflow-hidden rounded-md border">
         <Table>
