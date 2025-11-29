@@ -12,6 +12,10 @@ import NotFound from './NotFound.tsx'
 import ManageVendors from './pages/Admin/ManageVendors.tsx'
 import AdminFeedbacks from './pages/Admin/AdminFeedbacks.tsx'
 import AddVendors from './components/AddVendors.tsx'
+import VendorProducts from './pages/Vendor/VendorProducts.tsx'
+import VendorChat from './pages/Vendor/VendorChat.tsx'
+import VendorRating from './pages/Vendor/VendorRating.tsx'
+import VendorProfile from './pages/Vendor/VendorProfile.tsx'
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
@@ -23,6 +27,10 @@ const router = createBrowserRouter([
   { path: "/avendor", element: <ManageVendors /> },
   { path: "/afeedback", element: <AdminFeedbacks /> },
   { path: "/vendorForm", element: <AddVendors /> },
+  { path: "/vproduct", element: <VendorProducts /> },
+  { path: "/vchat", element: <VendorChat /> },
+  { path: "/vrating", element: <VendorRating /> },
+  { path: "/vprofile", element: <VendorProfile /> },
   { path: "*", element: <NotFound /> }
 ])
 
