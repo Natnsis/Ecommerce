@@ -103,3 +103,81 @@ export const feedbacks = [
   { img: "/food.jpg", fName: "Robel", lName: "Mekonnen", time: "02:02pm", notification: "17" },
   { img: "/footer.jpg", fName: "Betty", lName: "Arega", time: "08:15pm", notification: "5" },
 ]
+
+export const notifications = [
+  {
+    img: "/admin.jpg",
+    name: "Natnael Sisay",
+    notification: "23"
+  },
+  {
+    img: "/automotive.jpg",
+    name: "Alemu Kassahun",
+    notification: "32"
+  },
+  {
+    img: "/beauty.jpg",
+    name: "Minale Awoke",
+    notification: "21"
+  },
+  {
+    img: "/cloths.jpg",
+    name: "Gebramariam Ayelign",
+    notification: "12"
+  },
+  {
+    img: "/food.jpg",
+    name: "Daniel Balkew",
+    notification: "53"
+  },
+  {
+    img: "/automotive.jpg",
+    name: "Sisay Moges",
+    notification: "14"
+  },
+  {
+    img: "/beauty.jpg",
+    name: "Yonatan Mulu",
+    notifications: "45"
+  },
+  {
+    img: "/cloths.jpg",
+    name: "Hanna Michael",
+    notification: "19"
+  },
+  {
+    img: "/food.jpg",
+    name: "Bereket Alemu",
+    notification: "27"
+  },
+  {
+    img: "/footer.jpg",
+    name: "Kalkidan Eshetu",
+    notification: "38"
+  },
+  {
+    img: "/automotive.jpg",
+    name: "Abel Fekadu",
+    notification: "44"
+  },
+  {
+    img: "/beauty.jpg",
+    name: "Meron Lulseged",
+    notification: "17"
+  },
+  {
+    img: "/cloths.jpg",
+    name: "Brook Hailu",
+    notification: "29"
+  },
+  {
+    img: "/food.jpg",
+    name: "Rediet Worku",
+    notification: "11"
+  },
+  {
+    img: "/footer.jpg",
+    name: "Samuel Adisu",
+    notification: "25"
+  }
+];

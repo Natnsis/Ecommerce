@@ -1,4 +1,4 @@
-import { ArrowRightLeft, ShoppingBasket, Star, Users } from "lucide-react"
+import { ArrowRightLeft, CircleDollarSign, ShoppingBasket, Star, Users } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
 const VCards = () => {
@@ -43,12 +43,12 @@ const VCards = () => {
       <div className="border mt-5 py-2 px-2 rounded-lg w-full">
         <div className="flex justify-between mb-3">
           <div>
-            <h1 className="font-secondary-extrabold text-4xl">4.5</h1>
-            <p className="font-primary text-sm">Rating</p>
+            <h1 className="font-secondary-extrabold text-4xl">4503 $</h1>
+            <p className="font-primary text-sm">Total Profit</p>
           </div>
-          <Star />
+          <CircleDollarSign />
         </div>
-        <Badge variant="secondary">Good</Badge>
+        <Badge variant="secondary">+34%</Badge>
       </div>
 
     </div>
