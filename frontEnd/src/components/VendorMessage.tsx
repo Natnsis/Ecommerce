@@ -5,8 +5,6 @@ import { Badge } from "./ui/badge"
 import { Card } from "./ui/card"
 
 const VendorMessage = () => {
-  const sent = '';
-  const received = '';
   return (
     <div className="mt-10 px-10 h-screen">
       <div className="border h-[80vh] rounded grid grid-cols-6 ">

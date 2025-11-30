@@ -1,6 +1,14 @@
+import Cheader from "@/components/Cheader"
+import Chero from "@/components/Chero"
+import DiscoverCards from "@/components/DiscoverCards"
+
 const CustomerDashboard = () => {
   return (
-    <div> customer dashboard</div>
+    <section>
+      <Cheader />
+      <Chero />
+      <DiscoverCards />
+    </section>
   )
 }
 
