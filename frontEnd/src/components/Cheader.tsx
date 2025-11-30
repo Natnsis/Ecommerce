@@ -4,6 +4,7 @@ import { ModeToggle } from "./mode-toggle"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { useNavigate } from "react-router-dom"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 
 const Cheader = () => {
   const navigate = useNavigate()
@@ -15,6 +16,15 @@ const Cheader = () => {
         <Button variant="ghost" className="font-secondary-extrabold text-md">CONTACT US</Button>
         <Button size="icon" variant="outline"><ShoppingBag /></Button>
         <ModeToggle />
+        <Select>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="Language" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="light">English</SelectItem>
+            <SelectItem value="dark">Amharic</SelectItem>
+          </SelectContent>
+        </Select>
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Avatar>
