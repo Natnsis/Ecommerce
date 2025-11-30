@@ -14,7 +14,6 @@ import AdminFeedbacks from './pages/Admin/AdminFeedbacks.tsx'
 import AddVendors from './components/AddVendors.tsx'
 import VendorProducts from './pages/Vendor/VendorProducts.tsx'
 import VendorChat from './pages/Vendor/VendorChat.tsx'
-import VendorRating from './pages/Vendor/VendorRating.tsx'
 import VendorProfile from './pages/Vendor/VendorProfile.tsx'
 import AddProducts from './pages/Vendor/AddProducts.tsx'
 
@@ -30,7 +29,6 @@ const router = createBrowserRouter([
   { path: "/vendorForm", element: <AddVendors /> },
   { path: "/vproduct", element: <VendorProducts /> },
   { path: "/vchat", element: <VendorChat /> },
-  { path: "/vrating", element: <VendorRating /> },
   { path: "/vprofile", element: <VendorProfile /> },
   { path: "/addproduct", element: <AddProducts /> },
   { path: "*", element: <NotFound /> }

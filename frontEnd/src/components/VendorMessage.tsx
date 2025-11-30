@@ -40,7 +40,7 @@ const VendorMessage = () => {
                 <img src="/admin.jpg" className="w-10 h-10" />
                 <div>
                   <h1>Alemu Kassahun</h1>
-                  <p className="text-green-400 text-xs font-primary text-center">typing...</p>
+                  <p className="text-green-400 text-xs font-primary">typing...</p>
                 </div>
               </div>
             </div>

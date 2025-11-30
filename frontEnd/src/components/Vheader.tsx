@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom"
 import { Button } from "./ui/button"
-import { LayoutDashboard, MessageCircle, ScanLine, Star, UserPen } from "lucide-react";
+import { LayoutDashboard, LogOut, MessageCircle, ScanLine, UserPen } from "lucide-react";
 import { ModeToggle } from "./mode-toggle";
 
 const Vheader = () => {
@@ -11,8 +11,8 @@ const Vheader = () => {
         <Button variant="ghost" onClick={() => navigate("/vdash")}><LayoutDashboard />DASHBOARD</Button>
         <Button variant="ghost" onClick={() => navigate("/vproduct")}><ScanLine />PRODUCT</Button>
         <Button variant="ghost" onClick={() => navigate("/vchat")}><MessageCircle />CHAT</Button>
-        <Button variant="ghost" onClick={() => navigate("/vrating")}><Star />RATING</Button>
         <Button variant="ghost" onClick={() => navigate("/vprofile")}><UserPen />PROFILE</Button>
+        <Button variant="ghost" onClick={() => navigate("/login")}><LogOut />LOGOUT</Button>
         <ModeToggle />
       </nav>
     </header>
