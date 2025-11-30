@@ -12,7 +12,7 @@ const Cheader = () => {
     <div className="px-5 py-3 flex justify-between">
       <h1 className="font-quater text-2xl">Gebeya</h1>
       <div className="flex items-center gap-5">
-        <Button variant="ghost" className="font-secondary-extrabold text-md">HOME</Button>
+        <Button variant="ghost" className="font-secondary-extrabold text-md" onClick={() => navigate('/cdash')}>HOME</Button>
         <Button variant="ghost" className="font-secondary-extrabold text-md">CONTACT US</Button>
         <Button size="icon" variant="outline"><ShoppingBag /></Button>
         <ModeToggle />

@@ -1,3 +1,4 @@
+import CFooter from "@/components/CFooter"
 import Cheader from "@/components/Cheader"
 import Chero from "@/components/Chero"
 import CustomerBooks from "@/components/CustomerBooks"
@@ -10,6 +11,7 @@ const CustomerDashboard = () => {
       <Chero />
       <DiscoverCards />
       <CustomerBooks />
+      <CFooter />
     </section>
   )
 }

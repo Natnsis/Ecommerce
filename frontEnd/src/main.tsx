@@ -16,6 +16,7 @@ import VendorProducts from './pages/Vendor/VendorProducts.tsx'
 import VendorChat from './pages/Vendor/VendorChat.tsx'
 import VendorProfile from './pages/Vendor/VendorProfile.tsx'
 import AddProducts from './pages/Vendor/AddProducts.tsx'
+import CustomerShop from './pages/Customer/CustomerShop.tsx'
 
 const router = createBrowserRouter([
   { path: "/", element: <App /> },
@@ -31,6 +32,7 @@ const router = createBrowserRouter([
   { path: "/vchat", element: <VendorChat /> },
   { path: "/vprofile", element: <VendorProfile /> },
   { path: "/addproduct", element: <AddProducts /> },
+  { path: "/cshop", element: <CustomerShop /> },
   { path: "*", element: <NotFound /> }
 ])
 

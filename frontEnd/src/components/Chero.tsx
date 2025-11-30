@@ -1,6 +1,8 @@
 import { Button } from "@/components/ui/button"
+import { useNavigate } from "react-router-dom"
 
 const Chero = () => {
+  const navigate = useNavigate()
   return (
     <div className="h-[40vh] slider flex items-center">
       <div className="text-white p-5 flex flex-col gap-5">
@@ -11,7 +13,7 @@ const Chero = () => {
           <h1 className="text-white font-quater mt-5 text-3xl w-[40vw] py-5 leading-relaxed">
             Shop Bigger, And Easiser, Vast Categories and Easy Payments, All In One Place
           </h1>
-          <Button className="w-1/4 bg-white text-black font-quater text-sm" variant="ghost">Shop Now</Button>
+          <Button className="w-1/4 bg-white text-black font-quater text-sm" variant="ghost" onClick={() => navigate('/cshop')}>Shop Now</Button>
         </div>
       </div>
     </div>
