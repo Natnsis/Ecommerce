@@ -4,19 +4,166 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  VENDOR
+  CUSTOMER
 }
 
 model User {
-  id String @id @default(uuid())
-  fName String? 
-  lName String?
-  password String
-  email String @unique
-  phone Int
-  address String?
-  imgUrl String?
+  id           String   @id @default(uuid())
+  firstName    String
+  lastName     String
+  email        String   @unique
+  password     String
+  phoneNumber  String?
+  address      String?
+  profileImage String?
+
+  role         Role
+
+  vendorCategoryId String?
+  vendorCategory   Category? @relation("VendorCategory", fields: [vendorCategoryId], references: [id])
+  bio              String?
+
+  products     Product[]     @relation("VendorProducts")
+
+  transactionsAsVendor   Transaction[] @relation("VendorTransactions")
+  transactionsAsCustomer Transaction[] @relation("CustomerTransactions")
+
+  feedbacks    Feedback[]
+
+  cart         Cart?
+
+  customerConversations Conversation[] @relation("CustomerConversations")
+  vendorConversations   Conversation[] @relation("VendorConversations")
+  sentMessages          Message[]
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
+model Category {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
 
+  parentId String?
+  parent   Category? @relation("CategoryTree", fields: [parentId], references: [id])
+  children Category[] @relation("CategoryTree")
 
+  products Product[]
+  vendors  User[] @relation("VendorCategory")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Float      // USD
+  inStock     Int
+  image       String?
+
+  vendorId    String
+  vendor      User       @relation("VendorProducts", fields: [vendorId], references: [id])
+
+  categoryId  String
+  category    Category   @relation(fields: [categoryId], references: [id])
+
+  cartItems   CartItem[]
+  feedbacks   Feedback[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Cart {
+  id         String   @id @default(uuid())
+  customerId String   @unique
+  customer   User     @relation(fields: [customerId], references: [id])
+
+  items      CartItem[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model CartItem {
+  id         String   @id @default(uuid())
+
+  cartId     String
+  cart       Cart     @relation(fields: [cartId], references: [id])
+
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+
+  quantity   Int
+
+  createdAt  DateTime @default(now())
+}
+
+model Transaction {
+  id         String   @id @default(uuid())
+
+  vendorId   String
+  vendor     User     @relation("VendorTransactions", fields: [vendorId], references: [id])
+
+  customerId String
+  customer   User     @relation("CustomerTransactions", fields: [customerId], references: [id])
+
+  amount     Float
+  createdAt  DateTime @default(now())
+}
+
+model Feedback {
+  id         String   @id @default(uuid())
+  title      String
+  note       String
+  response   String?
+
+  customerId String
+  customer   User     @relation(fields: [customerId], references: [id])
+
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+
+  createdAt  DateTime @default(now())
+}
+
+model Conversation {
+  id         String @id @default(uuid())
+
+  customerId String
+  customer   User   @relation("CustomerConversations", fields: [customerId], references: [id])
+
+  vendorId   String
+  vendor     User   @relation("VendorConversations", fields: [vendorId], references: [id])
+
+  messages   Message[]
+
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@unique([customerId, vendorId])
+}
+
+model Message {
+  id             String @id @default(uuid())
+
+  conversationId String
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+
+  senderId String
+  sender   User   @relation(fields: [senderId], references: [id])
+
+  content  String
+  isRead   Boolean @default(false)
+
+  createdAt DateTime @default(now())
+}
