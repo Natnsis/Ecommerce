@@ -1,10 +1,11 @@
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../generated/prisma"
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 enum Role {
@@ -25,22 +26,17 @@ model User {
 
   role         Role
 
-  vendorCategoryId String?
-  vendorCategory   Category? @relation("VendorCategory", fields: [vendorCategoryId], references: [id])
-  bio              String?
+  bio          String?        // only for vendors
 
-  products     Product[]     @relation("VendorProducts")
+  products     Product[]      // vendor products
 
   transactionsAsVendor   Transaction[] @relation("VendorTransactions")
   transactionsAsCustomer Transaction[] @relation("CustomerTransactions")
 
   feedbacks    Feedback[]
 
-  cart         Cart?
-
-  customerConversations Conversation[] @relation("CustomerConversations")
-  vendorConversations   Conversation[] @relation("VendorConversations")
-  sentMessages          Message[]
+  sentChats     Chat[] @relation("SenderChats")
+  receivedChats Chat[] @relation("ReceiverChats")
 
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
@@ -48,18 +44,13 @@ model User {
 
 model Category {
   id          String   @id @default(uuid())
-  name        String
+  name        String   @unique
   description String?
 
-  parentId String?
-  parent   Category? @relation("CategoryTree", fields: [parentId], references: [id])
-  children Category[] @relation("CategoryTree")
+  products    Product[]
 
-  products Product[]
-  vendors  User[] @relation("VendorCategory")
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Product {
@@ -71,41 +62,15 @@ model Product {
   image       String?
 
   vendorId    String
-  vendor      User       @relation("VendorProducts", fields: [vendorId], references: [id])
+  vendor      User     @relation(fields: [vendorId], references: [id])
 
   categoryId  String
-  category    Category   @relation(fields: [categoryId], references: [id])
+  category    Category @relation(fields: [categoryId], references: [id])
 
-  cartItems   CartItem[]
   feedbacks   Feedback[]
 
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
-}
-
-model Cart {
-  id         String   @id @default(uuid())
-  customerId String   @unique
-  customer   User     @relation(fields: [customerId], references: [id])
-
-  items      CartItem[]
-
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-}
-
-model CartItem {
-  id         String   @id @default(uuid())
-
-  cartId     String
-  cart       Cart     @relation(fields: [cartId], references: [id])
-
-  productId  String
-  product    Product  @relation(fields: [productId], references: [id])
-
-  quantity   Int
-
-  createdAt  DateTime @default(now())
 }
 
 model Transaction {
@@ -136,34 +101,19 @@ model Feedback {
   createdAt  DateTime @default(now())
 }
 
-model Conversation {
-  id         String @id @default(uuid())
+model Chat {
+  id          String   @id @default(uuid())
 
-  customerId String
-  customer   User   @relation("CustomerConversations", fields: [customerId], references: [id])
+  senderId    String
+  sender      User     @relation("SenderChats", fields: [senderId], references: [id])
 
-  vendorId   String
-  vendor     User   @relation("VendorConversations", fields: [vendorId], references: [id])
+  receiverId  String
+  receiver    User     @relation("ReceiverChats", fields: [receiverId], references: [id])
 
-  messages   Message[]
+  message     String
+  isRead      Boolean  @default(false)
 
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  createdAt   DateTime @default(now())
 
-  @@unique([customerId, vendorId])
-}
-
-model Message {
-  id             String @id @default(uuid())
-
-  conversationId String
-  conversation   Conversation @relation(fields: [conversationId], references: [id])
-
-  senderId String
-  sender   User   @relation(fields: [senderId], references: [id])
-
-  content  String
-  isRead   Boolean @default(false)
-
-  createdAt DateTime @default(now())
+  @@index([senderId, receiverId])
 }
