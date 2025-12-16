@@ -1,5 +1,5 @@
 import { BestSelling } from "@/components/BestSelling"
-import { BarGraph } from "@/components/diagrams/BarChat"
+import { BarGraph } from "@/components/diagrams/BarChart"
 import VCards from "@/components/VCards"
 import Vheader from "@/components/Vheader"
 import VNotifications from "@/components/VNotifications"

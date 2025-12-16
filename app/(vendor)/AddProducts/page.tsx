@@ -1,14 +1,14 @@
+"use client"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { useState } from "react"
 import { useDropzone } from "react-dropzone"
-import { useNavigate } from "react-router-dom"
+import { useRouter } from "next/navigation";
 
 const AddProducts = () => {
-  const navigate = useNavigate()
-
+  const router = useRouter();
   const [image, setImage] = useState(null)
 
   const onDrop = (acceptedFiles: any) => {
@@ -28,7 +28,7 @@ const AddProducts = () => {
         <div className="h-full w-full">
           <div className="p-5 flex justify-between">
             <h1 className="text-xl font-quater">Add Products</h1>
-            <Button onClick={() => navigate('/vproduct')}>Back</Button>
+            <Button onClick={() => router.push('/VendorProduct')}>Back</Button>
           </div>
           <div className="px-10 pb-10 font-primary flex flex-col gap-5">
             <div>

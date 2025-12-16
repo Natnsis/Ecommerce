@@ -1,4 +1,4 @@
-
+"use client"
 import * as React from "react"
 import {
   type ColumnDef,
@@ -34,7 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useNavigate } from "react-router-dom"
+import { useRouter } from "next/navigation"
 
 const data: Payment[] = [
   {
@@ -194,9 +194,7 @@ export function MyProductsTable() {
       rowSelection,
     },
   })
-
-  const navigate = useNavigate()
-
+  const router = useRouter()
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
@@ -234,7 +232,7 @@ export function MyProductsTable() {
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button className="ml-5" onClick={() => navigate('/addproduct')}>Add Product</Button>
+        <Button className="ml-5" onClick={() => router.push('/AddProducts')}>Add Product</Button>
 
       </div>
       <div className="overflow-hidden rounded-md border">

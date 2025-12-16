@@ -1,18 +1,20 @@
+"use client"
 import { ShoppingBag } from "lucide-react"
 import { Button } from "./ui/button"
 import { ModeToggle } from "./mode-toggle"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "./ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
-import { useNavigate } from "react-router-dom"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
+import { useRouter } from "next/navigation"
 
 const Cheader = () => {
-  const navigate = useNavigate()
+  const router = useRouter()
+
   return (
     <div className="px-5 py-3 flex justify-between">
       <h1 className="font-quater text-2xl">Gebeya</h1>
       <div className="flex items-center gap-5">
-        <Button variant="ghost" className="font-secondary-extrabold text-md" onClick={() => navigate('/cdash')}>HOME</Button>
+        <Button variant="ghost" className="font-secondary-extrabold text-md" onClick={() => router.push('/CustomerDashboard')}>HOME</Button>
         <Button variant="ghost" className="font-secondary-extrabold text-md">CONTACT US</Button>
         <Button size="icon" variant="outline"><ShoppingBag /></Button>
         <ModeToggle />
@@ -38,7 +40,7 @@ const Cheader = () => {
             <DropdownMenuItem>Profile</DropdownMenuItem>
             <DropdownMenuItem>Billing</DropdownMenuItem>
             <DropdownMenuItem>Team</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => navigate('/login')}>Logout</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => router.push('/login')}>Logout</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </div>

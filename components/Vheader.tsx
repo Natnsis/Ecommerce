@@ -1,19 +1,19 @@
-
-import { useNavigate } from "react-router-dom"
+"use client"
 import { Button } from "./ui/button"
 import { LayoutDashboard, LogOut, MessageCircle, ScanLine, UserPen } from "lucide-react";
 import { ModeToggle } from "./mode-toggle";
+import { useRouter } from "next/navigation";
 
 const Vheader = () => {
-  const navigate = useNavigate();
+  const router = useRouter();
   return (
     <header className="w-screen flex justify-center">
       <nav className="p-1 flex gap-5 border rounded-b-lg pr-5">
-        <Button variant="ghost" onClick={() => navigate("/vdash")}><LayoutDashboard />DASHBOARD</Button>
-        <Button variant="ghost" onClick={() => navigate("/vproduct")}><ScanLine />PRODUCT</Button>
-        <Button variant="ghost" onClick={() => navigate("/vchat")}><MessageCircle />CHAT</Button>
-        <Button variant="ghost" onClick={() => navigate("/vprofile")}><UserPen />PROFILE</Button>
-        <Button variant="ghost" onClick={() => navigate("/login")}><LogOut />LOGOUT</Button>
+        <Button variant="ghost" onClick={() => router.push("/VendorDashboard")}><LayoutDashboard />DASHBOARD</Button>
+        <Button variant="ghost" onClick={() => router.push("/VendorProduct")}><ScanLine />PRODUCT</Button>
+        <Button variant="ghost" onClick={() => router.push("/VendorChat")}><MessageCircle />CHAT</Button>
+        <Button variant="ghost" onClick={() => router.push("/VendorProfile")}><UserPen />PROFILE</Button>
+        <Button variant="ghost" onClick={() => router.push("/login")}><LogOut />LOGOUT</Button>
         <ModeToggle />
       </nav>
     </header>

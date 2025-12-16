@@ -1,4 +1,4 @@
-
+"use client"
 import * as React from "react"
 import {
   type ColumnDef,
@@ -34,7 +34,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useNavigate } from "react-router-dom"
+import { useRouter } from "next/navigation"
 
 const data: Payment[] = [
   {
@@ -168,7 +168,7 @@ export const columns: ColumnDef<Payment>[] = [
 ]
 
 export function VendorsTable() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -233,7 +233,7 @@ export function VendorsTable() {
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button className="ml-5" onClick={() => navigate('/vendorForm')}>Add</Button>
+        <Button className="ml-5" onClick={() => router.push('/vendorForm')}>Add</Button>
       </div>
       <div className="overflow-hidden rounded-md border">
         <Table>
