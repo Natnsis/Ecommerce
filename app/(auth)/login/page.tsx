@@ -1,3 +1,4 @@
+import { loginWithGoogle, loginWithPassword } from "@/app/auth/actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
@@ -6,6 +7,7 @@ import Link from "next/link"
 import { AiFillApple } from "react-icons/ai"
 import { FaFacebookF } from "react-icons/fa"
 import { FcGoogle } from "react-icons/fc"
+
 const Login = () => {
   return (
     <section className="flex h-screen">
@@ -17,7 +19,7 @@ const Login = () => {
           <p className="w-80 text-center text-sm font-primary mb-5">
             Welcome back!, Simplify your shoping, and find whatever you want on this platform.
           </p>
-          <form className="flex flex-col gap-4">
+          <form className="flex flex-col gap-4" action={loginWithPassword}>
             <Input placeholder="Email" className="rounded-full" name="email" />
             <Input placeholder="Password" className="rounded-full" name="password" />
             <Button className="rounded-full w-full">Sign In</Button>
@@ -28,17 +30,13 @@ const Login = () => {
             <Separator className="flex-1" />
           </div>
           <div className="flex justify-center gap-5 mt-5">
-            <Button variant="outline">
-              <FcGoogle size={20} />
-            </Button>
-            <Button variant="outline">
-              <FaFacebookF size={20} />
-            </Button>
-            <Button variant="outline">
-              <AiFillApple size={20} />
-            </Button>
+            <form action={loginWithGoogle} className="w-full">
+              <Button className="w-full" variant="outline">
+                <FcGoogle size={20} /> Google
+              </Button>
+            </form>
           </div>
-          <p className="font-priamry text-sm text-center mt-4">not a memeber? <Link href="/register" className="text-green-600">Register now</Link></p>
+          <p className="font-priamry text-sm text-center mt-4">Already a memeber? <Link href="/register" className="text-green-600">Register now</Link></p>
         </div>
       </div>
 

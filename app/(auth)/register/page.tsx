@@ -1,4 +1,5 @@
 "use client"
+import { loginWithGoogle, signupPassword } from "@/app/auth/actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
@@ -24,32 +25,29 @@ const Register = () => {
           <p className="w-80 text-center text-sm font-primary mb-5">
             Welcome to Gebeya, where you can find whatever you desire, connect with countless vendors
           </p>
-          <form className="flex flex-col gap-4">
-            <Input placeholder="Username" className="rounded-full" />
-            <Input placeholder="Password" className="rounded-full" />
-            <Button className="rounded-full w-full">Sign Up</Button>
+          <form className="flex flex-col gap-4" action={signupPassword}>
+            <Input placeholder="Email" className="rounded-full" name="email" />
+            <Input placeholder="Password" className="rounded-full" name="password" />
+            <Button className="rounded-full w-full" type="submit">Sign Up</Button>
           </form>
+
           <div className="flex items-center gap-2 mt-2">
             <Separator className="flex-1" />
             <p className="whitespace-nowrap font-primary">or continue with</p>
             <Separator className="flex-1" />
           </div>
           <div className="flex justify-center gap-5 mt-5">
-            <Button variant="outline">
-              <FcGoogle size={20} />
-            </Button>
-            <Button variant="outline">
-              <FaFacebookF size={20} />
-            </Button>
-            <Button variant="outline">
-              <AiFillApple size={20} />
-            </Button>
+            <form action={loginWithGoogle} className="w-full">
+              <Button className="w-full" variant="outline">
+                <FcGoogle size={20} /> Google
+              </Button>
+            </form>
           </div>
           <p className="font-priamry text-sm text-center mt-4">not a memeber? <Link href="/login" className="text-green-600">Login now</Link></p>
         </div>
       </div>
 
-    </section>
+    </section >
   )
 }
 
