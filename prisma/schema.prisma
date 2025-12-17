@@ -4,5 +4,114 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider  = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  VENDOR
+  CUSTOMER
+}
+
+model User {
+  id           String   @id @default(uuid())
+  firstName    String?
+  lastName     String?
+  email        String   @unique
+  password     String
+  phoneNumber  String?
+  address      String?
+  profileImage String?
+
+  role         Role
+
+  bio          String?        
+  products     Product[]     
+
+  transactionsAsVendor   Transaction[] @relation("VendorTransactions")
+  transactionsAsCustomer Transaction[] @relation("CustomerTransactions")
+
+  feedbacks    Feedback[]
+
+  sentChats     Chat[] @relation("SenderChats")
+  receivedChats Chat[] @relation("ReceiverChats")
+
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Category {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+
+  products    Product[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Float      // USD
+  inStock     Int
+  image       String?
+
+  vendorId    String
+  vendor      User     @relation(fields: [vendorId], references: [id])
+
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+
+  feedbacks   Feedback[]
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Transaction {
+  id         String   @id @default(uuid())
+
+  vendorId   String
+  vendor     User     @relation("VendorTransactions", fields: [vendorId], references: [id])
+
+  customerId String
+  customer   User     @relation("CustomerTransactions", fields: [customerId], references: [id])
+
+  amount     Float
+  createdAt  DateTime @default(now())
+}
+
+model Feedback {
+  id         String   @id @default(uuid())
+  title      String
+  note       String
+  response   String?
+
+  customerId String
+  customer   User     @relation(fields: [customerId], references: [id])
+
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+
+  createdAt  DateTime @default(now())
+}
+
+model Chat {
+  id          String   @id @default(uuid())
+
+  senderId    String
+  sender      User     @relation("SenderChats", fields: [senderId], references: [id])
+
+  receiverId  String
+  receiver    User     @relation("ReceiverChats", fields: [receiverId], references: [id])
+
+  message     String
+  isRead      Boolean  @default(false)
+
+  createdAt   DateTime @default(now())
+
+  @@index([senderId, receiverId])
 }
