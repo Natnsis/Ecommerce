@@ -6,7 +6,6 @@ import Link from "next/link"
 import { AiFillApple } from "react-icons/ai"
 import { FaFacebookF } from "react-icons/fa"
 import { FcGoogle } from "react-icons/fc"
-
 const Login = () => {
   return (
     <section className="flex h-screen">
@@ -19,8 +18,8 @@ const Login = () => {
             Welcome back!, Simplify your shoping, and find whatever you want on this platform.
           </p>
           <form className="flex flex-col gap-4">
-            <Input placeholder="Username" className="rounded-full" />
-            <Input placeholder="Password" className="rounded-full" />
+            <Input placeholder="Email" className="rounded-full" name="email" />
+            <Input placeholder="Password" className="rounded-full" name="password" />
             <Button className="rounded-full w-full">Sign In</Button>
           </form>
           <div className="flex items-center gap-2 mt-2">

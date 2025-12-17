@@ -1,10 +1,11 @@
 generator client {
   provider = "prisma-client"
-  output   = "../app/generated/prisma"
+  output   = "../src/generated/prisma" 
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
-  provider  = "postgresql"
+  provider = "postgresql"
 }
 
 enum Role {
@@ -13,105 +14,134 @@ enum Role {
   CUSTOMER
 }
 
-model User {
-  id           String   @id @default(uuid())
-  firstName    String?
-  lastName     String?
-  email        String   @unique
-  password     String
-  phoneNumber  String?
-  address      String?
-  profileImage String?
+model Profile {
+  id            String    @id @default(uuid())
+  userId        String    @unique 
+  firstName     String?
+  lastName      String?
+  phoneNumber   String?
+  address       String?
+  profileImage  String?   
+  role          Role      @default(CUSTOMER)
+  bio           String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 
-  role         Role
-
-  bio          String?        
-  products     Product[]     
-
+  products               Product[]
   transactionsAsVendor   Transaction[] @relation("VendorTransactions")
   transactionsAsCustomer Transaction[] @relation("CustomerTransactions")
+  feedbacks              Feedback[]
+  sentChats              Chat[]        @relation("SenderChats")
+  receivedChats          Chat[]        @relation("ReceiverChats")
 
-  feedbacks    Feedback[]
-
-  sentChats     Chat[] @relation("SenderChats")
-  receivedChats Chat[] @relation("ReceiverChats")
-
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  @@map("profiles")
 }
 
 model Category {
-  id          String   @id @default(uuid())
-  name        String   @unique
+  id          String    @id @default(uuid())
+  name        String    @unique
+  slug        String    @unique  
   description String?
-
   products    Product[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([name])
+  @@map("categories")
 }
 
 model Product {
-  id          String   @id @default(uuid())
+  id          String    @id @default(uuid())
   name        String
+  slug        String    @unique 
   description String?
-  price       Float      // USD
-  inStock     Int
-  image       String?
+  price       Decimal   @db.Decimal(10, 2) 
+  inStock     Int       @default(0)
+  images      String[]  
+  thumbnail   String?   
 
   vendorId    String
-  vendor      User     @relation(fields: [vendorId], references: [id])
+  vendor      Profile   @relation(fields: [vendorId], references: [id], onDelete: Cascade)
 
   categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
+  category    Category  @relation(fields: [categoryId], references: [id], onDelete: Restrict)
 
   feedbacks   Feedback[]
 
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([name])
+  @@index([vendorId])
+  @@index([categoryId])
+  @@map("products")
 }
 
 model Transaction {
-  id         String   @id @default(uuid())
+  id           String   @id @default(uuid())
+  amount       Decimal  @db.Decimal(10, 2)
+  status       TransactionStatus @default(PENDING) // Add status for real-world use
+  paymentIntentId String? // If using Stripe/PayPal etc.
 
-  vendorId   String
-  vendor     User     @relation("VendorTransactions", fields: [vendorId], references: [id])
+  vendorId     String
+  vendor       Profile  @relation("VendorTransactions", fields: [vendorId], references: [id], onDelete: Restrict)
 
-  customerId String
-  customer   User     @relation("CustomerTransactions", fields: [customerId], references: [id])
+  customerId   String
+  customer     Profile  @relation("CustomerTransactions", fields: [customerId], references: [id], onDelete: Restrict)
 
-  amount     Float
-  createdAt  DateTime @default(now())
+  createdAt    DateTime @default(now())
+
+  @@index([vendorId])
+  @@index([customerId])
+  @@index([createdAt])
+  @@map("transactions")
+}
+
+enum TransactionStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
 }
 
 model Feedback {
   id         String   @id @default(uuid())
-  title      String
+  rating     Int      @db.SmallInt 
+  title      String?
   note       String
-  response   String?
+  response   String?  
+  images     String[] 
 
   customerId String
-  customer   User     @relation(fields: [customerId], references: [id])
+  customer   Profile  @relation(fields: [customerId], references: [id], onDelete: Cascade)
 
   productId  String
-  product    Product  @relation(fields: [productId], references: [id])
+  product    Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@index([productId])
+  @@index([customerId])
+  @@map("feedbacks")
 }
 
 model Chat {
-  id          String   @id @default(uuid())
+  id         String   @id @default(uuid())
+  message    String
+  isRead     Boolean  @default(false)
+  images     String[] 
 
-  senderId    String
-  sender      User     @relation("SenderChats", fields: [senderId], references: [id])
+  senderId   String
+  sender     Profile  @relation("SenderChats", fields: [senderId], references: [id], onDelete: Cascade)
 
-  receiverId  String
-  receiver    User     @relation("ReceiverChats", fields: [receiverId], references: [id])
+  receiverId String
+  receiver   Profile  @relation("ReceiverChats", fields: [receiverId], references: [id], onDelete: Cascade)
 
-  message     String
-  isRead      Boolean  @default(false)
-
-  createdAt   DateTime @default(now())
+  createdAt  DateTime @default(now())
 
   @@index([senderId, receiverId])
+  @@index([createdAt sort: Desc])
+  @@map("chats")
 }
