@@ -2,13 +2,22 @@ import { loginWithGoogle, loginWithPassword } from "@/app/auth/actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
+import { getUserData } from "@/lib/getCurrentUser"
 import { ShoppingBasket } from "lucide-react"
 import Link from "next/link"
-import { AiFillApple } from "react-icons/ai"
-import { FaFacebookF } from "react-icons/fa"
+import { redirect } from "next/navigation"
 import { FcGoogle } from "react-icons/fc"
 
-const Login = () => {
+const Login = async () => {
+  const { role } = await getUserData()
+  if (role === 'CUSTOMER') {
+    redirect('/CustomerDashboard')
+  } else if (role === 'VENDOR') {
+    redirect('/vendor/dashboard')
+  } else if (role === 'ADMIN') {
+    redirect('/admin/dashboard')
+  }
+  console.log(role)
   return (
     <section className="flex h-screen">
       <div className="flex-1 flex items-center justify-center">

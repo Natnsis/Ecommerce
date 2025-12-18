@@ -53,7 +53,6 @@ export const loginWithGoogle = async () => {
 
 export const loginWithPassword = async (formData: FormData) => {
   const supabase = await createClient();
-
   const email = formData.get('email')?.toString().trim()
   const password = formData.get('password')?.toString()
 
@@ -72,6 +71,10 @@ export const loginWithPassword = async (formData: FormData) => {
   }
 
   redirect('/ClientDashboard')
+}
 
-
+export const logout = async () => {
+  const supabase = await createClient();
+  await supabase.auth.signOut();
+  redirect('/login')
 }

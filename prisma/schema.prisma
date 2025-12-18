@@ -24,8 +24,8 @@ model Profile {
   profileImage  String?   
   role          Role      @default(CUSTOMER)
   bio           String?
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt @default(now())
 
   products               Product[]
   transactionsAsVendor   Transaction[] @relation("VendorTransactions")
