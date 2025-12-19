@@ -1,13 +1,21 @@
-import Categories from "@/components/Categories"
-import Footer from "@/components/Footer"
-import ForYou from "@/components/ForYou"
-import Header from "@/components/Header"
-import { ModeToggle } from "@/components/mode-toggle"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Bell, ShoppingCart } from "lucide-react"
+import Categories from "@/components/Categories";
+import Footer from "@/components/Footer";
+import ForYou from "@/components/ForYou";
+import Header from "@/components/Header";
+import { ModeToggle } from "@/components/mode-toggle";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Bell, ShoppingCart } from "lucide-react";
 
-const Page = () => {
+const Page = async () => {
   return (
     <div>
       <Header />
@@ -38,7 +46,10 @@ const Page = () => {
             </Select>
           </div>
           <div className="w-full ml-5">
-            <Input className="border-0 shadow-0 focus:outline-none focus:border-none" placeholder="Search for a product or brand name..." />
+            <Input
+              className="border-0 shadow-0 focus:outline-none focus:border-none"
+              placeholder="Search for a product or brand name..."
+            />
           </div>
         </div>
         <div className="flex gap-5 w-30 ml-5 items-center">
@@ -54,7 +65,9 @@ const Page = () => {
             <h1 className="text-5xl font-quater">Limited Time Offer!</h1>
             <h1 className="text-5xl font-quater">Upto 50% Off</h1>
           </div>
-          <h2 className="text-2xl font-secondary mt-5">Redifine Your Everydary Style</h2>
+          <h2 className="text-2xl font-secondary mt-5">
+            Redifine Your Everydary Style
+          </h2>
         </div>
         <div>
           <img src="/home.jpg" className="h-[50vh] w-[40vw]" />
@@ -63,8 +76,8 @@ const Page = () => {
       <Categories />
       <ForYou />
       <Footer />
-    </div >
-  )
-}
+    </div>
+  );
+};
 
-export default Page 
+export default Page;

@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
-import { LogOut } from "lucide-react"
-import { Button } from "./ui/button"
-import { useRouter } from "next/navigation"
+import { LogOut } from "lucide-react";
+import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
 
 const Sidebar = () => {
   const router = useRouter();
@@ -11,7 +11,10 @@ const Sidebar = () => {
       <div>
         <div className="flex flex-col items-center mb-5">
           <h1 className="font-secondary-extrabold text-2xl">Gebeya</h1>
-          <img src="/admin.jpg" className="w-20 h-20 rounded-full border my-3" />
+          <img
+            src="/admin.jpg"
+            className="w-20 h-20 rounded-full border my-3"
+          />
         </div>
 
         <div className="flex flex-col gap-2 w-full">
@@ -40,13 +43,17 @@ const Sidebar = () => {
           </Button>
         </div>
       </div>
-
-      <Button className="flex gap-3 items-center cursor-pointer" onClick={() => router.push("/login")}>
-        <LogOut size={20} />
-        <p>log out</p>
-      </Button>
+      <form className="w-full">
+        <Button
+          className="flex gap-3 items-center cursor-pointer w-full"
+          type="submit"
+        >
+          <LogOut size={20} />
+          <p>log out</p>
+        </Button>
+      </form>
     </div>
-  )
-}
+  );
+};
 
-export default Sidebar
+export default Sidebar;

@@ -1,12 +1,9 @@
 "use client"
-import { loginWithGoogle, signupPassword } from "@/app/auth/actions"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { ShoppingBasket } from "lucide-react"
 import Link from "next/link"
-import { AiFillApple } from "react-icons/ai"
-import { FaFacebookF } from "react-icons/fa"
 import { FcGoogle } from "react-icons/fc"
 const Register = () => {
   return (
@@ -25,7 +22,7 @@ const Register = () => {
           <p className="w-80 text-center text-sm font-primary mb-5">
             Welcome to Gebeya, where you can find whatever you desire, connect with countless vendors
           </p>
-          <form className="flex flex-col gap-4" action={signupPassword}>
+          <form className="flex flex-col gap-4">
             <Input placeholder="Email" className="rounded-full" name="email" />
             <Input placeholder="Password" className="rounded-full" name="password" />
             <Button className="rounded-full w-full" type="submit">Sign Up</Button>
@@ -37,7 +34,7 @@ const Register = () => {
             <Separator className="flex-1" />
           </div>
           <div className="flex justify-center gap-5 mt-5">
-            <form action={loginWithGoogle} className="w-full">
+            <form className="w-full">
               <Button className="w-full" variant="outline">
                 <FcGoogle size={20} /> Google
               </Button>
