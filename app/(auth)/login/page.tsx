@@ -1,10 +1,12 @@
-"use client"
+import { loginWithPassword } from "@/app/actions/auth";
+import { signUpWithGoogle } from "@/app/actions/google";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { ShoppingBasket } from "lucide-react";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
+
 const Login = async () => {
   return (
     <section className="flex h-screen">
@@ -32,7 +34,7 @@ const Login = async () => {
             <Separator className="flex-1" />
           </div>
           <div className="flex justify-center gap-5 mt-5">
-            <form className="w-full">
+            <form className="w-full" action={signUpWithGoogle}>
               <Button className="w-full" variant="outline">
                 <FcGoogle size={20} /> Google
               </Button>
