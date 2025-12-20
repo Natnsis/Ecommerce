@@ -1,11 +1,10 @@
+"use client"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { ShoppingBasket } from "lucide-react";
 import Link from "next/link";
-import { redirect } from "next/navigation";
 import { FcGoogle } from "react-icons/fc";
-
 const Login = async () => {
   return (
     <section className="flex h-screen">
