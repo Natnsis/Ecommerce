@@ -19,7 +19,7 @@ const Login = async () => {
             Welcome back!, Simplify your shoping, and find whatever you want on
             this platform.
           </p>
-          <form className="flex flex-col gap-4" action={loginWithPassword}>
+          <form className="flex flex-col gap-4" >
             <Input placeholder="Email" className="rounded-full" name="email" />
             <Input
               placeholder="Password"
@@ -34,7 +34,7 @@ const Login = async () => {
             <Separator className="flex-1" />
           </div>
           <div className="flex justify-center gap-5 mt-5">
-            <form className="w-full" action={signUpWithGoogle}>
+            <form className="w-full" >
               <Button className="w-full" variant="outline">
                 <FcGoogle size={20} /> Google
               </Button>
