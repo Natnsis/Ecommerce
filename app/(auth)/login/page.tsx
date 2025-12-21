@@ -1,8 +1,7 @@
-import { loginWithPassword } from "@/app/actions/auth";
-import { signUpWithGoogle } from "@/app/actions/google";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
+import { loginWithPassword } from "@/lib/auth";
 import { ShoppingBasket } from "lucide-react";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
@@ -19,7 +18,7 @@ const Login = async () => {
             Welcome back!, Simplify your shoping, and find whatever you want on
             this platform.
           </p>
-          <form className="flex flex-col gap-4" >
+          <form className="flex flex-col gap-4" action={loginWithPassword} >
             <Input placeholder="Email" className="rounded-full" name="email" />
             <Input
               placeholder="Password"
