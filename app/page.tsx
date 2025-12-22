@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Bell, ShoppingCart } from "lucide-react";
 
-const Page = async () => {
+const Page = () => {
   return (
     <div>
       <Header />

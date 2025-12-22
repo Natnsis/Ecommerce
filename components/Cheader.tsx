@@ -1,3 +1,4 @@
+"use client"
 import { ShoppingBag } from "lucide-react";
 import { Button } from "./ui/button";
 import { ModeToggle } from "./mode-toggle";
@@ -21,8 +22,18 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
+import { logout } from "@/action/auth";
+import { useRouter } from 'next/navigation'
 
 const Cheader = () => {
+  const router = useRouter();
+
+  const handleLogout = async (e: any) => {
+    e.preventDefault();
+    await logout();
+    router.push('/login')
+  }
+
   return (
     <div className="px-5 py-3 flex justify-between">
       <h1 className="font-quater text-2xl">Gebeya</h1>
@@ -59,7 +70,7 @@ const Cheader = () => {
             <DropdownMenuSeparator />
             <DropdownMenuItem>Natnael Sisay</DropdownMenuItem>
             <DropdownMenuItem>
-              <Button>Logout</Button>
+              <Button onClick={handleLogout}>Logout</Button>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

@@ -5,15 +5,26 @@ import { Separator } from "@/components/ui/separator";
 import { ShoppingBasket } from "lucide-react";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { loginWithPassword } from "@/action/auth";
 import { supabase } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 
 const Login = () => {
+  const router = useRouter();
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        router.push("/CustomerDashboard");
+      }
+    };
+
+    checkUser();
+  }, [router]);
+
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const router = useRouter();
   const handleSubmit = async (e: any) => {
     e.preventDefault();
     try {

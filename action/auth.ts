@@ -14,4 +14,9 @@ export const registerWithPassword = async (email: string, password: string) => {
     password
   })
   if (error) throw error
-} 
+}
+
+export const logout = async () => {
+  const { error } = await supabase.auth.signOut()
+  if (error) throw error
+}
