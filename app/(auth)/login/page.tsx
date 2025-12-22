@@ -6,7 +6,7 @@ import { ShoppingBasket } from "lucide-react";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
 import { useEffect, useState } from 'react'
-import { loginWithPassword } from "@/action/auth";
+import { loginWithGoogle, loginWithPassword } from "@/action/auth";
 import { supabase } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 
@@ -51,24 +51,31 @@ const Login = () => {
             Welcome back!, Simplify your shoping, and find whatever you want on
             this platform.
           </p>
-          <Input placeholder="Email" className="rounded-full" onChange={(e) => setEmail(e.target.value)} />
-          <Input
-            placeholder="Password"
-            className="rounded-full"
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Button className="rounded-full w-full" onClick={handleSubmit}>Sign In</Button>
+          <div className="flex flex-col gap-4">
+            <Input placeholder="Email" className="rounded-full" onChange={(e) => setEmail(e.target.value)} />
+            <Input
+              placeholder="Password"
+              className="rounded-full"
+              onChange={(e) => setPassword(e.target.value)}
+            />
+            <Button className="rounded-full w-full" onClick={handleSubmit}>Sign In</Button>
+          </div>
           <div className="flex items-center gap-2 mt-2">
             <Separator className="flex-1" />
             <p className="whitespace-nowrap font-primary">or continue with</p>
             <Separator className="flex-1" />
           </div>
           <div className="flex justify-center gap-5 mt-5">
-            <form className="w-full" >
-              <Button className="w-full" variant="outline">
-                <FcGoogle size={20} /> Google
-              </Button>
-            </form>
+            <Button className="w-full" variant="outline" onClick={async (e) => {
+              e.preventDefault();
+              try {
+                await loginWithGoogle();
+              } catch (err) {
+                console.log(err);
+              }
+            }}>
+              <FcGoogle size={20} /> Google
+            </Button>
           </div>
           <p className="text-xs text-center text-gray-500 mt-2">
             Google sign-in is used for Customer accounts
@@ -85,7 +92,7 @@ const Login = () => {
       <div className="w-[45vw]">
         <img src="/login.jpg" className="h-screen w-full object-cover" />
       </div>
-    </section>
+    </section >
   );
 };
 
