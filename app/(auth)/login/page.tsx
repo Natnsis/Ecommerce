@@ -1,12 +1,34 @@
+"use client"
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { loginWithPassword } from "@/lib/auth";
 import { ShoppingBasket } from "lucide-react";
 import Link from "next/link";
 import { FcGoogle } from "react-icons/fc";
+import { useState } from 'react'
+import { loginWithPassword } from "@/action/auth";
+import { supabase } from "@/utils/supabase/client";
+import { useRouter } from "next/navigation";
 
-const Login = async () => {
+const Login = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const router = useRouter();
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    try {
+      await loginWithPassword(email, password)
+      const user = await supabase.auth.getUser();
+      if (!user) {
+        alert('not logged in bro')
+        router.push("/");
+      }
+      router.push("/CustomerDashboard");
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
   return (
     <section className="flex h-screen">
       <div className="flex-1 flex items-center justify-center">
@@ -18,15 +40,13 @@ const Login = async () => {
             Welcome back!, Simplify your shoping, and find whatever you want on
             this platform.
           </p>
-          <form className="flex flex-col gap-4" action={loginWithPassword} >
-            <Input placeholder="Email" className="rounded-full" name="email" />
-            <Input
-              placeholder="Password"
-              className="rounded-full"
-              name="password"
-            />
-            <Button className="rounded-full w-full">Sign In</Button>
-          </form>
+          <Input placeholder="Email" className="rounded-full" onChange={(e) => setEmail(e.target.value)} />
+          <Input
+            placeholder="Password"
+            className="rounded-full"
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button className="rounded-full w-full" onClick={handleSubmit}>Sign In</Button>
           <div className="flex items-center gap-2 mt-2">
             <Separator className="flex-1" />
             <p className="whitespace-nowrap font-primary">or continue with</p>

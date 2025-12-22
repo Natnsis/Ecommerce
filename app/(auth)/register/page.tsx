@@ -1,12 +1,24 @@
 "use client"
+import { registerWithPassword } from "@/action/auth"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
-import { registerWithPassword } from "@/lib/auth"
 import { ShoppingBasket } from "lucide-react"
 import Link from "next/link"
+import { useState } from "react"
 import { FcGoogle } from "react-icons/fc"
 const Register = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+
+  const handleSubmit = async (e: any) => {
+    e.preventDefault();
+    try {
+      await registerWithPassword(email, password);
+    } catch (e) {
+      console.log(e)
+    }
+  }
   return (
     <section className="flex h-screen">
       <div className="w-[45vw]">
@@ -23,11 +35,19 @@ const Register = () => {
           <p className="w-80 text-center text-sm font-primary mb-5">
             Welcome to Gebeya, where you can find whatever you desire, connect with countless vendors
           </p>
-          <form className="flex flex-col gap-4" action={registerWithPassword}>
-            <Input placeholder="Email" className="rounded-full" name="email" />
-            <Input placeholder="Password" className="rounded-full" name="password" />
-            <Button className="rounded-full w-full" type="submit">Sign Up</Button>
-          </form>
+          <Input
+            placeholder="Email"
+            className="rounded-full"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+          />
+          <Input
+            placeholder="Password"
+            className="rounded-full"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+          <Button className="rounded-full w-full" onClick={handleSubmit}>Sign Up</Button>
 
           <div className="flex items-center gap-2 mt-2">
             <Separator className="flex-1" />
