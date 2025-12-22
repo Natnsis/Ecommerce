@@ -24,16 +24,29 @@ import {
 } from "@/components/ui/avatar"
 import { logout } from "@/action/auth";
 import { useRouter } from 'next/navigation'
+import { supabase } from "@/utils/supabase/client";
+import { useEffect, useState } from "react";
 
 const Cheader = () => {
   const router = useRouter();
-
+  const [user, setUser] = useState<any>(null)
+  const [loading, setLoading] = useState(true);
   const handleLogout = async (e: any) => {
     e.preventDefault();
     await logout();
-    router.push('/login')
+    router.push('/login');
   }
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+      setLoading(false)
+    })
+  });
 
+  if (!user) {
+    router.push("/login")
+  }
+  if (loading) return <div>Loading...</div>;
   return (
     <div className="px-5 py-3 flex justify-between">
       <h1 className="font-quater text-2xl">Gebeya</h1>

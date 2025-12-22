@@ -9,11 +9,11 @@ export const loginWithPassword = async (email: string, password: string) => {
 }
 
 export const registerWithPassword = async (email: string, password: string) => {
-  const { error } = await supabase.auth.signUp({
+  const { error: signUpError } = await supabase.auth.signUp({
     email,
     password
   })
-  if (error) throw error
+  if (signUpError) throw signUpError
 }
 
 export const logout = async () => {

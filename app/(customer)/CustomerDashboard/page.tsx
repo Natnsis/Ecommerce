@@ -4,7 +4,7 @@ import Chero from "@/components/Chero"
 import CustomerBooks from "@/components/CustomerBooks"
 import DiscoverCards from "@/components/DiscoverCards"
 
-const CustomerDashboard = async () => {
+const CustomerDashboard = () => {
   return (
     <section>
       <Cheader />
