@@ -1,11 +1,27 @@
 "use client";
-
 import { LogOut } from "lucide-react";
 import { Button } from "./ui/button";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
+import { FormEvent, useState } from "react";
 
 const Sidebar = () => {
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const handleLogout = async (e: FormEvent) => {
+    e.preventDefault()
+    const supabase = createClient();
+    setIsLoading(true);
+    const { error } = await supabase.auth.signOut();
+    setIsLoading(false);
+    if (error) {
+      console.error("Logout error:", error);
+      alert("Failed to log out. Please try again.");
+    } else {
+      router.push("/login");
+      router.refresh();
+    }
+  };
   return (
     <div className="p-5 flex flex-col justify-between items-center h-screen border-r w-60">
       <div>
@@ -47,9 +63,10 @@ const Sidebar = () => {
         <Button
           className="flex gap-3 items-center cursor-pointer w-full"
           type="submit"
+          onClick={handleLogout}
         >
           <LogOut size={20} />
-          <p>log out</p>
+          <p>{isLoading ? "logging out.." : "Logout"}</p>
         </Button>
       </form>
     </div>

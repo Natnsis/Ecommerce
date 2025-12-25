@@ -233,7 +233,7 @@ export function VendorsTable() {
               })}
           </DropdownMenuContent>
         </DropdownMenu>
-        <Button className="ml-5" onClick={() => router.push('/vendorForm')}>Add</Button>
+        <Button className="ml-5" onClick={() => router.push('/AdminAddVendor')}>Add</Button>
       </div>
       <div className="overflow-hidden rounded-md border">
         <Table>

@@ -1,4 +1,5 @@
-import { useNavigate } from "react-router-dom"
+"use client"
+import { useRouter } from "next/navigation"
 import { Button } from "./ui/button"
 import { Input } from "./ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select"
@@ -6,7 +7,7 @@ import { useState } from "react"
 import { useDropzone } from "react-dropzone"
 
 const AddVendors = () => {
-  const navigate = useNavigate()
+  const router = useRouter()
   const [image, setImage] = useState(null)
 
   const onDrop = (acceptedFiles) => {
@@ -23,7 +24,7 @@ const AddVendors = () => {
       <div className="border rounded-lg p-5 h-full">
         <div className="flex justify-between">
           <h1 className="font-quater text-xl">Add Vendors</h1>
-          <Button onClick={() => navigate('/avendor')}>Go Back</Button>
+          <Button onClick={() => router.push('/AdminDashboard')}>Go Back</Button>
         </div>
         <div className="grid grid-cols-5 gap-5 w-full justify-between">
           <div className="col-span-3 px-5 rounded">
