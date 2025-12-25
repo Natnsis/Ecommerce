@@ -37,7 +37,7 @@ const Cheader = async () => {
         </Select>
 
         {/* Client-only portion that shows avatar and logout */}
-        <CheaderClient profile={profile} />
+        <CheaderClient />
       </div>
     </div>
   );
