@@ -31,13 +31,12 @@ const AddVendors = () => {
             <h1 className="font-primary text-gray-400">fill out the following fields</h1>
             <div className="mt-5 flex gap-5 w-full">
               <div className="w-full">
-                <label className="font-primary" htmlFor="fName">First Name</label>
+                <label className="font-primary" htmlFor="fName">Full Name</label>
                 <Input name="fName" />
               </div>
-
               <div className="w-full">
-                <label className="font-primary" htmlFor="fName">Last Name</label>
-                <Input name="fName" />
+                <label className="font-primary" htmlFor="fName">Email</label>
+                <Input name="fName" type="email" />
               </div>
             </div>
             <div className="mt-5 flex gap-5 w-full">
@@ -53,10 +52,6 @@ const AddVendors = () => {
             </div>
 
             <div className="mt-5 flex gap-5 w-full">
-              <div className="w-1/2">
-                <label className="font-primary" htmlFor="fName">Email</label>
-                <Input name="fName" type="email" />
-              </div>
             </div>
 
             <h1 className="font-primary text-gray-400 mt-5">Personal Data</h1>
