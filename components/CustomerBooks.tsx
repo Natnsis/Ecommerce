@@ -1,16 +1,16 @@
 const books = [
   { id: 1, img: "/books/book1.jpg" },
-  { id: 1, img: "/books/book2.jpg" },
-  { id: 1, img: "/books/book3.jpg" },
-  { id: 1, img: "/books/book4.jpg" },
-  { id: 1, img: "/books/book5.jpg" },
-  { id: 1, img: "/books/book6.jpg" },
-  { id: 1, img: "/books/book7.jpg" },
-  { id: 1, img: "/books/book8.jpg" },
-  { id: 1, img: "/books/book9.jpg" },
-  { id: 1, img: "/books/book10.jpg" },
-  { id: 1, img: "/books/book11.jpg" },
-  { id: 1, img: "/books/book12.jpg" },
+  { id: 2, img: "/books/book2.jpg" },
+  { id: 3, img: "/books/book3.jpg" },
+  { id: 4, img: "/books/book4.jpg" },
+  { id: 5, img: "/books/book5.jpg" },
+  { id: 6, img: "/books/book6.jpg" },
+  { id: 7, img: "/books/book7.jpg" },
+  { id: 8, img: "/books/book8.jpg" },
+  { id: 9, img: "/books/book9.jpg" },
+  { id: 10, img: "/books/book10.jpg" },
+  { id: 11, img: "/books/book11.jpg" },
+  { id: 12, img: "/books/book12.jpg" },
 ]
 
 const CustomerBooks = () => {

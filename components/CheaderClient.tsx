@@ -1,4 +1,6 @@
 "use client";
+
+import { createClient } from "@/lib/supabase/client";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import {
   DropdownMenu,
@@ -8,33 +10,34 @@ import {
 } from "./ui/dropdown-menu";
 import { useRouter } from "next/navigation";
 
-export default function CheaderClient({ profile }: { profile: any }) {
+export default function CheaderClient() {
   const router = useRouter();
+  const supabase = createClient();
 
-  const first = profile?.firstName ?? "";
-  const last = profile?.lastName ?? "";
-  const initials =
-    (first?.[0] ?? "") + (last?.[0] ?? "") || (profile?.firstName?.[0] ?? "G");
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Logout error:", error);
+      alert("Failed to log out. Please try again.");
+    }
+    router.push("/login");
+    router.refresh();
+  };
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Avatar>
-          <AvatarImage
-            src={profile?.profileImage ?? "https://github.com/shadcn.png"}
-            alt={profile?.firstName ?? "Guest"}
-          />
-          <AvatarFallback>{initials.toUpperCase()}</AvatarFallback>
+      <DropdownMenuTrigger asChild>
+        <Avatar className="cursor-pointer">
+          <AvatarImage src="/admin.jpg" alt="User avatar" />
+          <AvatarFallback>U</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
-        <DropdownMenuItem onClick={() => router.push("/CustomerDashboard")}>
+      <DropdownMenuContent align="end">
+        <DropdownMenuItem onSelect={() => router.push("/profile")}>
           Profile
         </DropdownMenuItem>
-        <DropdownMenuItem>
-          <form>
-            <button className="w-full text-left">Logout</button>
-          </form>
+        <DropdownMenuItem onSelect={handleLogout}>
+          Logout
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
