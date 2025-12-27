@@ -5,6 +5,7 @@ import { Input } from "./ui/input"
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select"
 import { useState } from "react"
 import { useDropzone } from "react-dropzone"
+import { createClient } from "@/lib/supabase/client"
 
 const AddVendors = () => {
   const router = useRouter()
@@ -16,8 +17,14 @@ const AddVendors = () => {
   const [phone, setPhone] = useState("")
   const [address, setAddress] = useState("")
   const [category, setCategory] = useState("")
+  const supabase = createClient();
 
-  const signUpVendors = () => {
+  const signUpVendors = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+    });
 
   }
 
@@ -47,22 +54,39 @@ const AddVendors = () => {
             <div className="mt-5 flex gap-5 w-full">
               <div className="w-full">
                 <label className="font-primary" htmlFor="fName">Full Name</label>
-                <Input name="fName" />
+                <Input
+                  onChange={(e) => setFullName(e.target.value)}
+                  value={fullName}
+                />
               </div>
+
               <div className="w-full">
                 <label className="font-primary" htmlFor="fName">Email</label>
-                <Input name="fName" type="email" />
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                />
               </div>
             </div>
+
             <div className="mt-5 flex gap-5 w-full">
               <div className="w-full">
                 <label className="font-primary" htmlFor="fName">Password</label>
-                <Input name="fName" type="password" />
+                <Input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                />
               </div>
 
               <div className="w-full">
                 <label className="font-primary" htmlFor="fName">Confirm</label>
-                <Input name="fName" type="password" />
+                <Input
+                  type="password"
+                  value={confirm}
+                  onChange={(e) => setConfirm(e.target.value)}
+                />
               </div>
             </div>
 
@@ -73,17 +97,23 @@ const AddVendors = () => {
             <div className="mt-2 flex gap-5 w-full">
               <div className="w-full">
                 <label className="font-primary" htmlFor="fName">P.No</label>
-                <Input name="fName" type="number" />
+                <Input
+                  type="number"
+                  value={phone}
+                  onChange={(e) => setPhone(e.target.value)}
+                />
               </div>
 
               <div className="w-full">
                 <label className="font-primary" htmlFor="fName">Address</label>
-                <Input name="fName" type="password" />
+                <Input
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                />
               </div>
             </div>
 
             <div className="mt-5">
-
               <h1 className="font-primary text-gray-400 mt-5 mb-2">What the Vendor Sells</h1>
               <div className="flex gap-10">
                 <Select>
