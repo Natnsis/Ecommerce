@@ -9,6 +9,17 @@ import { useDropzone } from "react-dropzone"
 const AddVendors = () => {
   const router = useRouter()
   const [image, setImage] = useState(null)
+  const [fullName, setFullName] = useState("")
+  const [email, setEmail] = useState("")
+  const [password, setPassword] = useState("")
+  const [confirm, setConfirm] = useState("")
+  const [phone, setPhone] = useState("")
+  const [address, setAddress] = useState("")
+  const [category, setCategory] = useState("")
+
+  const signUpVendors = () => {
+
+  }
 
   const onDrop = (acceptedFiles) => {
     const file = acceptedFiles[0]
@@ -19,6 +30,10 @@ const AddVendors = () => {
     accept: { "image/*": [] },
     onDrop,
   })
+
+  const RegisterVendor = () => {
+    console.log("hehe")
+  }
   return (
     <section className="h-screen w-screen p-10">
       <div className="border rounded-lg p-5 h-full">
