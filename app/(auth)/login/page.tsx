@@ -8,6 +8,7 @@ import { FcGoogle } from "react-icons/fc";
 import { useState } from 'react';
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner"
 
 const Login = () => {
   const [email, setEmail] = useState<string>("")
@@ -48,11 +49,11 @@ const Login = () => {
         default:
           router.push("/login");
       }
-      alert("User logged in successfully");
+      toast("User logged in successfully");
       console.log("Logged in user:", authData.user, "Role:", role);
     } catch (err: any) {
       console.error("Login error:", err);
-      alert(err.message || "Login failed. Please check your credentials.");
+      toast(err.message || "Login failed. Please check your credentials.");
     } finally {
       setIsLoading(false);
     }
@@ -68,7 +69,7 @@ const Login = () => {
     });
     if (error) {
       console.error("Google login error:", error);
-      alert("Failed to sign in with Google.");
+      toast("Failed to sign in with Google.");
     }
   };
 

@@ -8,7 +8,6 @@ import {
   UserPen,
 } from "lucide-react";
 import { ModeToggle } from "./mode-toggle";
-import { logout } from "@/app/auth/actions";
 import { useRouter } from "next/navigation";
 
 const Vheader = () => {
@@ -32,7 +31,7 @@ const Vheader = () => {
           <UserPen />
           PROFILE
         </Button>
-        <form action={logout}>
+        <form>
           <Button variant="ghost" type="submit">
             <LogOut />
             LOGOUT

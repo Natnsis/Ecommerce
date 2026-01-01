@@ -7,6 +7,7 @@ import Link from "next/link"
 import { FcGoogle } from "react-icons/fc"
 import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
+import { toast } from "sonner"
 
 const Register = () => {
   const [email, setEmail] = useState<string>("")
@@ -36,11 +37,11 @@ const Register = () => {
           { onConflict: "id" }
         );
       if (profilesError) throw profilesError;
-      alert("User registered successfully");
+      toast("User registered successfully");
       console.log("Registered user:", data.user);
     } catch (err: any) {
       console.error("Registration error:", err);
-      alert(err.message || "Registration failed. Please try again.");
+      toast(err.message || "Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -56,7 +57,7 @@ const Register = () => {
     });
     if (error) {
       console.error("Google login error:", error);
-      alert("Failed to sign in with Google.");
+      toast("Failed to sign in with Google.");
     }
   };
 
@@ -116,5 +117,6 @@ const Register = () => {
     </section >
   )
 }
+import { toast } from "sonner"
 
 export default Register

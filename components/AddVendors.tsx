@@ -6,9 +6,12 @@ import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrig
 import { useState } from "react"
 import { useDropzone } from "react-dropzone"
 import { createClient } from "@/lib/supabase/client"
+import { toast } from "sonner"
 
 const AddVendors = () => {
   const router = useRouter()
+  const supabase = createClient();
+  const [url, setUrl] = useState(null)
   const [image, setImage] = useState(null)
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
@@ -17,20 +20,27 @@ const AddVendors = () => {
   const [phone, setPhone] = useState("")
   const [address, setAddress] = useState("")
   const [category, setCategory] = useState("")
-  const supabase = createClient();
+  const [loading, setLoading] = useState(false)
 
+  //TODO:i add vendor with image
   const signUpVendors = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password !== confirm) {
+      toast("both passwords are not the same")
+    }
+
     const { error } = await supabase.auth.signUp({
       email,
       password,
     });
-
   }
 
+  console.log(image)
+  //FIXME: fix the typeing error
   const onDrop = (acceptedFiles) => {
     const file = acceptedFiles[0]
-    setImage(URL.createObjectURL(file))
+    setUrl(URL.createObjectURL(file))
+    setImage(file)
   }
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -38,9 +48,7 @@ const AddVendors = () => {
     onDrop,
   })
 
-  const RegisterVendor = () => {
-    console.log("hehe")
-  }
+  console.log(image)
   return (
     <section className="h-screen w-screen p-10">
       <div className="border rounded-lg p-5 h-full">
@@ -116,7 +124,7 @@ const AddVendors = () => {
             <div className="mt-5">
               <h1 className="font-primary text-gray-400 mt-5 mb-2">What the Vendor Sells</h1>
               <div className="flex gap-10">
-                <Select>
+                <Select onValueChange={(value) => setCategory(value)}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
@@ -131,7 +139,7 @@ const AddVendors = () => {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-                <Button>Submit</Button>
+                <Button onClick={signUpVendors}>Submit</Button>
               </div>
             </div>
           </div>
