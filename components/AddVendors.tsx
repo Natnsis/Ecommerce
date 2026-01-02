@@ -1,131 +1,217 @@
-"use client"
-import { useRouter } from "next/navigation"
-import { Button } from "./ui/button"
-import { Input } from "./ui/input"
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select"
-import { useState } from "react"
-import { useDropzone } from "react-dropzone"
-import { createClient } from "@/lib/supabase/client"
-import { toast } from "sonner"
+"use client";
+
+import { useRouter } from "next/navigation";
+import { Button } from "./ui/button";
+import { Input } from "./ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "./ui/select";
+import { useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { createClient } from "@/lib/supabase/client";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { vendorInputs, vendorType } from "@/app/schema/vendorSchema";
 
 const AddVendors = () => {
-  const router = useRouter()
+  const router = useRouter();
   const supabase = createClient();
-  const [url, setUrl] = useState(null)
-  const [image, setImage] = useState(null)
-  const [fullName, setFullName] = useState("")
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [confirm, setConfirm] = useState("")
-  const [phone, setPhone] = useState("")
-  const [address, setAddress] = useState("")
-  const [category, setCategory] = useState("")
-  const [loading, setLoading] = useState(false)
+  const [url, setUrl] = useState<string | null>(null);
+  const [image, setImage] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
 
-  //TODO:i add vendor with image
-  const signUpVendors = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (password !== confirm) {
-      toast("both passwords are not the same")
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    setValue,
+    watch,
+  } = useForm<vendorType>({
+    resolver: zodResolver(vendorInputs),
+  });
+
+  const category = watch("category");
+
+  const signUpVendors = async (data: vendorType) => {
+    setLoading(true);
+    try {
+      // Step 1: Create the user account
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (signUpError) throw signUpError;
+      if (!signUpData.user) throw new Error("Failed to create user");
+
+      const userId = signUpData.user.id;
+
+      // Step 2: Immediately sign in the new user to establish a session
+      // This is critical for RLS policies on storage and profiles
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (signInError) {
+        console.warn("Auto sign-in failed (possibly email confirmation enabled):", signInError.message);
+        // Continue anyway — we'll try upload/insert, but may fail due to no session
+      }
+
+      let avatarUrl: string | null = null;
+
+      // Step 3: Upload image if provided
+      if (image) {
+        const fileExt = image.name.split(".").pop()?.toLowerCase() || "jpg";
+        const fileName = `profile-${userId}.${fileExt}`;
+        const filePath = `vendors/${userId}/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("Images")
+          .upload(filePath, image, {
+            cacheControl: "3600",
+            upsert: true,
+          });
+
+        if (uploadError) {
+          console.error("Upload failed:", uploadError);
+          toast.error("Image upload failed: " + uploadError.message);
+          // Continue without image
+        } else {
+          const { data: urlData } = supabase.storage.from("Images").getPublicUrl(filePath);
+          avatarUrl = urlData.publicUrl;
+        }
+      }
+
+      // Step 4: Insert/Update profile
+      const { error: profileError } = await supabase.from("profiles").upsert(
+        {
+          id: userId,
+          full_name: data.fullName,
+          avatar_url: avatarUrl,
+          role: "VENDOR",
+          phone: data.phone,
+          address: data.address,
+          category: data.category,
+        },
+        { onConflict: "id" }
+      );
+
+      if (profileError) {
+        console.log("Profile insert failed:", profileError);
+        toast.error("Profile update failed: " + profileError.message);
+        throw profileError;
+      }
+
+      toast.success("Vendor added successfully!");
+      router.push("/AdminDashboard");
+    } catch (error: any) {
+      console.error("Error adding vendor:", error);
+      toast.error(error.message || "Failed to add vendor");
+    } finally {
+      setLoading(false);
     }
+  };
 
-    const { error } = await supabase.auth.signUp({
-      email,
-      password,
-    });
-  }
-
-  console.log(image)
-  //FIXME: fix the typeing error
-  const onDrop = (acceptedFiles) => {
-    const file = acceptedFiles[0]
-    setUrl(URL.createObjectURL(file))
-    setImage(file)
-  }
+  const onDrop = (acceptedFiles: File[]) => {
+    const file = acceptedFiles[0];
+    if (file) {
+      setImage(file);
+      setUrl(URL.createObjectURL(file));
+    }
+  };
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     accept: { "image/*": [] },
     onDrop,
-  })
+    multiple: false,
+  });
 
-  console.log(image)
   return (
     <section className="h-screen w-screen p-10">
       <div className="border rounded-lg p-5 h-full">
-        <div className="flex justify-between">
+        <div className="flex justify-between items-center mb-8">
           <h1 className="font-quater text-xl">Add Vendors</h1>
-          <Button onClick={() => router.push('/AdminDashboard')}>Go Back</Button>
+          <Button onClick={() => router.push("/AdminDashboard")} variant="outline">
+            Go Back
+          </Button>
         </div>
-        <div className="grid grid-cols-5 gap-5 w-full justify-between">
-          <div className="col-span-3 px-5 rounded">
-            <h1 className="font-primary text-gray-400">fill out the following fields</h1>
-            <div className="mt-5 flex gap-5 w-full">
+        <form onSubmit={handleSubmit(signUpVendors)} className="grid grid-cols-5 gap-5">
+          <div className="col-span-3 px-5">
+            <h1 className="font-primary text-gray-400 mb-4">
+              Fill out the following fields
+            </h1>
+            {/* Full Name & Email */}
+            <div className="flex gap-5 mb-5">
               <div className="w-full">
-                <label className="font-primary" htmlFor="fName">Full Name</label>
-                <Input
-                  onChange={(e) => setFullName(e.target.value)}
-                  value={fullName}
-                />
+                <label className="font-primary block mb-1">Full Name</label>
+                <Input {...register("fullName")} placeholder="John Doe" />
+                {errors.fullName && (
+                  <p className="text-red-500 text-sm mt-1">{errors.fullName.message}</p>
+                )}
               </div>
-
               <div className="w-full">
-                <label className="font-primary" htmlFor="fName">Email</label>
-                <Input
-                  type="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-            </div>
-
-            <div className="mt-5 flex gap-5 w-full">
-              <div className="w-full">
-                <label className="font-primary" htmlFor="fName">Password</label>
-                <Input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-              </div>
-
-              <div className="w-full">
-                <label className="font-primary" htmlFor="fName">Confirm</label>
-                <Input
-                  type="password"
-                  value={confirm}
-                  onChange={(e) => setConfirm(e.target.value)}
-                />
+                <label className="font-primary block mb-1">Email</label>
+                <Input {...register("email")} type="email" placeholder="john@example.com" />
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
+                )}
               </div>
             </div>
-
-            <div className="mt-5 flex gap-5 w-full">
-            </div>
-
-            <h1 className="font-primary text-gray-400 mt-5">Personal Data</h1>
-            <div className="mt-2 flex gap-5 w-full">
+            {/* Password & Confirm */}
+            <div className="flex gap-5 mb-5">
               <div className="w-full">
-                <label className="font-primary" htmlFor="fName">P.No</label>
-                <Input
-                  type="number"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
+                <label className="font-primary block mb-1">Password</label>
+                <Input type="password" {...register("password")} />
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+                )}
               </div>
-
               <div className="w-full">
-                <label className="font-primary" htmlFor="fName">Address</label>
-                <Input
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                />
+                <label className="font-primary block mb-1">Confirm Password</label>
+                <Input type="password" {...register("confirm")} />
+                {errors.confirm && (
+                  <p className="text-red-500 text-sm mt-1">{errors.confirm.message}</p>
+                )}
               </div>
             </div>
-
-            <div className="mt-5">
-              <h1 className="font-primary text-gray-400 mt-5 mb-2">What the Vendor Sells</h1>
-              <div className="flex gap-10">
-                <Select onValueChange={(value) => setCategory(value)}>
-                  <SelectTrigger className="w-[180px]">
+            {/* Personal Data */}
+            <h1 className="font-primary text-gray-400 mt-8 mb-3">Personal Data</h1>
+            <div className="flex gap-5 mb-5">
+              <div className="w-full">
+                <label className="font-primary block mb-1">Phone Number</label>
+                <Input type="tel" {...register("phone")} placeholder="+1234567890" />
+                {errors.phone && (
+                  <p className="text-red-500 text-sm mt-1">{errors.phone.message}</p>
+                )}
+              </div>
+              <div className="w-full">
+                <label className="font-primary block mb-1">Address</label>
+                <Input {...register("address")} placeholder="123 Main St, City" />
+                {errors.adress && (
+                  <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>
+                )}
+              </div>
+            </div>
+            {/* Category Selection */}
+            <h1 className="font-primary text-gray-400 mt-8 mb-3">
+              What the Vendor Sells
+            </h1>
+            <div className="flex gap-6 items-end">
+              <div>
+                <label className="font-primary block mb-1">Category</label>
+                <Select
+                  value={category}
+                  onValueChange={(value) => setValue("category", value)}
+                >
+                  <SelectTrigger className="w-[200px]">
                     <SelectValue placeholder="Select Category" />
                   </SelectTrigger>
                   <SelectContent>
@@ -139,36 +225,49 @@ const AddVendors = () => {
                     </SelectGroup>
                   </SelectContent>
                 </Select>
-                <Button onClick={signUpVendors}>Submit</Button>
+                {errors.category && (
+                  <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
+                )}
               </div>
+              <Button type="submit" disabled={loading}>
+                {loading ? "Submitting..." : "Submit Vendor"}
+              </Button>
             </div>
           </div>
-          <div className="border p-5 rounded col-span-2 mt-5 h-fit rounded">
-            <h1 className="font-primary text-gray-400">Select Image For Profile Picture</h1>
-            <div>
-              <div
-                {...getRootProps()}
-                className="border-2 border-dashed p-6 rounded-md text-center cursor-pointer h-1/2"
-              >
-                <input {...getInputProps()} />
-
-                {isDragActive
-                  ? <p>Drop the image here…</p>
-                  : <p>Drag & drop an image here, or click to select</p>}
-              </div>
-              {image && (
-                <img
-                  src={image}
-                  className="mt-4 w-48 h-48 object-cover rounded-md"
-                  alt="preview"
-                />
+          {/* Image Upload Section */}
+          <div className="border p-6 rounded-lg col-span-2 h-fit">
+            <h1 className="font-primary text-gray-400 mb-4">
+              Select Image For Profile Picture
+            </h1>
+            <div
+              {...getRootProps()}
+              className="border-2 border-dashed border-gray-300 rounded-md p-8 text-center cursor-pointer transition hover:border-gray-400"
+            >
+              <input {...getInputProps()} />
+              {isDragActive ? (
+                <p className="text-gray-600">Drop the image here...</p>
+              ) : (
+                <p className="text-gray-500">
+                  Drag & drop an image here, or click to select
+                </p>
               )}
             </div>
+            {url && (
+              <div className="mt-6 text-center">
+                <p className="text-sm text-gray-600 mb-2">Preview:</p>
+                <img
+                  src={url}
+                  alt="Profile preview"
+                  className="w-48 h-48 object-cover rounded-full mx-auto shadow-lg border-4 border-white"
+                />
+                <p className="text-sm text-gray-500 mt-2">{image?.name}</p>
+              </div>
+            )}
           </div>
-        </div>
+        </form>
       </div>
     </section>
-  )
-}
+  );
+};
 
-export default AddVendors
+export default AddVendors;
