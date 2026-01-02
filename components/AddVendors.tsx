@@ -42,24 +42,79 @@ const AddVendors = () => {
   const signUpVendors = async (data: vendorType) => {
     setLoading(true);
     try {
-      console.log("Form Data Submitted:", {
-        ...data,
-        profileImage: image ? image.name : null,
-        imageFile: image,
+      // Step 1: Create the user account
+      const { data: signUpData, error: signUpError } = await supabase.auth.signUp({
+        email: data.email,
+        password: data.password,
       });
 
-      // TODO: Upload image to Supabase Storage + save vendor data
-      // Example:
-      // if (image) {
-      //   const { data: uploadData, error } = await supabase.storage
-      //     .from('vendor-images')
-      //     .upload(`public/${image.name}`, image);
-      // }
+      if (signUpError) throw signUpError;
+      if (!signUpData.user) throw new Error("Failed to create user");
+
+      const userId = signUpData.user.id;
+
+      // Step 2: Immediately sign in the new user to establish a session
+      // This is critical for RLS policies on storage and profiles
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: data.email,
+        password: data.password,
+      });
+
+      if (signInError) {
+        console.warn("Auto sign-in failed (possibly email confirmation enabled):", signInError.message);
+        // Continue anyway — we'll try upload/insert, but may fail due to no session
+      }
+
+      let avatarUrl: string | null = null;
+
+      // Step 3: Upload image if provided
+      if (image) {
+        const fileExt = image.name.split(".").pop()?.toLowerCase() || "jpg";
+        const fileName = `profile-${userId}.${fileExt}`;
+        const filePath = `vendors/${userId}/${fileName}`;
+
+        const { error: uploadError } = await supabase.storage
+          .from("Images")
+          .upload(filePath, image, {
+            cacheControl: "3600",
+            upsert: true,
+          });
+
+        if (uploadError) {
+          console.error("Upload failed:", uploadError);
+          toast.error("Image upload failed: " + uploadError.message);
+          // Continue without image
+        } else {
+          const { data: urlData } = supabase.storage.from("Images").getPublicUrl(filePath);
+          avatarUrl = urlData.publicUrl;
+        }
+      }
+
+      // Step 4: Insert/Update profile
+      const { error: profileError } = await supabase.from("profiles").upsert(
+        {
+          id: userId,
+          full_name: data.fullName,
+          avatar_url: avatarUrl,
+          role: "VENDOR",
+          phone: data.phone,
+          address: data.address,
+          category: data.category,
+        },
+        { onConflict: "id" }
+      );
+
+      if (profileError) {
+        console.error("Profile insert failed:", profileError);
+        toast.error("Profile update failed: " + profileError.message);
+        throw profileError; // Still fail the whole process if profile fails
+      }
 
       toast.success("Vendor added successfully!");
-    } catch (error) {
+      router.push("/AdminDashboard");
+    } catch (error: any) {
       console.error("Error adding vendor:", error);
-      toast.error("Failed to add vendor");
+      toast.error(error.message || "Failed to add vendor");
     } finally {
       setLoading(false);
     }
@@ -88,13 +143,11 @@ const AddVendors = () => {
             Go Back
           </Button>
         </div>
-
         <form onSubmit={handleSubmit(signUpVendors)} className="grid grid-cols-5 gap-5">
           <div className="col-span-3 px-5">
             <h1 className="font-primary text-gray-400 mb-4">
               Fill out the following fields
             </h1>
-
             {/* Full Name & Email */}
             <div className="flex gap-5 mb-5">
               <div className="w-full">
@@ -112,7 +165,6 @@ const AddVendors = () => {
                 )}
               </div>
             </div>
-
             {/* Password & Confirm */}
             <div className="flex gap-5 mb-5">
               <div className="w-full">
@@ -130,7 +182,6 @@ const AddVendors = () => {
                 )}
               </div>
             </div>
-
             {/* Personal Data */}
             <h1 className="font-primary text-gray-400 mt-8 mb-3">Personal Data</h1>
             <div className="flex gap-5 mb-5">
@@ -143,13 +194,12 @@ const AddVendors = () => {
               </div>
               <div className="w-full">
                 <label className="font-primary block mb-1">Address</label>
-                <Input {...register("adress")} placeholder="123 Main St, City" />
+                <Input {...register("address")} placeholder="123 Main St, City" />
                 {errors.adress && (
-                  <p className="text-red-500 text-sm mt-1">{errors.adress.message}</p>
+                  <p className="text-red-500 text-sm mt-1">{errors.address.message}</p>
                 )}
               </div>
             </div>
-
             {/* Category Selection */}
             <h1 className="font-primary text-gray-400 mt-8 mb-3">
               What the Vendor Sells
@@ -179,13 +229,11 @@ const AddVendors = () => {
                   <p className="text-red-500 text-sm mt-1">{errors.category.message}</p>
                 )}
               </div>
-
               <Button type="submit" disabled={loading}>
                 {loading ? "Submitting..." : "Submit Vendor"}
               </Button>
             </div>
           </div>
-
           {/* Image Upload Section */}
           <div className="border p-6 rounded-lg col-span-2 h-fit">
             <h1 className="font-primary text-gray-400 mb-4">
@@ -204,7 +252,6 @@ const AddVendors = () => {
                 </p>
               )}
             </div>
-
             {url && (
               <div className="mt-6 text-center">
                 <p className="text-sm text-gray-600 mb-2">Preview:</p>
