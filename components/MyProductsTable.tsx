@@ -35,6 +35,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { useRouter } from "next/navigation"
+import { createClient } from "@/lib/supabase/client";
 
 const data: Payment[] = [
   {
@@ -68,6 +69,8 @@ const data: Payment[] = [
     email: "carmella@example.com",
   },
 ]
+
+
 
 export type Payment = {
   id: string
@@ -168,6 +171,8 @@ export const columns: ColumnDef<Payment>[] = [
 ]
 
 export function MyProductsTable() {
+  const supabase = createClient()
+  const { data: products, error } = supabase.from('products').select("*").order('created_at');
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
