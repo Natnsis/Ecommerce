@@ -7,3 +7,5 @@ export const productInputs = z.object({
   stock: z.number(),
   category: z.string().nonempty()
 })
+
+export type productType = z.infer<typeof productInputs>;
