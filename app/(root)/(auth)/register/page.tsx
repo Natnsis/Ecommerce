@@ -1,4 +1,5 @@
 "use client"
+
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
@@ -7,7 +8,6 @@ import Link from "next/link"
 import { FcGoogle } from "react-icons/fc"
 import { useState } from "react"
 import { createClient } from "@/lib/supabase/client"
-import { toast } from "sonner"
 
 const Register = () => {
   const [email, setEmail] = useState<string>("")

@@ -9,9 +9,20 @@ import {
 } from "lucide-react";
 import { ModeToggle } from "./mode-toggle";
 import { useRouter } from "next/navigation";
+import { createClient } from "@/lib/supabase/client";
 
 const Vheader = () => {
   const router = useRouter();
+  const supabase = createClient()
+  const handleLogout = async () => {
+    const { error } = await supabase.auth.signOut();
+    if (error) {
+      console.error("Logout error:", error);
+      alert("Failed to log out. Please try again.");
+    }
+    router.push("/login");
+    router.refresh();
+  };
   return (
     <header className="w-screen flex justify-center">
       <nav className="p-1 flex gap-5 border rounded-b-lg pr-5">
@@ -31,12 +42,10 @@ const Vheader = () => {
           <UserPen />
           PROFILE
         </Button>
-        <form>
-          <Button variant="ghost" type="submit">
-            <LogOut />
-            LOGOUT
-          </Button>
-        </form>
+        <Button variant="ghost" onClick={handleLogout} >
+          <LogOut />
+          LOGOUT
+        </Button>
         <ModeToggle />
       </nav>
     </header>
