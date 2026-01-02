@@ -86,10 +86,9 @@ const AddProducts = () => {
         imageUrl = urlData.publicUrl;
       }
 
-      // Coerce to number to satisfy TS and DB
       const price = Number(data.price);
       const stock = Number(data.stock);
-
+      console.log(price, stock)
       const { error: insertError } = await supabase.from("products").insert({
         vendor_id: user.id,
         name: data.name,
@@ -115,7 +114,6 @@ const AddProducts = () => {
   return (
     <section className="h-screen w-screen flex items-center justify-center">
       <div className="h-fit w-[90vw] border rounded-lg flex gap-5 justify-between py-5">
-        {/* Left Side - Form Fields */}
         <div className="h-full w-full">
           <div className="p-5 flex justify-between">
             <h1 className="text-xl font-quater">Add Products</h1>
