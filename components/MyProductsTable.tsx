@@ -3,61 +3,14 @@ import { fetchProducts } from "@/app/controllers/product";
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
-  TableFooter,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { createClient } from "@/lib/supabase/client"
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
-
-const invoices = [
-  {
-    invoice: "INV001",
-    paymentStatus: "Paid",
-    totalAmount: "$250.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV002",
-    paymentStatus: "Pending",
-    totalAmount: "$150.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV003",
-    paymentStatus: "Unpaid",
-    totalAmount: "$350.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV004",
-    paymentStatus: "Paid",
-    totalAmount: "$450.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV005",
-    paymentStatus: "Paid",
-    totalAmount: "$550.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV006",
-    paymentStatus: "Pending",
-    totalAmount: "$200.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV007",
-    paymentStatus: "Unpaid",
-    totalAmount: "$300.00",
-    paymentMethod: "Credit Card",
-  },
-]
+import { Button } from "./ui/button";
+import { Pencil, Trash } from "lucide-react";
 
 export function MyProductsTable() {
   const { data, isLoading, error } = useQuery({
@@ -65,38 +18,52 @@ export function MyProductsTable() {
     queryFn: fetchProducts
   })
 
-  if (!isLoading && error) {
-    console.log()
+  if (error) {
+    console.error(error)
   }
+  if (isLoading) return <p>Loading...</p>
+  console.log(data)
 
   return (
     <div className="mt-10">
       <Table>
-        <TableCaption>A list of your recent invoices.</TableCaption>
         <TableHeader>
           <TableRow>
-            <TableHead className="w-[100px]">Invoice</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Method</TableHead>
-            <TableHead className="text-right">Amount</TableHead>
+            <TableHead className="w-[50px]">No.</TableHead>
+            <TableHead>Image</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Price</TableHead>
+            <TableHead>Stock</TableHead>
+            <TableHead className="w-[50px]">Added Day</TableHead>
+            <TableHead>Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {invoices.map((invoice) => (
-            <TableRow key={invoice.invoice}>
-              <TableCell className="font-medium">{invoice.invoice}</TableCell>
-              <TableCell>{invoice.paymentStatus}</TableCell>
-              <TableCell>{invoice.paymentMethod}</TableCell>
-              <TableCell className="text-right">{invoice.totalAmount}</TableCell>
+          {data!.map((item, index) => (
+            <TableRow key={item.id}>
+              <TableCell className="font-medium">{index + 1}</TableCell>
+              <TableCell>
+                <img
+                  src={item.image_url}
+                  alt="product-img"
+                  width={35}
+                  height={40}
+                  className="rounded-full"
+                />
+              </TableCell>
+              <TableCell>{item.name}</TableCell>
+              <TableCell>{item.category}</TableCell>
+              <TableCell>{item.price}</TableCell>
+              <TableCell>{item.stock}</TableCell>
+              <TableCell className="w-[50px]">{item.created_at}</TableCell>
+              <TableCell className="flex items-center gap-5">
+                <Button variant="secondary"><Pencil /></Button>
+                <Button variant="destructive"><Trash /></Button>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={3}>Total</TableCell>
-            <TableCell className="text-right">$2,500.00</TableCell>
-          </TableRow>
-        </TableFooter>
       </Table>
     </div>
   )
