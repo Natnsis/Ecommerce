@@ -23,3 +23,13 @@ export const deleteProduct = async (id: string) => {
     .eq("id", id)
   if (error) throw error
 }
+
+export const updateProduct = async (id: string) => {
+  const { data, error } = await supabase
+    .from("product")
+    .update("")
+    .eq("id", id)
+  if (error) throw error
+}
+
+

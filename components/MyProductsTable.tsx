@@ -35,8 +35,8 @@ export function MyProductsTable() {
             <TableHead>Category</TableHead>
             <TableHead>Price</TableHead>
             <TableHead>Stock</TableHead>
-            <TableHead className="w-[50px]">Added Day</TableHead>
-            <TableHead>Action</TableHead>
+            <TableHead className="w-[50px]">Added Date</TableHead>
+            <TableHead className="text-center">Action</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -47,9 +47,7 @@ export function MyProductsTable() {
                 <img
                   src={item.image_url}
                   alt="product-img"
-                  width={35}
-                  height={40}
-                  className="rounded-full"
+                  className="rounded-full w-10 h-10"
                 />
               </TableCell>
               <TableCell>{item.name}</TableCell>
@@ -57,7 +55,7 @@ export function MyProductsTable() {
               <TableCell>{item.price}</TableCell>
               <TableCell>{item.stock}</TableCell>
               <TableCell className="w-[50px]">{item.created_at}</TableCell>
-              <TableCell className="flex items-center gap-5">
+              <TableCell className="flex items-center gap-5 flex justify-center">
                 <Button variant="secondary"><Pencil /></Button>
                 <Button variant="destructive"><Trash /></Button>
               </TableCell>
