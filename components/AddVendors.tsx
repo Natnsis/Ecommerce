@@ -105,9 +105,9 @@ const AddVendors = () => {
       );
 
       if (profileError) {
-        console.error("Profile insert failed:", profileError);
+        console.log("Profile insert failed:", profileError);
         toast.error("Profile update failed: " + profileError.message);
-        throw profileError; // Still fail the whole process if profile fails
+        throw profileError;
       }
 
       toast.success("Vendor added successfully!");
