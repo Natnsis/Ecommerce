@@ -13,7 +13,7 @@ const VendorProducts = () => {
       <div className="p-5">
         <div className="flex justify-between mr-20">
           <h1 className="font-quater text-xl">My Products</h1>
-          <Button className="flex" variant="outline" onClick={()=> router.push("/AddProducts")}><Plus /> Add</Button>
+          <Button className="flex" variant="outline" onClick={() => router.push("/AddProducts")}><Plus /> Add</Button>
         </div>
         <div className="px-15">
           <MyProductsTable />
