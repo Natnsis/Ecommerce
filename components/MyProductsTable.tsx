@@ -4,8 +4,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "./ui/button";
 import { Pencil, Trash, Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export function MyProductsTable() {
+  const router = useRouter();
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({
@@ -22,9 +24,6 @@ export function MyProductsTable() {
       alert("Error deleting product: " + err.message);
     }
   });
-
-  console.log(data);
-
 
   if (isLoading) return <p className="p-10 text-center">Loading...</p>;
   if (error) return <p>Error loading products.</p>;
@@ -59,10 +58,6 @@ export function MyProductsTable() {
                 {new Date(item.created_at).toLocaleDateString()}
               </TableCell>
               <TableCell className="flex items-center gap-2 justify-center">
-                <Button variant="secondary" size="icon">
-                  <Pencil className="w-4 h-4" />
-                </Button>
-
                 <Button
                   variant="destructive"
                   size="icon"
@@ -80,6 +75,6 @@ export function MyProductsTable() {
           ))}
         </TableBody>
       </Table>
-    </div>
+    </div >
   )
 }
