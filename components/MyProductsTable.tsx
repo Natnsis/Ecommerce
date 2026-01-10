@@ -1,16 +1,18 @@
 "use client"
 import { deleteProduct, fetchProducts } from "@/app/controllers/product";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"; // Added these
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "./ui/button";
 import { Pencil, Trash, Loader2 } from "lucide-react";
 
 export function MyProductsTable() {
   const queryClient = useQueryClient();
+
   const { data, isLoading, error } = useQuery({
     queryKey: ['products'],
     queryFn: fetchProducts
   });
+
   const mutation = useMutation({
     mutationFn: ({ id, url }: { id: string, url: string }) => deleteProduct(id, url),
     onSuccess: () => {
@@ -20,6 +22,9 @@ export function MyProductsTable() {
       alert("Error deleting product: " + err.message);
     }
   });
+
+  console.log(data);
+
 
   if (isLoading) return <p className="p-10 text-center">Loading...</p>;
   if (error) return <p>Error loading products.</p>;
