@@ -16,27 +16,29 @@ import { Textarea } from "@/components/ui/textarea";
 import Vheader from "@/components/Vheader";
 import { Trash } from "lucide-react";
 import { fetchProfile } from "@/app/controllers/profile";
+import { toast } from "sonner";
 
 const VendorProfile = () => {
-  const { data: profile, isLoading, isError } = useQuery({
-    queryKey: ["profile"],
-    queryFn: fetchProfile,
+
+  const { data: profileData, error: profileError } = useQuery({
+    queryKey: ['vendorProfile'],
+    queryFn: fetchProfile
   });
 
-  if (isLoading) return <p className="p-5">Loading profile...</p>;
-  if (isError) return <p className="p-5 text-red-500">Failed to load profile</p>;
-  console.log(profile);
+  if (profileError) {
+    toast("unable to fetch your profile");
+  }
+
+
   return (
     <section>
       <Vheader />
       <div className="p-5 flex justify-center items-center">
         <div className="border h-full rounded-lg p-5 flex flex-col gap-2 font-primary">
-
-          {/* Profile Picture */}
           <p className="font-primary">Profile Picture</p>
           <div className="flex items-center gap-10">
             <img
-              src={profile?.avatar_url || "/automotive.jpg"}
+              src={profileData?.avatar_url || "/automotive.jpg"}
               className="w-15 h-15 rounded-full"
             />
             <div className="flex gap-2">
@@ -47,41 +49,15 @@ const VendorProfile = () => {
             </div>
           </div>
 
-          {/* Name fields */}
           <div className="flex gap-5">
             <div>
-              <label htmlFor="fName">First Name</label>
-              <Input name="fName" defaultValue={profile?.first_name || ""} />
-            </div>
-
-            <div>
-              <label htmlFor="lName">Last Name</label>
-              <Input name="lName" defaultValue={profile?.last_name || ""} />
-            </div>
-          </div>
-
-          {/* Password */}
-          <div>
-            <label htmlFor="password">Password</label>
-            <Input name="password" type="password" />
-          </div>
-
-          {/* Phone */}
-          <div>
-            <label>Phone No.</label>
-            <Input defaultValue={profile?.phone || ""} />
-          </div>
-
-          {/* Address + Category */}
-          <div className="flex gap-5">
-            <div>
-              <label>Address</label>
-              <Input defaultValue={profile?.address || ""} />
+              <label htmlFor="fullName">Full Name</label>
+              <Input name="fullName" defaultValue={profileData?.full_name} />
             </div>
 
             <div>
               <label>Category</label>
-              <Select defaultValue={profile?.category || ""}>
+              <Select value={profileData?.category}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
@@ -99,13 +75,24 @@ const VendorProfile = () => {
             </div>
           </div>
 
-          {/* Bio */}
           <div>
-            <label>Bio</label>
-            <Textarea defaultValue={profile?.bio || ""} />
+            <label>Phone No.</label>
+            <Input defaultValue={profileData?.phone} />
           </div>
 
-          {/* Buttons */}
+          <div className="flex gap-5">
+            <div>
+              <label>Address</label>
+              <Input defaultValue={profileData?.address} />
+            </div>
+
+          </div>
+
+          <div>
+            <label>Bio</label>
+            <Textarea defaultValue={profileData?.bio} />
+          </div>
+
           <div className="flex justify-end gap-5">
             <Button>Submit</Button>
             <Button variant="outline">Cancel</Button>
