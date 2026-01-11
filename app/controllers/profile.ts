@@ -30,10 +30,11 @@ export const fetchProfile = async () => {
   }
 };
 
-export const updateProfile = async (updates: {
-  username?: string;
-  avatar_url?: string;
-  full_name?: string;
+export const updateVendorProfile = async (updates: {
+  fullame?: string;
+  category?: string;
+  address?: string;
+  phone?: string;
 }) => {
   try {
     const {
@@ -46,7 +47,7 @@ export const updateProfile = async (updates: {
     }
 
     const { data, error } = await supabase
-      .from("profile")
+      .from("profiles")
       .update({
         ...updates,
         updated_at: new Date().toISOString(),

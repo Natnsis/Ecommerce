@@ -3,11 +3,9 @@ import { deleteProduct, fetchProducts } from "@/app/controllers/product";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "./ui/button";
-import { Pencil, Trash, Loader2 } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { Trash, Loader2 } from "lucide-react";
 
 export function MyProductsTable() {
-  const router = useRouter();
   const queryClient = useQueryClient();
 
   const { data, isLoading, error } = useQuery({

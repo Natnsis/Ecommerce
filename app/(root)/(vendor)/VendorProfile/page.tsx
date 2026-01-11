@@ -14,9 +14,11 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import Vheader from "@/components/Vheader";
-import { Trash } from "lucide-react";
-import { fetchProfile } from "@/app/controllers/profile";
+import { fetchProfile, updateVendorProfile } from "@/app/controllers/profile";
 import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { profileSchema } from "@/app/schema/profileSchema";
 
 const VendorProfile = () => {
 
@@ -28,6 +30,18 @@ const VendorProfile = () => {
   if (profileError) {
     toast("unable to fetch your profile");
   }
+
+  const form = useForm({
+    resolver: zodResolver(profileSchema),
+    defaultValues: {
+      full_name: profileData?.full_name,
+      category: profileData?.category,
+      phone: profileData?.phone,
+      address: profileData?.address,
+      bio: profileData?.bio
+    }
+
+  })
 
 
   return (
@@ -41,23 +55,17 @@ const VendorProfile = () => {
               src={profileData?.avatar_url || "/automotive.jpg"}
               className="w-15 h-15 rounded-full"
             />
-            <div className="flex gap-2">
-              <Button>Change Picture</Button>
-              <Button variant="destructive" size="icon">
-                <Trash />
-              </Button>
-            </div>
           </div>
 
           <div className="flex gap-5">
             <div>
               <label htmlFor="fullName">Full Name</label>
-              <Input name="fullName" defaultValue={profileData?.full_name} />
+              <Input {...form.register("full_name")} />
             </div>
 
             <div>
               <label>Category</label>
-              <Select value={profileData?.category}>
+              <Select {...form.register("category")}>
                 <SelectTrigger className="w-[180px]">
                   <SelectValue placeholder="Select a category" />
                 </SelectTrigger>
@@ -77,20 +85,19 @@ const VendorProfile = () => {
 
           <div>
             <label>Phone No.</label>
-            <Input defaultValue={profileData?.phone} />
+            <Input {...form.register("phone")} />
           </div>
 
           <div className="flex gap-5">
             <div>
               <label>Address</label>
-              <Input defaultValue={profileData?.address} />
+              <Input {...form.register("address")} />
             </div>
-
           </div>
 
           <div>
             <label>Bio</label>
-            <Textarea defaultValue={profileData?.bio} />
+            <Textarea {...form.register("bio")} />
           </div>
 
           <div className="flex justify-end gap-5">

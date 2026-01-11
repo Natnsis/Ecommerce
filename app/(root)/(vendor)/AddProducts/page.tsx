@@ -88,7 +88,6 @@ const AddProducts = () => {
 
       const price = Number(data.price);
       const stock = Number(data.stock);
-      console.log(price, stock)
       const { error: insertError } = await supabase.from("products").insert({
         vendor_id: user.id,
         name: data.name,
