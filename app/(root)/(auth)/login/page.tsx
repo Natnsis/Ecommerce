@@ -50,9 +50,7 @@ const Login = () => {
           router.push("/login");
       }
       toast("User logged in successfully");
-      console.log("Logged in user:", authData.user, "Role:", role);
     } catch (err: any) {
-      console.error("Login error:", err);
       toast(err.message || "Login failed. Please check your credentials.");
     } finally {
       setIsLoading(false);
@@ -68,7 +66,6 @@ const Login = () => {
       },
     });
     if (error) {
-      console.error("Google login error:", error);
       toast("Failed to sign in with Google.");
     }
   };

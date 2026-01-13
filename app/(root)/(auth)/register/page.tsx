@@ -38,9 +38,7 @@ const Register = () => {
         );
       if (profilesError) throw profilesError;
       toast("User registered successfully");
-      console.log("Registered user:", data.user);
     } catch (err: any) {
-      console.error("Registration error:", err);
       toast(err.message || "Registration failed. Please try again.");
     } finally {
       setIsLoading(false);
@@ -56,7 +54,6 @@ const Register = () => {
       },
     });
     if (error) {
-      console.error("Google login error:", error);
       toast("Failed to sign in with Google.");
     }
   };
