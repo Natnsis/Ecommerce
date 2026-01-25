@@ -16,7 +16,7 @@ const cart = () => {
       <section className="px-60 py-10">
         <div className="flex justify-between items-center">
           <h1 className="text-3xl font-bold">Your Cart</h1>
-          <Button>checkout <CurrencyDollarSimpleIcon /></Button>
+          <Button variant="outline" className="text-[#2ec27e]">checkout <CurrencyDollarSimpleIcon color="#2ec27e" /></Button>
         </div>
         <div>
           <table className="w-full mt-10">
@@ -35,7 +35,7 @@ const cart = () => {
               <tbody>
                 <tr>
                   <td>
-                    <Image src="/products/book1.png" alt="image" width={400} height={600} />
+                    <Image src="/products/book1.png" alt="image" width={200} height={600} />
                   </td>
                   <td className="w-2/9 text-center">1</td>
                   <td className="w-2/9 text-center">$20</td>
@@ -44,7 +44,7 @@ const cart = () => {
 
                 <tr>
                   <td>
-                    <Image src="/products/book1.png" alt="image" width={400} height={600} />
+                    <Image src="/products/book1.png" alt="image" width={200} height={600} />
                   </td>
                   <td className="w-2/9 text-center">1</td>
                   <td className="w-2/9 text-center">$20</td>
@@ -53,7 +53,7 @@ const cart = () => {
 
                 <tr>
                   <td>
-                    <Image src="/products/book1.png" alt="image" width={400} height={600} />
+                    <Image src="/products/book1.png" alt="image" width={200} height={600} />
                   </td>
                   <td className="text-center">1</td>
                   <td className="text-center">$20</td>
