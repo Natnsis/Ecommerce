@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button"
 import { ShoppingCartIcon, UserIcon } from "@phosphor-icons/react";
 import Language from '@/components/Language';
 import { ModeToggle } from "@/components/mode-toggle";
-
+import { useRouter } from "next/navigation"
 const Header = () => {
+  const router = useRouter();
   return (
     <header className='flex justify-between gap-5 items-center'>
       <div className='flex items-center'>
@@ -23,7 +24,7 @@ const Header = () => {
         </Button>
         <Language />
         <ModeToggle />
-        <Button>
+        <Button onClick={() => router.push("/auth/login")}>
           <UserIcon size={32} />
           <p>Sign In</p>
         </Button>
