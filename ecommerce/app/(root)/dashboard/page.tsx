@@ -14,8 +14,10 @@ import {
 } from "@/components/ui/select"
 import Image from "next/image"
 import { products } from "@/lib/constant"
+import { useRouter } from "next/navigation"
 
 const dashboard = () => {
+  const router = useRouter()
   return (
     <section className="p-5 w-full">
       <div className="flex justify-between items-center w-full">
@@ -169,7 +171,7 @@ const dashboard = () => {
           </div>
           <div className="grid grid-cols-5 gap-3 mt-5 overflow-y-auto max-h-[80vh]">
             {products.map((p, index) => (
-              <div className="border-b" key={index}>
+              <div className="border-b" key={index} onClick={() => router.push(`/dashboard/${p.id}`)}>
                 <div className="border bg-gray-50 rounded-lg h-[30vh] overflow-hidden">
                   <div className="flex justify-end p-3"><HeartIcon size={20} /></div>
                   <Image
@@ -181,15 +183,15 @@ const dashboard = () => {
                   />
                 </div>
                 <div className="border-x p-2">
-                  <h1 className="font-bold">Title of Product</h1>
+                  <h1 className="font-bold">{p.title}</h1>
                   <div className="flex gap-1 items-center">
                     <StarIcon size={16} className="color-amber-900" color="#f6d32d" weight="fill" />
-                    <p className="text-sm">4.9 <span className="text-gray-700">(123 reviews)</span></p>
+                    <p className="text-sm">{p.rating} <span className="text-gray-700">({p.reviews} reviews)</span></p>
                   </div>
                   <div className="flex justify-between mr-5">
                     <div className="text-sm flex gap-3">
-                      <s>$140</s>
-                      <p className="text-gray-700">$130</p>
+                      <s>${p.former}</s>
+                      <p className="text-gray-700">${p.price}</p>
                     </div>
                     <ShoppingBagIcon size={25} color="#E7000A" weight="fill" />
                   </div>
