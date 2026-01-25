@@ -10,10 +10,7 @@ const InnerHeader = () => {
       </div>
       <nav className="flex gap-5">
         <Button variant="link">Home</Button>
-        <Button variant="link">Sale</Button>
-        <Button variant="link">Man</Button>
-        <Button variant="link">Woman</Button>
-        <Button variant="link">Kids</Button>
+        <Button variant="link">Order</Button>
       </nav>
     </header>
   )

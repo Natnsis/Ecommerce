@@ -15,6 +15,7 @@ import {
 import Image from "next/image"
 import { products } from "@/lib/constant"
 import { useRouter } from "next/navigation"
+import { ModeToggle } from "@/components/mode-toggle"
 
 const dashboard = () => {
   const router = useRouter()
@@ -30,6 +31,7 @@ const dashboard = () => {
           <Button variant="outline" onClick={() => router.push("/dashboard/cart")}>
             <ShoppingBagIcon />
           </Button>
+          <ModeToggle />
           <Profile />
         </div>
       </div>
@@ -40,39 +42,39 @@ const dashboard = () => {
             <h1 className="mb-1">Category</h1>
             <div className="flex gap-1 items-center">
               <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600">Electronics</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Electronics</p>
             </div>
             <div className="flex gap-1 items-center">
               <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600">Fashion</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Fashion</p>
             </div>
             <div className="flex gap-1 items-center">
               <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600">Home & Living</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Home & Living</p>
             </div>
             <div className="flex gap-1 items-center">
               <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600">Sports & Outdoors</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Sports & Outdoors</p>
             </div>
             <div className="flex gap-1 items-center">
               <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600">Books & Stationery</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Books & Stationery</p>
             </div>
             <div className="flex gap-1 items-center">
               <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600">Toys & Kids</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Toys & Kids</p>
             </div>
             <div className="flex gap-1 items-center">
               <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600">Health & Wellness</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Health & Wellness</p>
             </div>
             <div className="flex gap-1 items-center">
               <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600">Personal Care</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Personal Care</p>
             </div>
             <div className="flex gap-1 items-center">
               <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600">Automotive</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">Automotive</p>
             </div>
             <Separator className="mt-3" />
           </div>
@@ -81,29 +83,29 @@ const dashboard = () => {
             <h1 className="mb-1">Price</h1>
             <div className="flex gap-1 items-center">
               <input type="radio" className="accent-[#E7000A]" name="price" />
-              <p className="text-sm text-gray-600">$0 - $50</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">$0 - $50</p>
             </div>
             <div className="flex gap-1 items-center">
               <input type="radio" className="accent-[#E7000A]" name="price" />
-              <p className="text-sm text-gray-600">$50 - $100</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">$50 - $100</p>
             </div>
             <div className="flex gap-1 items-center">
               <input type="radio" className="accent-[#E7000A]" name="price" />
-              <p className="text-sm text-gray-600">$100 - $150</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">$100 - $150</p>
             </div>
             <div className="flex gap-1 items-center">
               <input type="radio" className="accent-[#E7000A]" name="price" />
-              <p className="text-sm text-gray-600">over $150</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">over $150</p>
             </div>
             <div className="flex items-center gap-1 mt-3 w-[10vw]">
               <div className="">
                 <Input defaultValue={0} className="text-center" type="number" />
-                <p className="text-center text-sm text-gray-600">Min</p>
+                <p className="text-center text-sm text-gray-600 dark:text-gray-300">Min</p>
               </div>
               <p>-</p>
               <div>
                 <Input defaultValue={0} className="text-center" type="number" />
-                <p className="text-center text-sm text-gray-600">Max</p>
+                <p className="text-center text-sm text-gray-600 dark:text-gray-300">Max</p>
               </div>
             </div>
             <Separator className="mt-3" />
@@ -150,13 +152,9 @@ const dashboard = () => {
           <div className="flex justify-between items-center mt-5">
             <div className="flex gap-2">
               <Button>All Products</Button>
-              <Button variant="outline">Nike</Button>
-              <Button variant="outline">Addidas</Button>
-              <Button variant="outline">Pumma</Button>
-              <Button variant="outline">Vans</Button>
-              <Button variant="outline">Reebook</Button>
-              <Button variant="outline">Converse</Button>
-              <Button variant="outline">New Balance</Button>
+              <Button variant="outline">Hot</Button>
+              <Button variant="outline">Rare</Button>
+              <Button variant="outline">Hobby</Button>
             </div>
             <Select>
               <SelectTrigger className="w-[150px]">
@@ -186,12 +184,12 @@ const dashboard = () => {
                   <h1 className="font-bold">{p.title}</h1>
                   <div className="flex gap-1 items-center">
                     <StarIcon size={16} className="color-amber-900" color="#f6d32d" weight="fill" />
-                    <p className="text-sm">{p.rating} <span className="text-gray-700">({p.reviews} reviews)</span></p>
+                    <p className="text-sm">{p.rating} <span className="text-gray-700 dark:text-gray-300">({p.reviews} reviews)</span></p>
                   </div>
                   <div className="flex justify-between mr-5">
                     <div className="text-sm flex gap-3">
                       <s>${p.former}</s>
-                      <p className="text-gray-700">${p.price}</p>
+                      <p className="text-gray-700 dark:text-gray-300">${p.price}</p>
                     </div>
                     <ShoppingBagIcon size={25} color="#E7000A" weight="fill" />
                   </div>

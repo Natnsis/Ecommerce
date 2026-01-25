@@ -16,7 +16,7 @@ const detail = () => {
         <ArrowLeftIcon size={20} />
         <p>Go back</p>
       </Button>
-      <section className="flex gap-5 h-[90vh]">
+      <section className="flex gap-5 h-[90vh] mt-10">
         <div className="bg-white p-10 w-1/2 h-[80vh] flex items-center justify-center">
           <Image
             src={product?.img!}
@@ -31,9 +31,9 @@ const detail = () => {
           <div className="flex gap-2 items-center">
             <StarIcon color="#f6d32d" weight="fill" size={30} />
             <p className="text-lg font-bold">{product?.rating}</p>
-            <p className="text-gray-700">(based on {product?.reviews} reviews)</p>
+            <p className="text-gray-700 dark:text-gray-300">(based on {product?.reviews} reviews)</p>
           </div>
-          <p className="text-gray-600 text-sm">
+          <p className="text-gray-600 text-sm dark:text-gray-300">
             Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
           </p>
           <div>
