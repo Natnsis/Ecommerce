@@ -27,7 +27,7 @@ const dashboard = () => {
           <Button>
             <HeartIcon />
           </Button>
-          <Button variant="outline">
+          <Button variant="outline" onClick={() => router.push("/dashboard/cart")}>
             <ShoppingBagIcon />
           </Button>
           <Profile />
