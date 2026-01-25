@@ -1,7 +1,10 @@
+"use client"
+import { HouseSimpleIcon, StorefrontIcon, UsersThreeIcon, GearSixIcon } from "@phosphor-icons/react"
+import Sidebar from "@/components/Sidebar";
 const Admin = () => {
   return (
-    <main className="p-5">
-      hehe
+    <main className="grid grid-cols-8 h-screen">
+      <Sidebar />
     </main>
   )
 }
