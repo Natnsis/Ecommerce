@@ -9,6 +9,7 @@ import { useRouter } from "next/navigation"
 
 const Login = () => {
   const router = useRouter()
+
   return (
     <section className="h-screen flex gap-20">
       <div className="flex h-full items-center w-1/2 justify-center">
