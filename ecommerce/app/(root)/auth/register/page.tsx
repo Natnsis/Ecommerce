@@ -15,7 +15,7 @@ const Register = () => {
         <Card>
           <CardContent>
             <h1 className="text-3xl text-center" >Get Started With Us</h1>
-            <p className="mb-5 text-gray-600">Enter your email and password to create your account.</p>
+            <p className="mb-5 text-gray-600 dark:text-gray-400">Enter your email and password to create your account.</p>
             <Label htmlFor="email">Email</Label>
             <Input id="email" className="mb-3" />
             <Label htmlFor="password">Password</Label>
@@ -30,7 +30,7 @@ const Register = () => {
               <Image src="/google.png" alt="google" width={20} height={50} />
               <p>Sign in with Google</p>
             </Button>
-            <p className="text-center text-gray-600">Already have an account? register
+            <p className="text-center text-gray-600 dark:text-gray-400">Already have an account? register
               <Button className="text-bold" variant="link" onClick={() => router.push("/auth/login")}>
                 Here
               </Button>

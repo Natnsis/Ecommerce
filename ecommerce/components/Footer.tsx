@@ -13,7 +13,7 @@ const Footer = () => {
             <Image src="/gebeya-logo.png" alt="footer-log" width={50} height={300} />
             <h1 className="text-lg font-bold">Gebeya</h1>
           </div>
-          <p className="w-[40vw] text-sm pl-3 text-gray-600">
+          <p className="w-[40vw] text-sm pl-3 text-gray-600 dark:text-gray-400">
             We’re committed to delivering quality products, secure payments, and a smooth shopping experience. From browsing to checkout, our goal is to make online shopping simple, reliable, and enjoyable for everyone.
           </p>
           <div className="pl-3 flex gap-2">

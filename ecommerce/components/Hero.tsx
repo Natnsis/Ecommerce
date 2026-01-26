@@ -10,7 +10,7 @@ const Hero = () => {
       <div className="flex flex-col justify-center">
         <div className="pl-20">
           <h1 className="text-5xl font-extrabold mb-2">Discover Your Perfect Products</h1>
-          <p className="text-gray-500 w-4/5 mb-5">
+          <p className="text-gray-500 w-4/5 mb-5 dark:text-gray-400">
             We bring you the best quality products at unbeatable prices.
             Your satisfaction is our priority.
           </p>
