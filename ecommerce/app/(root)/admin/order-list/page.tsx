@@ -1,8 +1,13 @@
+import Sidebar from "@/components/Sidebar"
+
 const orderList = () => {
   return (
-    <div>
-      order list
-    </div>
+    <main className="grid grid-cols-8 h-screen">
+      <Sidebar pageName="order-list" />
+      <section className="px-5 col-span-7 p-5">
+        theheh
+      </section>
+    </main>
   )
 }
 

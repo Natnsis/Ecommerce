@@ -8,7 +8,7 @@ import { RecentProducts } from "@/components/RecentProducts";
 const Admin = () => {
   return (
     <main className="grid grid-cols-8 h-screen">
-      <Sidebar />
+      <Sidebar pageName="home" />
       <section className="px-5 col-span-7 p-5">
         <AdminHeader />
         <Counts />
