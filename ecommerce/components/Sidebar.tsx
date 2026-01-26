@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-import { HouseSimpleIcon, StorefrontIcon, UsersThreeIcon, GearSixIcon } from "@phosphor-icons/react"
+import { HouseSimpleIcon, StorefrontIcon, UsersThreeIcon, TreasureChestIcon, SignOutIcon } from "@phosphor-icons/react"
 import Image from "next/image"
 
 const Sidebar = () => {
@@ -20,10 +20,14 @@ const Sidebar = () => {
             <UsersThreeIcon />
             Users
           </Button>
-        </div>
-        <div className="h-2/3 flex items-end">
           <Button className="w-full mt-5 flex justify-start gap-2" variant="ghost">
-            <GearSixIcon />
+            <TreasureChestIcon />
+            Products
+          </Button>
+        </div>
+        <div className="h-[50vh] flex items-end">
+          <Button className="w-full mt-5 flex justify-start gap-2" variant="ghost">
+            <SignOutIcon />
             Logout
           </Button>
         </div>
