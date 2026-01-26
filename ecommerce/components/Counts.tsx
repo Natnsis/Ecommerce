@@ -38,7 +38,7 @@ const Counts = () => {
             </div>
             <div>
               <h1 className="text-2xl font-bold">21,376</h1>
-              <p className="text-gray-700">Total Order</p>
+              <p className="text-gray-700">Number Of Products</p>
             </div>
           </div>
         </CardContent>

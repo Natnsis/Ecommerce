@@ -9,7 +9,7 @@ const AdminHeader = () => {
     <header className="flex justify-between px-5">
       <div>
         <h1 className="text-xl font-bold">Welcome Back!</h1>
-        <p className="text-gray-600 text-sm">Manage the platfrom with freedom</p>
+        <p className="text-gray-600 text-sm dark:text-gray-500">Manage the platfrom with freedom</p>
       </div>
       <div className="flex gap-3">
         <Avatar className="h-15 w-10">
@@ -21,8 +21,8 @@ const AdminHeader = () => {
           <AvatarFallback>CN</AvatarFallback>
         </Avatar>
         <div>
-          <h1 className="text-gray-600">Admin</h1>
-          <p className="text-gray-600 text-sm">nsisay49@gmail.com</p>
+          <h1 className="text-gray-600 dark:text-gray-200">Admin</h1>
+          <p className="text-gray-600 text-sm dark:text-gray-500">nsisay49@gmail.com</p>
         </div>
       </div>
     </header>

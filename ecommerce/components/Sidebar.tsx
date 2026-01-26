@@ -10,6 +10,7 @@ import {
 } from "@phosphor-icons/react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import { AdminModeToggle } from "@/components/admin-mode"
 
 type PageVariants = "ghost" | "default"
 
@@ -88,7 +89,11 @@ const Sidebar = ({ pageName }: { pageName: string }) => {
             <TreasureChestIcon />
             Products
           </Button>
+          <div className="mt-5">
+            <AdminModeToggle />
+          </div>
         </div>
+
         <div className="h-[50vh] flex items-end">
           <Button
             className="w-full mt-5 flex justify-start gap-2"
