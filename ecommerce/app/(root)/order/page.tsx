@@ -24,7 +24,7 @@ const order = () => {
                   </div>
                   <div>
                     <h1 className="text-lg">{p.title}</h1>
-                    <p className="text-gray-600">Forest Green</p>
+                    <p className="text-gray-600 dark:text-gray-400">Forest Green</p>
                     <div className="flex gap-4">
                       <p>${p.price}</p>
                       <s>${p.former}</s>

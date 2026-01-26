@@ -14,7 +14,7 @@ const Products = () => {
         <h1 className="text-4xl">Products</h1>
         <div className="flex justify-between">
           <p className="text-sm text-gray-700 mt-2 dark:text-gray-500">
-            List of customers within the platform
+            List of products within the platform
           </p>
           <Button onClick={() => router.push("/admin/add-product")}>
             <StackPlusIcon />
