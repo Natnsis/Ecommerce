@@ -10,7 +10,7 @@ const About = () => {
         </div>
         <div className="px-10 w-[70vw]">
           <h1 className="text-4xl">About Us</h1>
-          <p className="text-gray-600">At Gebeya, we believe shopping should be simple, enjoyable, and tailored to you. Our mission is to bring you high-quality products at unbeatable prices, all in one convenient online store.</p>
+          <p className="text-gray-600 dark:text-gray-400">At Gebeya, we believe shopping should be simple, enjoyable, and tailored to you. Our mission is to bring you high-quality products at unbeatable prices, all in one convenient online store.</p>
           <div className="flex gap-3">
             <Card className="mt-5">
               <CardContent>
