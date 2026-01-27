@@ -5,7 +5,7 @@ const supabase = createClient()
 
 export const addProduct = async (data: productType) => {
   try {
-    const { name, price, market, category, description, image } = data;
+    const { name, price, market, category, description, stock, image } = data;
     if (!image) throw new Error("No image provided");
     const fileExt = image.name.split(".").pop();
     const fileName = `${crypto.randomUUID()}.${fileExt}`;
@@ -26,6 +26,7 @@ export const addProduct = async (data: productType) => {
 
     const { error: dbError } = await supabase.from("products").insert({
       name,
+      stock,
       price,
       market,
       category,
@@ -116,7 +117,7 @@ export const deleteProduct = async (id: string) => {
 
 export const updateProduct = async (id: string, data: Partial<productType>) => {
   try {
-    const { name, price, market, category, description } = data;
+    const { name, price, market, category, description, stock } = data;
 
     const { error } = await supabase
       .from("products")
@@ -126,6 +127,7 @@ export const updateProduct = async (id: string, data: Partial<productType>) => {
         market,
         category,
         description,
+        stock
       })
       .eq("id", id);
 

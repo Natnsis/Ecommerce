@@ -39,7 +39,6 @@ export function ProductsTable() {
 
   return (
     <Table>
-      <TableCaption>A list of your products.</TableCaption>
       <TableHeader>
         <TableRow>
           <TableHead>No.</TableHead>
