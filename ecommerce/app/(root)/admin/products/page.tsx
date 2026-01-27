@@ -21,7 +21,7 @@ const Products = () => {
             <p>Add Product</p>
           </Button>
         </div>
-        <div>
+        <div className="mt-10">
           <ProductsTable />
         </div>
       </section>

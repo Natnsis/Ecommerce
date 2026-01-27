@@ -72,6 +72,7 @@ export const getProductWithId = async (id: string) => {
   }
 }
 
+//FIX: delete file with product
 export const deleteProduct = async (id: string) => {
   try {
     const { error: deleteError } = await supabase.from("products")
