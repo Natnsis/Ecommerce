@@ -2,8 +2,12 @@ import { z } from "zod";
 
 export const productSchema = z.object({
   name: z.string().min(3, "Minimum 3 characters required"),
-  price: z.number(),
-  market: z.number(),
+  price: z.number().refine((value) => value !== 0, { message: "market price cant be free" }),
+  market: z.number()
+    .refine((value) => value !== 0, {
+      message: "Market price can't be free",
+    })
+  ,
   category: z.string().nonempty("Choose a category"),
   description: z
     .string()
