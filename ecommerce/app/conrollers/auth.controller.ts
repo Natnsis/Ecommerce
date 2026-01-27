@@ -46,19 +46,22 @@ export const RegisterWithEmail = async (data: AuthTypes) => {
 }
 
 export const GoogleOAuth = async () => {
-  try {
-    const supabase = createClient()
-    const { error: authError } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: {
-        redirectTo: "${window.location.origin}"
-      }
-    })
-    if (authError) throw authError
-  } catch (error) {
-    throw error
+  const supabase = createClient();
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: `${window.location.origin}/dashboard`,
+      queryParams: {
+        prompt: "select_account",
+      },
+    },
+  });
+
+  if (error) {
+    console.error(error);
+    throw error;
   }
-}
+};
 
 export const Logout = async () => {
   try {

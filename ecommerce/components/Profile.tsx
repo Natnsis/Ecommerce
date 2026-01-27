@@ -33,6 +33,7 @@ const Profile = () => {
       throw error
     }
   }
+
   return (
     < DropdownMenu >
       <DropdownMenuTrigger asChild>

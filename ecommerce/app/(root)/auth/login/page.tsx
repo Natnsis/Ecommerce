@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AuthSchema, AuthTypes } from "@/app/schemas/auth.schema"
 import { useState } from "react"
-import { LoginWithEmail } from "@/app/conrollers/auth.controller"
+import { GoogleOAuth, LoginWithEmail } from "@/app/conrollers/auth.controller"
 import { toast } from "sonner"
 import { Spinner } from "@/components/ui/spinner"
 
@@ -36,6 +36,14 @@ const Login = () => {
         router.push("/admin")
       }
       setIsLoading(false)
+    } catch (error) {
+      throw error
+    }
+  }
+
+  const loginWithOAuth = async () => {
+    try {
+      await GoogleOAuth()
     } catch (error) {
       throw error
     }
@@ -76,7 +84,10 @@ const Login = () => {
                 <span className="text-sm text-gray-500">or</span>
                 <Separator className="flex-1" />
               </div>
-              <Button variant="outline" className="w-full mb-5">
+              <Button
+                variant="outline"
+                className="w-full mb-5"
+                onClick={loginWithOAuth}>
                 <Image src="/google.png" alt="google" width={20} height={50} />
                 <p>Sign in with Google</p>
               </Button>

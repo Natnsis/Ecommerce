@@ -10,7 +10,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AuthSchema, AuthTypes } from "@/app/schemas/auth.schema"
 import { useState } from "react"
-import { RegisterWithEmail } from "@/app/conrollers/auth.controller"
+import { GoogleOAuth, RegisterWithEmail } from "@/app/conrollers/auth.controller"
 import { toast } from "sonner"
 
 const Register = () => {
@@ -34,6 +34,14 @@ const Register = () => {
       router.push("/auth/login")
     } catch (error) {
       setIsLoading(false)
+      throw error
+    }
+  }
+
+  const loginWithOAuth = async () => {
+    try {
+      await GoogleOAuth()
+    } catch (error) {
       throw error
     }
   }
@@ -66,7 +74,8 @@ const Register = () => {
               </div>
               <Button
                 variant="outline"
-                className="w-full mb-5">
+                className="w-full mb-5"
+                onClick={loginWithOAuth}>
                 <Image
                   src="/google.png"
                   alt="google"
