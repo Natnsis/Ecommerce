@@ -1,9 +1,10 @@
 import { createClient } from "@/lib/supabase/client"
 import { productType } from "../schemas/product.schema"
 
+const supabase = createClient()
+
 export const addProduct = async (data: productType) => {
   try {
-    const supabase = createClient();
     const { name, price, market, category, description, image } = data;
     if (!image) throw new Error("No image provided");
     const fileExt = image.name.split(".").pop();
@@ -41,22 +42,23 @@ export const addProduct = async (data: productType) => {
   }
 };
 
-export const getProduct = async () => {
+export const getProducts = async () => {
   try {
-    const supabase = createClient();
-    const { data: products, error: productsError } = await supabase.from("products")
-      .select("*")
-    if (productsError) throw productsError;
-    return products
+    const { data: products, error } = await supabase
+      .from("products")
+      .select("*");
+    if (error) {
+      console.error("Supabase Error:", error.message);
+      throw new Error(error.message);
+    }
+    return products;
   } catch (error) {
     console.log(error)
-    throw error
   }
-}
+};
 
 export const getProductWithId = async (id: string) => {
   try {
-    const supabase = createClient();
     const { data: product, error: productError } = await supabase
       .from("products")
       .select("*")
@@ -72,7 +74,6 @@ export const getProductWithId = async (id: string) => {
 
 export const deleteProduct = async (id: string) => {
   try {
-    const supabase = createClient();
     const { error: deleteError } = await supabase.from("products")
       .delete()
       .eq("id", id)
@@ -84,7 +85,6 @@ export const deleteProduct = async (id: string) => {
 
 export const updateProduct = async (id: string, data: Partial<productType>) => {
   try {
-    const supabase = createClient();
     const { name, price, market, category, description } = data;
 
     const { error } = await supabase
