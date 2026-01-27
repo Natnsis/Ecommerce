@@ -12,6 +12,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { productSchema, productType } from "@/app/schemas/product.schema"
 import { useState } from "react"
 import Image from "next/image"
+import { addProduct } from "@/app/conrollers/product.controller"
+import { toast } from "sonner"
 
 const CATEGORIES = [
   "electronics",
@@ -29,7 +31,7 @@ const page = () => {
   const [preview, setPreview] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const { register, handleSubmit, control, formState: { errors } } = useForm({
+  const { register, handleSubmit, control, formState: { errors }, reset } = useForm({
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: "",
@@ -41,8 +43,16 @@ const page = () => {
     }
   });
 
-  const onSubmit = (data: productType) => {
-    console.log(data)
+  const onSubmit = async (data: productType) => {
+    try {
+      setIsLoading(true)
+      await addProduct(data);
+      setIsLoading(false)
+      reset()
+      toast("Uploaded Succesfully")
+    } catch (error) {
+      throw error
+    }
   }
 
   return (

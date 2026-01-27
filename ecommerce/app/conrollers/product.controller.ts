@@ -8,7 +8,7 @@ export const addProduct = async (data: productType) => {
     if (!image) throw new Error("No image provided");
     const fileExt = image.name.split(".").pop();
     const fileName = `${crypto.randomUUID()}.${fileExt}`;
-    const filePath = `products/${fileName}`;
+    const filePath = `${fileName}`;
 
     const { error: uploadError } = await supabase.storage
       .from("products")
