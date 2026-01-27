@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button"
+"use client"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,14 +8,32 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-
 import {
   Avatar,
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
+import { Logout } from "@/app/conrollers/auth.controller"
+import { toast } from "sonner"
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Spinner } from "./ui/spinner"
 
 const Profile = () => {
+  const router = useRouter()
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const logout = async () => {
+    try {
+      setIsLoading(true)
+      await Logout()
+      setIsLoading(false)
+      toast.success("you've logged out");
+      router.push("/auth/login");
+    } catch (error) {
+      throw error
+    }
+  }
+
   return (
     < DropdownMenu >
       <DropdownMenuTrigger asChild>
@@ -32,12 +50,13 @@ const Profile = () => {
         <DropdownMenuGroup>
           <DropdownMenuLabel>My Account</DropdownMenuLabel>
           <DropdownMenuItem>Profile</DropdownMenuItem>
-          <DropdownMenuItem>Billing</DropdownMenuItem>
-        </DropdownMenuGroup>
-        <DropdownMenuGroup>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem>Team</DropdownMenuItem>
-          <DropdownMenuItem>Subscription</DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={logout}>{isLoading ?
+              <span>
+                <Spinner />
+                logging out...
+              </span> : "Log out"}
+          </DropdownMenuItem>
         </DropdownMenuGroup>
       </DropdownMenuContent>
     </DropdownMenu >

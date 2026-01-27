@@ -11,6 +11,9 @@ import {
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { AdminModeToggle } from "@/components/admin-mode"
+import { Logout } from "@/app/conrollers/auth.controller"
+import { toast } from "sonner"
+import { Spinner } from "./ui/spinner"
 
 type PageVariants = "ghost" | "default"
 
@@ -20,6 +23,7 @@ const Sidebar = ({ pageName }: { pageName: string }) => {
   const [order, setOrder] = useState<PageVariants>("ghost")
   const [user, setUser] = useState<PageVariants>("ghost")
   const [product, setProduct] = useState<PageVariants>("ghost")
+  const [isLoading, setIsLoading] = useState<boolean>(false)
 
   useEffect(() => {
     switch (pageName) {
@@ -55,6 +59,18 @@ const Sidebar = ({ pageName }: { pageName: string }) => {
         break;
     }
   }, [])
+
+  const logout = async () => {
+    try {
+      setIsLoading(true)
+      await Logout()
+      setIsLoading(false)
+      toast.success("you've logged out");
+      router.push("/auth/login");
+    } catch (error) {
+      throw error
+    }
+  }
 
   return (
     <aside className="col-span-1 border-r p-2 h-full">
@@ -98,9 +114,14 @@ const Sidebar = ({ pageName }: { pageName: string }) => {
           <Button
             className="w-full mt-5 flex justify-start gap-2"
             variant="ghost"
-            onClick={() => router.push("/admin/products")}>
+            disabled={isLoading}
+            onClick={logout}>
             <SignOutIcon />
-            Logout
+            {isLoading ?
+              <div>
+                logging out...
+              </div> :
+              "Logout"}
           </Button>
         </div>
       </div>
