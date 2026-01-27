@@ -27,7 +27,6 @@ export function ProductsTable() {
     queryFn: getProducts,
   });
 
-  //FIX: doesnt delete
   const deleteMutation = useMutation({
     mutationFn: (id: string) => deleteProduct(id),
     onSuccess: () => {

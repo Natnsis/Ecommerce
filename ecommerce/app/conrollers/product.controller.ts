@@ -72,15 +72,45 @@ export const getProductWithId = async (id: string) => {
   }
 }
 
-//FIX: delete file with product
 export const deleteProduct = async (id: string) => {
   try {
-    const { error: deleteError } = await supabase.from("products")
+    const { data: product, error: fetchError } = await supabase
+      .from("products")
+      .select("url")
+      .eq("id", id)
+      .maybeSingle()
+
+    if (fetchError) throw fetchError
+    if (!product?.url) throw new Error("Image URL not found")
+
+    const bucketName = "products"
+    const filePath = product.url.split(`/storage/v1/object/public/${bucketName}/`)[1]
+
+    if (!filePath) {
+      throw new Error("Invalid image URL format")
+    }
+
+    const { error: storageError } = await supabase
+      .storage
+      .from(bucketName)
+      .remove([filePath])
+
+    if (storageError) throw storageError
+
+    const { error: deleteError } = await supabase
+      .from("products")
       .delete()
       .eq("id", id)
+
     if (deleteError) throw deleteError
-  } catch (error) {
-    console.log(error)
+
+  } catch (error: any) {
+    console.error("Delete product failed:", {
+      message: error?.message,
+      code: error?.code,
+      details: error?.details,
+      raw: error,
+    })
   }
 }
 
