@@ -27,6 +27,8 @@ const CATEGORIES = [
 const page = () => {
   const router = useRouter()
   const [preview, setPreview] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const { register, handleSubmit, control, formState: { errors } } = useForm({
     resolver: zodResolver(productSchema),
     defaultValues: {
@@ -172,9 +174,9 @@ const page = () => {
                   {errors.image && (<p className="text-[#E7000A]">{errors.image.message}</p>)}
                 </div>
 
-                <Button className="w-full" type="submit">
+                <Button className="w-full" type="submit" disabled={isLoading}>
                   <PlusIcon />
-                  Save Product
+                  {isLoading ? "saving..." : "Save Product"}
                 </Button>
               </div>
             </form>
