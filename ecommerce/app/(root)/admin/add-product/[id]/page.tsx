@@ -12,7 +12,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { productSchema, productType } from "@/app/schemas/product.schema"
 import { useState } from "react"
 import Image from "next/image"
-import { addProduct, getProductWithId } from "@/app/conrollers/product.controller"
+import { getProductWithId, updateProduct } from "@/app/conrollers/product.controller"
 import { toast } from "sonner"
 import { useQuery } from "@tanstack/react-query"
 
@@ -55,10 +55,10 @@ const page = () => {
 
   const DEFAULT_PRODUCT_IMAGE = "https://via.nplaceholder.com/600x600"
 
-  const onSubmit = async (data: productType) => {
+  const onSubmit = async (id: number, data: productType) => {
     try {
       setIsLoading(true)
-      await addProduct(data);
+      await updateProduct(id, data);
       setIsLoading(false)
       toast("Uploaded Succesfully")
     } catch (error) {
@@ -84,8 +84,9 @@ const page = () => {
                   <Label htmlFor="name">Name</Label>
                   <Input
                     id="name"
-                    placeholder="Product name" {...register("name")}
-                    value={data ? data.name : "product-name"} />
+                    placeholder={data ? data.name : "product name"}
+                    {...register("name")}
+                  />
                   {errors.name && (<p className="text-[#E7000A]">{errors.name.message}</p>)}
                 </div>
 
@@ -96,10 +97,7 @@ const page = () => {
                     <Input
                       id="price"
                       type="number"
-                      placeholder="0.00"
-                      min="0"
-                      step="0.01"
-                      value={data ? data.price : "0.0"}
+                      placeholder={data ? data.price : "0.0"}
                       {...register("price", { valueAsNumber: true })}
                     />
                     {errors.price && (<p className="text-[#E7000A]">{errors.price.message}</p>)}
@@ -109,10 +107,7 @@ const page = () => {
                     <Input
                       id="marketPrice"
                       type="number"
-                      placeholder="0.00"
-                      min="0"
-                      step="0.01"
-                      value={data ? data.market : "0.0"}
+                      placeholder={data ? data.market : "0.0"}
                       {...register("market", { valueAsNumber: true })} />
                     {errors.market && (<p className="text-[#E7000A]">{errors.market.message}</p>)}
                   </div>
@@ -124,10 +119,9 @@ const page = () => {
                     <Input
                       id="stock"
                       type="number"
-                      placeholder="100"
+                      placeholder={data ? data.stock : "1"}
                       min="0"
                       step="0.01"
-                      value={data ? data.stock : "1"}
                       {...register("stock", { valueAsNumber: true })} />
                     {errors.stock && (<p className="text-[#E7000A]">{errors.stock.message}</p>)}
                   </div>
@@ -164,9 +158,8 @@ const page = () => {
                   <Label htmlFor="description">Description</Label>
                   <Textarea
                     id="description"
-                    placeholder="Tell us more about the product..."
+                    placeholder={data ? data.description : "this is a product description"}
                     className="min-h-[100px]"
-                    value={data ? data.description : "this is a product description"}
                     {...register("description")}
                   />
                   {errors.description && (<p className="text-[#E7000A]">{errors.description.message}</p>)}
@@ -199,7 +192,7 @@ const page = () => {
 
                 <Button className="w-full" type="submit" disabled={isLoading}>
                   <PlusIcon />
-                  {isLoading ? "saving..." : "Save Product"}
+                  {isLoading ? "updating..." : "Update Product"}
                 </Button>
               </div>
             </form>

@@ -115,7 +115,7 @@ export const deleteProduct = async (id: string) => {
   }
 }
 
-export const updateProduct = async (id: string, data: Partial<productType>) => {
+export const updateProduct = async (id: number, data: Partial<productType>) => {
   try {
     const { name, price, market, category, description, stock } = data;
 
