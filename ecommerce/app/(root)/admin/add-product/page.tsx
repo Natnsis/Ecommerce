@@ -9,13 +9,14 @@ import { Card, CardTitle, CardHeader, CardContent } from "@/components/ui/card"
 import { Select, SelectTrigger, SelectItem, SelectValue, SelectContent } from "@/components/ui/select"
 
 const CATEGORIES = [
-  "Electronics",
-  "Clothing",
-  "Home & Kitchen",
-  "Books",
-  "Toys & Games",
-  "Beauty",
-  "Sports",
+  "electronics",
+  "fashion",
+  "furniture",
+  "sport",
+  "stationary",
+  "toys",
+  "health",
+  "authomotive"
 ];
 
 const page = () => {
