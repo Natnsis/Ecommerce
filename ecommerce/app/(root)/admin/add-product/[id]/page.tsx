@@ -1,20 +1,35 @@
 "use client"
+
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import {
+  Card,
+  CardTitle,
+  CardHeader,
+  CardContent
+} from "@/components/ui/card"
+import {
+  Select,
+  SelectTrigger,
+  SelectItem,
+  SelectValue,
+  SelectContent
+} from "@/components/ui/select"
+
 import { ArrowLeftIcon, PlusIcon } from "@phosphor-icons/react"
 import { useParams, useRouter } from "next/navigation"
-import { Textarea } from "@/components/ui/textarea"
-import { Card, CardTitle, CardHeader, CardContent } from "@/components/ui/card"
-import { Select, SelectTrigger, SelectItem, SelectValue, SelectContent } from "@/components/ui/select"
+import Image from "next/image"
+
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { productSchema, productType } from "@/app/schemas/product.schema"
-import { useState } from "react"
-import Image from "next/image"
+
 import { getProductWithId, updateProduct } from "@/app/conrollers/product.controller"
-import { toast } from "sonner"
 import { useQuery } from "@tanstack/react-query"
+import { toast } from "sonner"
+import { useEffect, useState } from "react"
 
 const CATEGORIES = [
   "electronics",
@@ -25,182 +40,184 @@ const CATEGORIES = [
   "toys",
   "health",
   "authomotive"
-];
+]
 
-const page = () => {
+const DEFAULT_PRODUCT_IMAGE = "https://via.nplaceholder.com/600x600"
+
+const Page = () => {
   const router = useRouter()
   const { id } = useParams()
-  const [preview, setPreview] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false)
 
-  const { register, handleSubmit, control, formState: { errors }, reset } = useForm({
+  const {
+    register,
+    handleSubmit,
+    control,
+    reset,
+    formState: { errors }
+  } = useForm<productType>({
     resolver: zodResolver(productSchema),
     defaultValues: {
       name: "",
       price: 0,
       market: 0,
+      stock: 0,
       category: "",
       description: "",
-      image: undefined
+      image: undefined // 👈 image stays untouched
     }
-  });
-
-  const { data, error } = useQuery({
-    queryKey: ['product', id],
-    queryFn: async ({ queryKey }) => {
-      const [, productId] = queryKey
-      return getProductWithId(productId as string)
-    },
   })
 
-  const DEFAULT_PRODUCT_IMAGE = "https://via.nplaceholder.com/600x600"
+  const { data } = useQuery({
+    queryKey: ["product", id],
+    queryFn: () => getProductWithId(id as string),
+    enabled: !!id
+  })
 
-  const onSubmit = async (id: number, data: productType) => {
+  // Populate form once product is fetched
+  useEffect(() => {
+    if (!data) return
+
+    reset({
+      name: data.name,
+      price: data.price,
+      market: data.market,
+      stock: data.stock,
+      category: data.category,
+      description: data.description,
+      image: undefined // 👈 never preload image
+    })
+  }, [data, reset])
+
+  const onSubmit = async (formData: productType) => {
     try {
       setIsLoading(true)
-      await updateProduct(id, data);
-      setIsLoading(false)
-      toast("Uploaded Succesfully")
+      await updateProduct(Number(id), formData)
+      toast("Updated successfully")
+      router.back()
     } catch (error) {
-      throw error
+      toast("Something went wrong")
+    } finally {
+      setIsLoading(false)
     }
   }
 
   return (
     <main className="p-5">
-      <Button onClick={() => router.back()}>
+      <Button onClick={() => router.back()} className="mb-5">
         <ArrowLeftIcon />
-        <p>Back</p>
+        <span>Back</span>
       </Button>
-      <section className="h-[90vh] p-5">
-        <Card className="w-full max-w-4xl mx-auto">
-          <CardHeader>
-            <CardTitle>Update Product</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form className="grid grid-cols-1 md:grid-cols-3 gap-6" onSubmit={handleSubmit(onSubmit)}>
-              <div className="md:col-span-2 space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Name</Label>
+
+      <Card className="max-w-4xl mx-auto">
+        <CardHeader>
+          <CardTitle>Update Product</CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="grid grid-cols-1 md:grid-cols-3 gap-6"
+          >
+            {/* LEFT */}
+            <div className="md:col-span-2 space-y-4">
+              <div>
+                <Label>Name</Label>
+                <Input placeholder={data?.name || "Product name"} {...register("name")} />
+                {errors.name && <p className="text-[#E7000A]">{errors.name.message}</p>}
+              </div>
+
+              <div className="grid sm:grid-cols-2 gap-4">
+                <div>
+                  <Label>Price</Label>
                   <Input
-                    id="name"
-                    placeholder={data ? data.name : "product name"}
-                    {...register("name")}
+                    type="number"
+                    placeholder={data?.price?.toString() || "0"}
+                    {...register("price", { valueAsNumber: true })}
                   />
-                  {errors.name && (<p className="text-[#E7000A]">{errors.name.message}</p>)}
+                  {errors.price && <p className="text-[#E7000A]">{errors.price.message}</p>}
                 </div>
 
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="price">Price</Label>
-                    <Input
-                      id="price"
-                      type="number"
-                      placeholder={data ? data.price : "0.0"}
-                      {...register("price", { valueAsNumber: true })}
-                    />
-                    {errors.price && (<p className="text-[#E7000A]">{errors.price.message}</p>)}
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="marketPrice">Market Price</Label>
-                    <Input
-                      id="marketPrice"
-                      type="number"
-                      placeholder={data ? data.market : "0.0"}
-                      {...register("market", { valueAsNumber: true })} />
-                    {errors.market && (<p className="text-[#E7000A]">{errors.market.message}</p>)}
-                  </div>
-                </div>
-
-                <div className="flex gap-5">
-                  <div className="space-y-2 w-1/2">
-                    <Label htmlFor="stock">Stock</Label>
-                    <Input
-                      id="stock"
-                      type="number"
-                      placeholder={data ? data.stock : "1"}
-                      min="0"
-                      step="0.01"
-                      {...register("stock", { valueAsNumber: true })} />
-                    {errors.stock && (<p className="text-[#E7000A]">{errors.stock.message}</p>)}
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="category">Category</Label>
-                    <Controller
-                      name="category"
-                      control={control}
-                      render={({ field }) => (
-                        <Select
-                          defaultValue=""
-                          onValueChange={field.onChange}
-                          value={field.value}
-                        >
-                          <SelectTrigger id="category">
-                            <SelectValue placeholder="Select a category" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {CATEGORIES.map((category) => (
-                              <SelectItem key={category} value={category}>
-                                {category}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      )}
-                    />
-                    {errors.category && (<p className="text-[#E7000A]">{errors.category.message}</p>)}
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    placeholder={data ? data.description : "this is a product description"}
-                    className="min-h-[100px]"
-                    {...register("description")}
+                <div>
+                  <Label>Market Price</Label>
+                  <Input
+                    type="number"
+                    placeholder={data?.market?.toString() || "0"}
+                    {...register("market", { valueAsNumber: true })}
                   />
-                  {errors.description && (<p className="text-[#E7000A]">{errors.description.message}</p>)}
+                  {errors.market && <p className="text-[#E7000A]">{errors.market.message}</p>}
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div
-                  className="flex flex-col items-center justify-center 
-                  p-6 border-2 border-dashed rounded-lg bg-muted/30 
-                  hover:bg-muted/50 transition-colors">
+              <div className="flex gap-4">
+                <div className="w-1/2">
+                  <Label>Stock</Label>
+                  <Input
+                    type="number"
+                    placeholder={data?.stock?.toString() || "1"}
+                    {...register("stock", { valueAsNumber: true })}
+                  />
+                  {errors.stock && <p className="text-[#E7000A]">{errors.stock.message}</p>}
+                </div>
+
+                <div className="w-1/2">
+                  <Label>Category</Label>
                   <Controller
-                    name="image"
+                    name="category"
                     control={control}
                     render={({ field }) => (
-                      <Label
-                        className="cursor-pointer flex flex-col items-center gap-2 text-center"
-                      >
-                        <Image
-                          src={data ? data.url : DEFAULT_PRODUCT_IMAGE}
-                          alt="Preview"
-                          width={160}
-                          height={160}
-                          className="rounded-md object-cover"
-                        />
-                      </Label>
+                      <Select value={field.value} onValueChange={field.onChange}>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {CATEGORIES.map(c => (
+                            <SelectItem key={c} value={c}>
+                              {c}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     )}
                   />
+                  {errors.category && <p className="text-[#E7000A]">{errors.category.message}</p>}
                 </div>
-
-                <Button className="w-full" type="submit" disabled={isLoading}>
-                  <PlusIcon />
-                  {isLoading ? "updating..." : "Update Product"}
-                </Button>
               </div>
-            </form>
-          </CardContent>
-        </Card>
-      </section>
+
+              <div>
+                <Label>Description</Label>
+                <Textarea
+                  placeholder={data?.description || "Product description"}
+                  {...register("description")}
+                />
+                {errors.description && (
+                  <p className="text-[#E7000A]">{errors.description.message}</p>
+                )}
+              </div>
+            </div>
+
+            {/* RIGHT */}
+            <div className="space-y-4">
+              <div className="p-6 border-2 border-dashed rounded-lg bg-muted/30 flex justify-center">
+                <Image
+                  src={data?.url || DEFAULT_PRODUCT_IMAGE}
+                  alt="Product Image"
+                  width={160}
+                  height={160}
+                  className="rounded-md object-cover"
+                />
+              </div>
+
+              <Button type="submit" disabled={isLoading} className="w-full">
+                <PlusIcon />
+                {isLoading ? "Updating..." : "Update Product"}
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
     </main>
   )
 }
 
-export default page
+export default Page
