@@ -1,9 +1,18 @@
 "use client";
-
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
@@ -71,14 +80,34 @@ export function ProductsTable() {
                 <PencilSimpleIcon />
               </Button>
 
-              <Button
-                variant="destructive"
-                size="icon"
-                onClick={() => deleteMutation.mutate(p.id)}
-                disabled={deleteMutation.isPending}
-              >
-                <TrashIcon />
-              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant="destructive"
+                  >
+                    <TrashIcon />
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Are you sure you want to delete the product?</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      This action cannot be undone. This will permanently delete your
+                      account from our servers.
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction
+                      onClick={() => deleteMutation.mutate(p.id)}
+                      disabled={deleteMutation.isPending}
+                    >
+                      Continue
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
             </TableCell>
           </TableRow>
         ))}
