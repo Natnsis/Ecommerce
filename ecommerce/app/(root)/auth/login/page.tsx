@@ -9,19 +9,30 @@ import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AuthSchema, AuthTypes } from "@/app/schemas/auth.schema"
+import { useState } from "react"
+import { LoginWithEmail } from "@/app/conrollers/auth.controller"
+import { toast } from "sonner"
 
 const Login = () => {
   const router = useRouter()
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(AuthSchema),
     defaultValues: {
       email: "",
       password: ""
     }
-  })
+  });
 
-  const onSubmit = (data: AuthTypes) => {
-    console.log(data)
+  const onSubmit = async (data: AuthTypes) => {
+    try {
+      setIsLoading(true)
+      await LoginWithEmail(data);
+      toast.success("Welcome back!")
+      setIsLoading(false)
+    } catch (error) {
+      throw error
+    }
   }
 
   return (
@@ -45,8 +56,10 @@ const Login = () => {
               {errors.password && (<p className="text-red-600 mb-3">{errors.password.message}</p>)}
               <Button
                 className="w-full mb-3"
-                type="submit">
-                Login
+                type="submit"
+                disabled={isLoading}
+              >
+                {isLoading ? "logging in..." : "Login"}
               </Button>
               <div className="flex items-center gap-2 mb-5">
                 <Separator className="flex-1" />

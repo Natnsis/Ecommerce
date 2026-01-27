@@ -9,10 +9,15 @@ import { useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { AuthSchema, AuthTypes } from "@/app/schemas/auth.schema"
+import { useState } from "react"
+import { RegisterWithEmail } from "@/app/conrollers/auth.controller"
+import { toast } from "sonner"
 
 const Register = () => {
   const router = useRouter()
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm({
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const { register, handleSubmit, formState: { errors } } = useForm({
     resolver: zodResolver(AuthSchema),
     defaultValues: {
       email: "",
@@ -21,7 +26,16 @@ const Register = () => {
   })
 
   const onSubmit = async (data: AuthTypes) => {
-    console.log(data)
+    try {
+      setIsLoading(true)
+      await RegisterWithEmail(data);
+      toast.success("user registered succcessfully")
+      setIsLoading(false)
+      router.push("/auth/login")
+    } catch (error) {
+      setIsLoading(false)
+      throw error
+    }
   }
 
   return (
@@ -41,9 +55,9 @@ const Register = () => {
               <Button
                 className="w-full mb-3"
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isLoading}
               >
-                {isSubmitting ? "registering..." : "Register"}
+                {isLoading ? "registering..." : "Register"}
               </Button>
               <div className="flex items-center gap-2 mb-5">
                 <Separator className="flex-1" />

@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/client"
+import { AuthTypes } from "../schemas/auth.schema";
 
-export const LoginWithEmail = async (data) => {
+export const LoginWithEmail = async (data: AuthTypes) => {
   try {
     const supabase = createClient()
     const { email, password } = data
@@ -14,7 +15,7 @@ export const LoginWithEmail = async (data) => {
   }
 }
 
-export const RegisterWithEmail = async (data) => {
+export const RegisterWithEmail = async (data: AuthTypes) => {
   try {
     const supabase = createClient()
     const { email, password } = data
