@@ -1,4 +1,5 @@
 "use client";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,9 +24,12 @@ import { Button } from "@/components/ui/button";
 import { PencilSimpleIcon, TrashIcon } from "@phosphor-icons/react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { deleteProduct, getProducts } from "@/app/conrollers/product.controller";
+import { useRouter } from "next/navigation";
 
 export function ProductsTable() {
   const queryClient = useQueryClient();
+  const router = useRouter()
+
   const {
     data: products = [],
     isLoading,
@@ -43,11 +47,15 @@ export function ProductsTable() {
     },
   });
 
+  const updadteProduct = (id) => {
+    router.push()
+  }
+
   if (isLoading) return <p>Loading products...</p>;
   if (isError) return <p>Error: {(error as Error).message}</p>;
 
   return (
-    <Table>
+    < Table >
       <TableHeader>
         <TableRow>
           <TableHead>No.</TableHead>
@@ -76,7 +84,11 @@ export function ProductsTable() {
             <TableCell>{p.market}</TableCell>
 
             <TableCell className="flex items-center gap-3">
-              <Button variant="outline" size="icon">
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={() => router.push(`/admin/add-product/${p.id}`)}
+              >
                 <PencilSimpleIcon />
               </Button>
 
