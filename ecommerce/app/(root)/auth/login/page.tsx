@@ -12,6 +12,7 @@ import { AuthSchema, AuthTypes } from "@/app/schemas/auth.schema"
 import { useState } from "react"
 import { LoginWithEmail } from "@/app/conrollers/auth.controller"
 import { toast } from "sonner"
+import { Spinner } from "@/components/ui/spinner"
 
 const Login = () => {
   const router = useRouter()
@@ -27,8 +28,13 @@ const Login = () => {
   const onSubmit = async (data: AuthTypes) => {
     try {
       setIsLoading(true)
-      await LoginWithEmail(data);
+      const userData = await LoginWithEmail(data);
       toast.success("Welcome back!")
+      if (userData.role == "customer") {
+        router.push("/dashboard")
+      } else {
+        router.push("/admin")
+      }
       setIsLoading(false)
     } catch (error) {
       throw error
@@ -59,7 +65,11 @@ const Login = () => {
                 type="submit"
                 disabled={isLoading}
               >
-                {isLoading ? "logging in..." : "Login"}
+                {isLoading ?
+                  <div className="flex gap-1">
+                    <Spinner /> logging in
+                  </div>
+                  : "Login"}
               </Button>
               <div className="flex items-center gap-2 mb-5">
                 <Separator className="flex-1" />

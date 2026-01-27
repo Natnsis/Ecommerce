@@ -5,11 +5,19 @@ export const LoginWithEmail = async (data: AuthTypes) => {
   try {
     const supabase = createClient()
     const { email, password } = data
-    const { error: LoginError } = await supabase.auth.signInWithPassword({
+    const { data: userData, error: LoginError } = await supabase.auth.signInWithPassword({
       email,
       password
     });
     if (LoginError) throw LoginError;
+    const id = userData.user?.id
+    const { data: userRole, error: profileError } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("user_id", id)
+      .single()
+    if (profileError) throw profileError
+    return userRole
   } catch (error) {
     throw error
   }
@@ -19,11 +27,19 @@ export const RegisterWithEmail = async (data: AuthTypes) => {
   try {
     const supabase = createClient()
     const { email, password } = data
-    const { error: RegisterError } = await supabase.auth.signUp({
+    const { data: userData, error: RegisterError } = await supabase.auth.signUp({
       email,
       password
     })
     if (RegisterError) throw RegisterError
+    const user_id = userData.user?.id
+    const { error: profileError } = await supabase
+      .from('profiles')
+      .insert({
+        user_id,
+        role: "customer"
+      })
+    if (profileError) throw profileError;
   } catch (error) {
     throw error
   }
@@ -41,5 +57,15 @@ export const GoogleOAuth = async () => {
     if (authError) throw authError
   } catch (error) {
     throw error
+  }
+}
+
+export const Logout = async () => {
+  try {
+    const supabase = createClient();
+    const { error: logoutError } = await supabase.auth.signOut()
+    if (logoutError) throw logoutError
+  } catch (error) {
+    throw error;
   }
 }
