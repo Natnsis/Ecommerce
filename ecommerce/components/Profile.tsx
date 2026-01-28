@@ -5,7 +5,6 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import {
@@ -15,13 +14,29 @@ import {
 } from "@/components/ui/avatar"
 import { Logout } from "@/app/conrollers/auth.controller"
 import { toast } from "sonner"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Spinner } from "./ui/spinner"
+import { User } from "@supabase/supabase-js"
+import { createClient } from "@/lib/supabase/client"
+
+const supabase = createClient()
 
 const Profile = () => {
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [loading, setIsLoading] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null)
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      const { data: { session }, error } = await supabase.auth.getSession()
+      if (!error) setUser(session?.user ?? null)
+    }
+    fetchUser()
+  }, [])
+
+  console.log(user?.user_metadata?.avatar_url)
+
   const logout = async () => {
     try {
       setIsLoading(true)
@@ -39,19 +54,20 @@ const Profile = () => {
       <DropdownMenuTrigger asChild>
         <Avatar>
           <AvatarImage
-            src="https://github.com/shadcn.png"
-            alt="@shadcn"
+            src={
+              user?.user_metadata?.avatar_url || "https://github.com/shadcn.png"
+            }
+            alt={user?.email || "User Avatar"}
             className="grayscale"
           />
-          <AvatarFallback>CN</AvatarFallback>
+          <AvatarFallback>PF</AvatarFallback>
         </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent>
         <DropdownMenuGroup>
-          <DropdownMenuLabel>My Account</DropdownMenuLabel>
-          <DropdownMenuItem>Profile</DropdownMenuItem>
+          <DropdownMenuLabel>{user?.email}</DropdownMenuLabel>
           <DropdownMenuItem
-            onClick={logout}>{isLoading ?
+            onClick={logout}>{loading ?
               <span>
                 <Spinner />
                 logging out...

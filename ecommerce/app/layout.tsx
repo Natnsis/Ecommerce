@@ -38,11 +38,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <AuthProvider>
-            <TanstackProvider>
-              {children}
-            </TanstackProvider>
-          </AuthProvider>
+          <TanstackProvider>
+            {children}
+          </TanstackProvider>
           <Toaster />
         </ThemeProvider>
       </body>

@@ -19,8 +19,6 @@ import { ModeToggle } from "@/components/mode-toggle"
 
 const dashboard = () => {
   const router = useRouter()
-
-
   return (
     <section className="p-5 w-full">
       <div className="flex justify-between items-center w-full">
