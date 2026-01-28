@@ -1,214 +1,231 @@
-"use client"
-import InnerHeader from "@/components/InnerHeader"
-import Profile from "@/components/Profile"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { HeartIcon, ShoppingBagIcon, StarIcon } from "@phosphor-icons/react"
-import { Separator } from "@/components/ui/separator"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import Image from "next/image"
-import { products } from "@/lib/constant"
-import { useRouter } from "next/navigation"
-import { ModeToggle } from "@/components/mode-toggle"
-import { useUser } from "../context/user"
+"use client";
 
-const dashboard = () => {
-  const router = useRouter()
-  const { data: user } = useUser()
-  if (!user) {
-    console.log("No user")
-    return
-  }
-  console.log(user.id)
-  console.log(user.email)
+import InnerHeader from "@/components/InnerHeader";
+import Profile from "@/components/Profile";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { HeartIcon, ShoppingBagIcon, StarIcon } from "@phosphor-icons/react";
+import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { ModeToggle } from "@/components/mode-toggle";
+import { useUser } from "../context/user";
+import { useEffect, useMemo, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
+import { getProducts } from "@/app/conrollers/product.controller";
+
+export default function Dashboard() {
+  const router = useRouter();
+  const { data: user, isLoading: isUserLoading } = useUser();
+
+  // Filters
+  const [category, setCategory] = useState<"all" | string>("all");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [minPriceInput, setMinPriceInput] = useState<string>("");
+  const [maxPriceInput, setMaxPriceInput] = useState<string>("");
+
+  // Parsed values — undefined when empty
+  const minPrice = minPriceInput.trim() !== "" ? Number(minPriceInput) : undefined;
+  const maxPrice = maxPriceInput.trim() !== "" ? Number(maxPriceInput) : undefined;
+
+  useEffect(() => {
+    if (!isUserLoading && user) {
+      console.log("User ID:", user.id);
+      console.log("User Email:", user.email);
+    } else if (!isUserLoading && !user) {
+      console.log("No user found");
+    }
+  }, [user, isUserLoading]);
+
+  const { data: products = [], isLoading: productsLoading } = useQuery({
+    queryKey: ["products"],
+    queryFn: getProducts,
+  });
+
+  const filteredProducts = useMemo(() => {
+    return products.filter((p) => {
+      // 1. Search
+      const matchesSearch =
+        !searchTerm.trim() ||
+        p.name?.toLowerCase().includes(searchTerm.toLowerCase().trim());
+
+      // 2. Category
+      const matchesCategory = category === "all" || p.category === category;
+
+      // 3. Price (only if user entered something)
+      let matchesPrice = true;
+
+      if (minPrice !== undefined && !isNaN(minPrice)) {
+        if (p.price < minPrice) matchesPrice = false;
+      }
+
+      if (maxPrice !== undefined && !isNaN(maxPrice)) {
+        if (p.price > maxPrice) matchesPrice = false;
+      }
+
+      return matchesSearch && matchesCategory && matchesPrice;
+    });
+  }, [products, searchTerm, category, minPrice, maxPrice, minPriceInput, maxPriceInput]);
+
   return (
-    <section className="p-5 w-full">
-      <div className="flex justify-between items-center w-full">
+    <section className="p-5 w-full min-h-screen">
+      <div className="flex justify-between items-center mb-6">
         <InnerHeader />
-        <div className="flex gap-2">
-          <Input className="w-[30vw]" placeholder="search for products..." />
-          <Button>
-            <HeartIcon />
+
+        <div className="flex items-center gap-3">
+          <Input
+            className="w-[260px] md:w-[320px]"
+            placeholder="Search products..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+          <Button variant="outline" size="icon">
+            <HeartIcon size={20} />
           </Button>
-          <Button variant="outline" onClick={() => router.push("/dashboard/cart")}>
-            <ShoppingBagIcon />
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => router.push("/dashboard/cart")}
+          >
+            <ShoppingBagIcon size={20} />
           </Button>
           <ModeToggle />
           <Profile />
         </div>
       </div>
 
-      <main className="flex w-full">
-        <aside className="mt-2">
-          <div className="my-3">
-            <h1 className="mb-1">Category</h1>
-            <div className="flex gap-1 items-center">
-              <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600 dark:text-gray-300">Electronics</p>
+      <main className="flex gap-6">
+        {/* Filters sidebar */}
+        <aside className="w-64 shrink-0 hidden md:block">
+          <div className="sticky top-5 space-y-6">
+            {/* Category */}
+            <div>
+              <h2 className="font-semibold mb-3">Category</h2>
+              {[
+                { value: "all", label: "All Categories" },
+                { value: "electronics", label: "Electronics" },
+                { value: "fashion", label: "Fashion" },
+                { value: "furniture", label: "Home & Living" },
+                { value: "sport", label: "Sports & Outdoors" },
+                { value: "stationary", label: "Books & Stationery" },
+                { value: "toys", label: "Toys & Kids" },
+                { value: "health", label: "Health & Wellness" },
+                { value: "automotive", label: "Automotive" },
+              ].map((item) => (
+                <label
+                  key={item.value}
+                  className="flex items-center gap-2 py-1.5 text-sm text-gray-700 dark:text-gray-300 hover:text-rose-600 cursor-pointer"
+                >
+                  <input
+                    type="radio"
+                    name="category"
+                    value={item.value}
+                    checked={category === item.value}
+                    onChange={(e) => setCategory(e.target.value)}
+                    className="accent-rose-600 h-4 w-4"
+                  />
+                  {item.label}
+                </label>
+              ))}
             </div>
-            <div className="flex gap-1 items-center">
-              <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600 dark:text-gray-300">Fashion</p>
-            </div>
-            <div className="flex gap-1 items-center">
-              <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600 dark:text-gray-300">Home & Living</p>
-            </div>
-            <div className="flex gap-1 items-center">
-              <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600 dark:text-gray-300">Sports & Outdoors</p>
-            </div>
-            <div className="flex gap-1 items-center">
-              <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600 dark:text-gray-300">Books & Stationery</p>
-            </div>
-            <div className="flex gap-1 items-center">
-              <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600 dark:text-gray-300">Toys & Kids</p>
-            </div>
-            <div className="flex gap-1 items-center">
-              <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600 dark:text-gray-300">Health & Wellness</p>
-            </div>
-            <div className="flex gap-1 items-center">
-              <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600 dark:text-gray-300">Personal Care</p>
-            </div>
-            <div className="flex gap-1 items-center">
-              <input type="radio" className="accent-[#E7000A]" name="category" />
-              <p className="text-sm text-gray-600 dark:text-gray-300">Automotive</p>
-            </div>
-            <Separator className="mt-3" />
-          </div>
 
-          <div className="my-3">
-            <h1 className="mb-1">Price</h1>
-            <div className="flex gap-1 items-center">
-              <input type="radio" className="accent-[#E7000A]" name="price" />
-              <p className="text-sm text-gray-600 dark:text-gray-300">$0 - $50</p>
-            </div>
-            <div className="flex gap-1 items-center">
-              <input type="radio" className="accent-[#E7000A]" name="price" />
-              <p className="text-sm text-gray-600 dark:text-gray-300">$50 - $100</p>
-            </div>
-            <div className="flex gap-1 items-center">
-              <input type="radio" className="accent-[#E7000A]" name="price" />
-              <p className="text-sm text-gray-600 dark:text-gray-300">$100 - $150</p>
-            </div>
-            <div className="flex gap-1 items-center">
-              <input type="radio" className="accent-[#E7000A]" name="price" />
-              <p className="text-sm text-gray-600 dark:text-gray-300">over $150</p>
-            </div>
-            <div className="flex items-center gap-1 mt-3 w-[10vw]">
-              <div className="">
-                <Input defaultValue={0} className="text-center" type="number" />
-                <p className="text-center text-sm text-gray-600 dark:text-gray-300">Min</p>
-              </div>
-              <p>-</p>
-              <div>
-                <Input defaultValue={0} className="text-center" type="number" />
-                <p className="text-center text-sm text-gray-600 dark:text-gray-300">Max</p>
-              </div>
-            </div>
-            <Separator className="mt-3" />
-          </div>
+            <Separator />
 
-          <div className="my-3">
-            <h1 className="mb-1">Rating</h1>
-            <Select>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="select rating level" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="5" className="flex justify-center">
-                  <StarIcon />
-                  <StarIcon />
-                  <StarIcon />
-                  <StarIcon />
-                  <StarIcon />
-                </SelectItem>
-                <SelectItem value="4" className="flex justify-center">
-                  <StarIcon />
-                  <StarIcon />
-                  <StarIcon />
-                  <StarIcon />
-                </SelectItem>
-                <SelectItem value="3" className="flex justify-center">
-                  <StarIcon />
-                  <StarIcon />
-                  <StarIcon />
-                </SelectItem>
-                <SelectItem value="2" className="flex justify-center">
-                  <StarIcon />
-                  <StarIcon />
-                </SelectItem>
-                <SelectItem value="1" className="flex justify-center">
-                  <StarIcon />
-                </SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </aside>
-        <section className="w-full p-5 border-t ml-10">
-          <h1 className="text-xl font-bold">Recommended</h1>
-          <div className="flex justify-between items-center mt-5">
-            <div className="flex gap-2">
-              <Button>All Products</Button>
-              <Button variant="outline">Hot</Button>
-              <Button variant="outline">Rare</Button>
-              <Button variant="outline">Hobby</Button>
-            </div>
-            <Select>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="Newest" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="pftt">Newest</SelectItem>
-                <SelectItem value="heeh1">Cheapest</SelectItem>
-                <SelectItem value="heeh">Oldest</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="grid grid-cols-5 gap-3 mt-5 overflow-y-auto max-h-[80vh]">
-            {products.map((p, index) => (
-              <div className="border-b" key={index} onClick={() => router.push(`/dashboard/${p.id}`)}>
-                <div className="border bg-gray-50 rounded-lg h-[30vh] overflow-hidden">
-                  <div className="flex justify-end p-3"><HeartIcon size={20} /></div>
-                  <Image
-                    src={p.img}
-                    alt="product-img"
-                    width={200}
-                    height={500}
-                    className="w-full h-full object-contain"
+            {/* Price Range */}
+            <div>
+              <h2 className="font-semibold mb-3">Price Range</h2>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs text-gray-500 mb-1 block">Min</label>
+                  <Input
+                    type="number"
+                    min={0}
+                    placeholder="0"
+                    value={minPriceInput}
+                    onChange={(e) => setMinPriceInput(e.target.value)}
                   />
                 </div>
-                <div className="border-x p-2">
-                  <h1 className="font-bold">{p.title}</h1>
-                  <div className="flex gap-1 items-center">
-                    <StarIcon size={16} className="color-amber-900" color="#f6d32d" weight="fill" />
-                    <p className="text-sm">{p.rating} <span className="text-gray-700 dark:text-gray-300">({p.reviews} reviews)</span></p>
-                  </div>
-                  <div className="flex justify-between mr-5">
-                    <div className="text-sm flex gap-3">
-                      <s>${p.former}</s>
-                      <p className="text-gray-700 dark:text-gray-300">${p.price}</p>
-                    </div>
-                    <ShoppingBagIcon size={25} color="#E7000A" weight="fill" />
-                  </div>
+                <div>
+                  <label className="text-xs text-gray-500 mb-1 block">Max</label>
+                  <Input
+                    type="number"
+                    min={0}
+                    placeholder="any"
+                    value={maxPriceInput}
+                    onChange={(e) => setMaxPriceInput(e.target.value)}
+                  />
                 </div>
               </div>
-            ))}
+              <p className="text-xs text-gray-500 mt-2">
+                Leave empty to show all prices
+              </p>
+            </div>
           </div>
+        </aside>
+
+        {/* Products grid */}
+        <section className="flex-1">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+            <h1 className="text-2xl font-bold">
+              {category === "all" ? "All Products" : category}
+            </h1>
+          </div>
+
+          {productsLoading ? (
+            <div className="text-center py-20 text-gray-500">Loading products...</div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="text-center py-20 text-gray-500">
+              No products match your filters
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-5">
+              {filteredProducts.map((p) => (
+                <div
+                  key={p.id}
+                  onClick={() => router.push(`/dashboard/${p.id}`)}
+                  className="border rounded-lg overflow-hidden bg-white dark:bg-gray-900 hover:shadow-md transition-all cursor-pointer group"
+                >
+                  <div className="relative h-48 bg-gray-50 dark:bg-gray-800">
+                    <button className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/80 dark:bg-black/60 hover:bg-white dark:hover:bg-black transition">
+                      <HeartIcon size={18} className="text-gray-500 hover:text-rose-600" />
+                    </button>
+                    <Image
+                      src={p.url || "/placeholder.svg"}
+                      alt={p.name || "Product"}
+                      fill
+                      className="object-contain p-4 group-hover:scale-105 transition-transform duration-300"
+                    />
+                  </div>
+
+                  <div className="p-4">
+                    <h3 className="font-medium line-clamp-2 min-h-[2.8rem] mb-1">
+                      {p.name}
+                    </h3>
+
+                    <div className="flex items-center gap-1 text-sm mb-2">
+                      <StarIcon size={14} weight="fill" className="text-amber-500" />
+                      <span>4.5</span>
+                      <span className="text-gray-500">(127)</span>
+                    </div>
+
+                    <div className="flex items-baseline gap-2 mb-3">
+                      <span className="text-xl font-bold text-rose-600">${p.price}</span>
+                      {p.market && p.market > p.price && (
+                        <span className="text-sm text-gray-500 line-through">${p.market}</span>
+                      )}
+                    </div>
+
+                    <Button size="sm" className="w-full text-sm gap-1.5">
+                      <ShoppingBagIcon size={16} />
+                      Add to Cart
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </section>
       </main>
     </section>
-  )
+  );
 }
-
-export default dashboard 

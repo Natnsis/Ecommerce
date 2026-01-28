@@ -17,24 +17,22 @@ import { toast } from "sonner"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Spinner } from "./ui/spinner"
-import { User } from "@supabase/supabase-js"
-import { createClient } from "@/lib/supabase/client"
+import { useUser } from "@/app/(root)/context/user"
 
-const supabase = createClient()
 
 const Profile = () => {
   const router = useRouter()
   const [loading, setIsLoading] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null)
+  const { data: user, isLoading } = useUser();
 
   useEffect(() => {
-    const fetchUser = async () => {
-      const { data: { session }, error } = await supabase.auth.getSession()
-      if (!error) setUser(session?.user ?? null)
+    if (!isLoading && user) {
+      console.log("User ID:", user.id);
+      console.log("User Email:", user.email);
+    } else if (!isLoading && !user) {
+      console.log("No user found");
     }
-    fetchUser()
-  }, [])
-
+  }, [user, isLoading]);
 
   const logout = async () => {
     try {
