@@ -18,13 +18,11 @@ export default function Dashboard() {
   const router = useRouter();
   const { data: user, isLoading: isUserLoading } = useUser();
 
-  // Filters
   const [category, setCategory] = useState<"all" | string>("all");
   const [searchTerm, setSearchTerm] = useState("");
   const [minPriceInput, setMinPriceInput] = useState<string>("");
   const [maxPriceInput, setMaxPriceInput] = useState<string>("");
 
-  // Parsed values — undefined when empty
   const minPrice = minPriceInput.trim() !== "" ? Number(minPriceInput) : undefined;
   const maxPrice = maxPriceInput.trim() !== "" ? Number(maxPriceInput) : undefined;
 
@@ -44,15 +42,11 @@ export default function Dashboard() {
 
   const filteredProducts = useMemo(() => {
     return products.filter((p) => {
-      // 1. Search
       const matchesSearch =
         !searchTerm.trim() ||
         p.name?.toLowerCase().includes(searchTerm.toLowerCase().trim());
 
-      // 2. Category
       const matchesCategory = category === "all" || p.category === category;
-
-      // 3. Price (only if user entered something)
       let matchesPrice = true;
 
       if (minPrice !== undefined && !isNaN(minPrice)) {
@@ -95,10 +89,8 @@ export default function Dashboard() {
       </div>
 
       <main className="flex gap-6">
-        {/* Filters sidebar */}
         <aside className="w-64 shrink-0 hidden md:block">
           <div className="sticky top-5 space-y-6">
-            {/* Category */}
             <div>
               <h2 className="font-semibold mb-3">Category</h2>
               {[
@@ -131,7 +123,6 @@ export default function Dashboard() {
 
             <Separator />
 
-            {/* Price Range */}
             <div>
               <h2 className="font-semibold mb-3">Price Range</h2>
               <div className="grid grid-cols-2 gap-3">
@@ -163,10 +154,9 @@ export default function Dashboard() {
           </div>
         </aside>
 
-        {/* Products grid */}
         <section className="flex-1">
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
-            <h1 className="text-2xl font-bold">
+            <h1 className="text-2xl font-bold capitalize">
               {category === "all" ? "All Products" : category}
             </h1>
           </div>
@@ -183,10 +173,13 @@ export default function Dashboard() {
                 <div
                   key={p.id}
                   onClick={() => router.push(`/dashboard/${p.id}`)}
-                  className="border rounded-lg overflow-hidden bg-white dark:bg-gray-900 hover:shadow-md transition-all cursor-pointer group"
+                  className="border rounded-lg overflow-hidden 
+                  bg-white dark:bg-gray-900 
+                  hover:shadow-md transition-all cursor-pointer group"
                 >
                   <div className="relative h-48 bg-gray-50 dark:bg-gray-800">
-                    <button className="absolute top-3 right-3 z-10 p-2 rounded-full bg-white/80 dark:bg-black/60 hover:bg-white dark:hover:bg-black transition">
+                    <button className="absolute top-3 right-3 z-10 p-2 rounded-full 
+                    bg-white/80 dark:bg-black/60 hover:bg-white dark:hover:bg-black transition">
                       <HeartIcon size={18} className="text-gray-500 hover:text-rose-600" />
                     </button>
                     <Image
@@ -197,35 +190,35 @@ export default function Dashboard() {
                     />
                   </div>
 
-                  <div className="p-4">
-                    <h3 className="font-medium line-clamp-2 min-h-[2.8rem] mb-1">
+                  <div className="p-4 pt-2">
+                    <h3 className="font-medium line-clamp-2">
                       {p.name}
                     </h3>
-
                     <div className="flex items-center gap-1 text-sm mb-2">
                       <StarIcon size={14} weight="fill" className="text-amber-500" />
                       <span>4.5</span>
                       <span className="text-gray-500">(127)</span>
                     </div>
 
-                    <div className="flex items-baseline gap-2 mb-3">
-                      <span className="text-xl font-bold text-rose-600">${p.price}</span>
-                      {p.market && p.market > p.price && (
-                        <span className="text-sm text-gray-500 line-through">${p.market}</span>
-                      )}
-                    </div>
+                    <div className="flex justify-between items-center">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-xl font-bold text-rose-600">${p.price}</span>
+                        {p.market && p.market > p.price && (
+                          <span className="text-sm text-gray-500 line-through">${p.market}</span>
+                        )}
+                      </div>
 
-                    <Button size="sm" className="w-full text-sm gap-1.5">
-                      <ShoppingBagIcon size={16} />
-                      Add to Cart
-                    </Button>
+                      <Button size="icon">
+                        <ShoppingBagIcon size={16} />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           )}
         </section>
-      </main>
-    </section>
+      </main >
+    </section >
   );
 }

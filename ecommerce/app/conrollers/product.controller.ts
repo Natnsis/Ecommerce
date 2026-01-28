@@ -58,7 +58,7 @@ export const getProducts = async () => {
   }
 };
 
-export const getProductWithId = async (id: string) => {
+export const getProductWithId = async (id: number) => {
   try {
     const { data: product, error: productError } = await supabase
       .from("products")
