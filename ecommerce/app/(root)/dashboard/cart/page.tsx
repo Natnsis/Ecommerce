@@ -66,9 +66,8 @@ export default function Cart() {
 
   return (
     <main className="min-h-screen p-5 md:p-8">
-      {/* Back button */}
       <div className="mb-6">
-        <Button variant="ghost" onClick={() => router.back()}>
+        <Button onClick={() => router.back()}>
           <ArrowLeftIcon size={20} className="mr-2" />
           Go Back
         </Button>
@@ -97,14 +96,13 @@ export default function Cart() {
             <Button
               variant="outline"
               className="mt-6"
-              onClick={() => router.push("/products")} // or wherever your shop is
+              onClick={() => router.back()}
             >
               Continue Shopping
             </Button>
           </div>
         ) : (
           <div className="rounded-lg border">
-            {/* Header */}
             <div className="grid grid-cols-12 gap-4 bg-gray-50 px-6 py-4 font-medium text-gray-600">
               <div className="col-span-6">Product</div>
               <div className="col-span-2 text-center">Quantity</div>
@@ -112,14 +110,12 @@ export default function Cart() {
               <div className="col-span-2 text-center">Action</div>
             </div>
 
-            {/* Scrollable items */}
             <div className="max-h-[60vh] overflow-y-auto divide-y">
               {cartWithProducts.map(({ cartItem, product, isLoading: productLoading }) => (
                 <div
                   key={cartItem.id}
                   className="grid grid-cols-12 items-center gap-4 px-6 py-4 hover:bg-gray-50"
                 >
-                  {/* Product info */}
                   <div className="col-span-6 flex items-center gap-4">
                     {productLoading || !product ? (
                       <div className="h-24 w-24 animate-pulse rounded bg-gray-200" />
@@ -144,18 +140,15 @@ export default function Cart() {
                       ) : (
                         <>
                           <p className="font-medium">{product.name}</p>
-                          {/* You can add variant / size here if needed */}
                         </>
                       )}
                     </div>
                   </div>
 
-                  {/* Quantity */}
                   <div className="col-span-2 text-center font-medium">
                     {cartItem.quantity || 1}
                   </div>
 
-                  {/* Price */}
                   <div className="col-span-2 text-center font-medium">
                     {productLoading || !product ? (
                       <div className="inline-block h-5 w-16 animate-pulse rounded bg-gray-200" />
@@ -164,9 +157,11 @@ export default function Cart() {
                     )}
                   </div>
 
-                  {/* Remove */}
                   <div className="col-span-2 flex justify-center">
-                    <Button variant="ghost" size="icon" className="text-red-600 hover:text-red-700">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="text-red-600 hover:text-red-700">
                       <XIcon size={20} />
                     </Button>
                   </div>
