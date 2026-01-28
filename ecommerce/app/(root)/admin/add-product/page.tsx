@@ -75,6 +75,7 @@ const page = () => {
                   {errors.name && (<p className="text-[#E7000A]">{errors.name.message}</p>)}
                 </div>
 
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="price">Price</Label>
@@ -101,31 +102,45 @@ const page = () => {
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="category">Category</Label>
-                  <Controller
-                    name="category"
-                    control={control}
-                    render={({ field }) => (
-                      <Select
-                        defaultValue=""
-                        onValueChange={field.onChange}
-                        value={field.value}
-                      >
-                        <SelectTrigger id="category">
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {CATEGORIES.map((category) => (
-                            <SelectItem key={category} value={category}>
-                              {category}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    )}
-                  />
-                  {errors.category && (<p className="text-[#E7000A]">{errors.category.message}</p>)}
+                <div className="flex gap-5">
+                  <div className="space-y-2 w-1/2">
+                    <Label htmlFor="stock">Stock</Label>
+                    <Input
+                      id="stock"
+                      type="number"
+                      placeholder="100"
+                      min="0"
+                      step="0.01"
+                      {...register("stock", { valueAsNumber: true })} />
+                    {errors.stock && (<p className="text-[#E7000A]">{errors.stock.message}</p>)}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="category">Category</Label>
+                    <Controller
+                      name="category"
+                      control={control}
+                      render={({ field }) => (
+                        <Select
+                          defaultValue=""
+                          onValueChange={field.onChange}
+                          value={field.value}
+                        >
+                          <SelectTrigger id="category">
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {CATEGORIES.map((category) => (
+                              <SelectItem key={category} value={category}>
+                                {category}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      )}
+                    />
+                    {errors.category && (<p className="text-[#E7000A]">{errors.category.message}</p>)}
+                  </div>
                 </div>
 
                 <div className="space-y-2">

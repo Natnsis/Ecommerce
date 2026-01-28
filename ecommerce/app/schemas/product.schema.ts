@@ -3,6 +3,7 @@ import { z } from "zod";
 export const productSchema = z.object({
   name: z.string().min(3, "Minimum 3 characters required"),
   price: z.number().refine((value) => value !== 0, { message: "market price cant be free" }),
+  stock: z.number().refine((value) => value !== 0, { message: "include atleast 1 product" }),
   market: z.number()
     .refine((value) => value !== 0, {
       message: "Market price can't be free",
@@ -26,3 +27,17 @@ export const productSchema = z.object({
 });
 
 export type productType = z.infer<typeof productSchema>
+
+
+
+export const productUpdateSchema = z.object({
+  name: z.string().min(1),
+  price: z.number(),
+  market: z.number(),
+  stock: z.number().int(),
+  category: z.string().min(1),
+  description: z.string().min(1),
+  image: z.instanceof(File).optional(),
+})
+
+export type ProductUpdateType = z.infer<typeof productUpdateSchema>
