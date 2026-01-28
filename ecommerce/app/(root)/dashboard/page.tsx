@@ -17,16 +17,33 @@ import { products } from "@/lib/constant"
 import { useRouter } from "next/navigation"
 import { ModeToggle } from "@/components/mode-toggle"
 import { useUser } from "../context/user"
+import { useEffect } from "react"
+import { useQuery } from "@tanstack/react-query"
+import { getProducts } from "@/app/conrollers/product.controller"
 
 const dashboard = () => {
   const router = useRouter()
-  const { data: user } = useUser()
-  if (!user) {
-    console.log("No user")
-    return
-  }
-  console.log(user.id)
-  console.log(user.email)
+  const { data: user, isLoading } = useUser();
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      console.log("User ID:", user.id);
+      console.log("User Email:", user.email);
+    } else if (!isLoading && !user) {
+      console.log("No user found");
+    }
+  }, [user, isLoading]);
+
+  const {
+    data: productData = [],
+    isLoading: loadingProduct,
+    isError,
+    error,
+  } = useQuery({
+    queryKey: ["products"],
+    queryFn: getProducts,
+  });
+
   return (
     <section className="p-5 w-full">
       <div className="flex justify-between items-center w-full">
@@ -176,12 +193,12 @@ const dashboard = () => {
             </Select>
           </div>
           <div className="grid grid-cols-5 gap-3 mt-5 overflow-y-auto max-h-[80vh]">
-            {products.map((p, index) => (
+            {productData.map((p, index) => (
               <div className="border-b" key={index} onClick={() => router.push(`/dashboard/${p.id}`)}>
                 <div className="border bg-gray-50 rounded-lg h-[30vh] overflow-hidden">
                   <div className="flex justify-end p-3"><HeartIcon size={20} /></div>
                   <Image
-                    src={p.img}
+                    src={p.url}
                     alt="product-img"
                     width={200}
                     height={500}
@@ -189,14 +206,18 @@ const dashboard = () => {
                   />
                 </div>
                 <div className="border-x p-2">
-                  <h1 className="font-bold">{p.title}</h1>
+                  <h1 className="font-bold">{p.name}</h1>
                   <div className="flex gap-1 items-center">
                     <StarIcon size={16} className="color-amber-900" color="#f6d32d" weight="fill" />
-                    <p className="text-sm">{p.rating} <span className="text-gray-700 dark:text-gray-300">({p.reviews} reviews)</span></p>
+                    <p
+                      className="text-sm">
+                      4.5 <span className="text-gray-700 dark:text-gray-300">
+                        (127 reviews)</span>
+                    </p>
                   </div>
                   <div className="flex justify-between mr-5">
                     <div className="text-sm flex gap-3">
-                      <s>${p.former}</s>
+                      <s>${p.market}</s>
                       <p className="text-gray-700 dark:text-gray-300">${p.price}</p>
                     </div>
                     <ShoppingBagIcon size={25} color="#E7000A" weight="fill" />
