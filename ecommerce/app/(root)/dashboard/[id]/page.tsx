@@ -3,20 +3,62 @@ import { Button } from "@/components/ui/button"
 import { ArrowLeftIcon, ShoppingBagOpenIcon, StarIcon } from "@phosphor-icons/react"
 import { useParams, useRouter } from "next/navigation"
 import { Input } from "@/components/ui/input"
-import { useQuery } from "@tanstack/react-query"
+import { useMutation, useQuery } from "@tanstack/react-query"
 import { getProductWithId } from "@/app/conrollers/product.controller"
-import { useState } from "react"
+import { useEffect, useState } from "react"
+import { toast } from "sonner"
+import { AddToCart } from "@/app/conrollers/cart.controller"
+import { useUser } from "../../context/user"
 
 const detail = () => {
   const router = useRouter()
   const [quantity, setQuantity] = useState(1)
-
+  const [userId, setUserId] = useState("")
   const { id } = useParams()
-  const { data: product, isLoading } = useQuery({
+  const [carting, setCarting] = useState(false)
+  const { data: user, isLoading } = useUser()
+  const { data: product, isLoading: productLoading } = useQuery({
     queryKey: ['product', id],
     queryFn: () => getProductWithId(id),
     enabled: !!id
-  })
+  });
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      setUserId(user.id)
+    } else if (!isLoading && !user) {
+      console.log("No user found");
+    }
+  }, [user, isLoading]);
+
+  const addToCart = async () => {
+    try {
+      if (productLoading) {
+        toast.loading('Wait a bit');
+        return;
+      }
+      if (!user?.id) {
+        toast.error("User data not found");
+        return;
+      }
+      if (!product) {
+        console.error("Product object is missing");
+        return;
+      }
+      setCarting(true)
+      await AddToCart({
+        product_id: product.id,
+        user_id: user?.id!,
+        quantity,
+        sum: product.price * quantity
+      })
+      toast.success("product added to cart")
+      setCarting(false)
+    } catch (error) {
+      console.error("Add to Cart Error:", error);
+      throw error
+    }
+  };
 
   return (
     <main className="h-screen p-5">
@@ -56,7 +98,13 @@ const detail = () => {
               value={quantity}
               onChange={(e) => setQuantity(+e.target.value)}
             />
-            <Button className="w-3/5">Add to cart <ShoppingBagOpenIcon size={44} /></Button>
+            <Button
+              className="w-3/5"
+              onClick={addToCart}
+              disabled={carting}>
+              {carting ? "Adding to Cart..." : "Add to cart"}
+              <ShoppingBagOpenIcon size={44} />
+            </Button>
           </div>
         </div>
       </section>
