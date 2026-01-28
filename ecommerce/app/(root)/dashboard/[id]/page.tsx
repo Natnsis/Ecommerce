@@ -1,15 +1,16 @@
 "use client"
-import { products } from "@/lib/constant"
 import { Button } from "@/components/ui/button"
 import { ArrowLeftIcon, ShoppingBagOpenIcon, StarIcon } from "@phosphor-icons/react"
 import { useParams, useRouter } from "next/navigation"
-import Image from 'next/image'
 import { Input } from "@/components/ui/input"
 import { useQuery } from "@tanstack/react-query"
 import { getProductWithId } from "@/app/conrollers/product.controller"
+import { useState } from "react"
 
 const detail = () => {
   const router = useRouter()
+  const [quantity, setQuantity] = useState(1)
+
   const { id } = useParams()
   const { data: product, isLoading } = useQuery({
     queryKey: ['product', id],
@@ -49,7 +50,12 @@ const detail = () => {
             <p>${product?.price ? product?.price : "1234-"}/product</p>
           </div>
           <div className="flex gap-5">
-            <Input placeholder="Quantity" className="w-2/5" type="number" />
+            <Input placeholder="Quantity"
+              className="w-2/5"
+              type="number"
+              value={quantity}
+              onChange={(e) => setQuantity(+e.target.value)}
+            />
             <Button className="w-3/5">Add to cart <ShoppingBagOpenIcon size={44} /></Button>
           </div>
         </div>
