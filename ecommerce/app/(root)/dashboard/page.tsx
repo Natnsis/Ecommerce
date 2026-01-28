@@ -16,11 +16,17 @@ import Image from "next/image"
 import { products } from "@/lib/constant"
 import { useRouter } from "next/navigation"
 import { ModeToggle } from "@/components/mode-toggle"
+import { useUser } from "../context/user"
 
 const dashboard = () => {
   const router = useRouter()
-
-
+  const { data: user } = useUser()
+  if (!user) {
+    console.log("No user")
+    return
+  }
+  console.log(user.id)
+  console.log(user.email)
   return (
     <section className="p-5 w-full">
       <div className="flex justify-between items-center w-full">
