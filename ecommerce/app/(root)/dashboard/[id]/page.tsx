@@ -19,7 +19,7 @@ const detail = () => {
   const { data: user, isLoading } = useUser()
   const { data: product, isLoading: productLoading } = useQuery({
     queryKey: ['product', id],
-    queryFn: () => getProductWithId(id),
+    queryFn: () => getProductWithId(Number(id)),
     enabled: !!id
   });
 
