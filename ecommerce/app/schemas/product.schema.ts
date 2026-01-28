@@ -27,3 +27,17 @@ export const productSchema = z.object({
 });
 
 export type productType = z.infer<typeof productSchema>
+
+
+
+export const productUpdateSchema = z.object({
+  name: z.string().min(1),
+  price: z.number(),
+  market: z.number(),
+  stock: z.number().int(),
+  category: z.string().min(1),
+  description: z.string().min(1),
+  image: z.instanceof(File).optional(),
+})
+
+export type ProductUpdateType = z.infer<typeof productUpdateSchema>

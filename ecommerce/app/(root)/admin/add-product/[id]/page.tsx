@@ -20,16 +20,19 @@ import {
 
 import { ArrowLeftIcon, PlusIcon } from "@phosphor-icons/react"
 import { useParams, useRouter } from "next/navigation"
-import Image from "next/image"
 
 import { Controller, useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { productSchema, productType } from "@/app/schemas/product.schema"
+import { productUpdateSchema, ProductUpdateType } from "@/app/schemas/product.schema"
 
-import { getProductWithId, updateProduct } from "@/app/conrollers/product.controller"
-import { useQuery } from "@tanstack/react-query"
+import {
+  getProductWithId,
+  updateProduct
+} from "@/app/conrollers/product.controller"
+
+import { useQuery, useMutation } from "@tanstack/react-query"
 import { toast } from "sonner"
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
 
 const CATEGORIES = [
   "electronics",
@@ -42,12 +45,11 @@ const CATEGORIES = [
   "authomotive"
 ]
 
-const DEFAULT_PRODUCT_IMAGE = "https://via.nplaceholder.com/600x600"
+const DEFAULT_PRODUCT_IMAGE = "https://via.placeholder.com/600x600"
 
 const Page = () => {
   const router = useRouter()
   const { id } = useParams()
-  const [isLoading, setIsLoading] = useState(false)
 
   const {
     register,
@@ -55,8 +57,8 @@ const Page = () => {
     control,
     reset,
     formState: { errors }
-  } = useForm<productType>({
-    resolver: zodResolver(productSchema),
+  } = useForm<ProductUpdateType>({
+    resolver: zodResolver(productUpdateSchema),
     defaultValues: {
       name: "",
       price: 0,
@@ -64,7 +66,7 @@ const Page = () => {
       stock: 0,
       category: "",
       description: "",
-      image: undefined // 👈 image stays untouched
+      image: undefined
     }
   })
 
@@ -74,7 +76,6 @@ const Page = () => {
     enabled: !!id
   })
 
-  // Populate form once product is fetched
   useEffect(() => {
     if (!data) return
 
@@ -85,21 +86,26 @@ const Page = () => {
       stock: data.stock,
       category: data.category,
       description: data.description,
-      image: undefined // 👈 never preload image
+      image: undefined
     })
   }, [data, reset])
 
-  const onSubmit = async (formData: productType) => {
-    try {
-      setIsLoading(true)
-      await updateProduct(Number(id), formData)
-      toast("Updated successfully")
+  const updateMutation = useMutation({
+    mutationFn: (formData: ProductUpdateType) =>
+      updateProduct(Number(id), formData),
+
+    onSuccess: () => {
+      toast.success("Product updated successfully")
       router.back()
-    } catch (error) {
-      toast("Something went wrong")
-    } finally {
-      setIsLoading(false)
+    },
+
+    onError: () => {
+      toast.error("Failed to update product")
     }
+  })
+
+  const onSubmit = (formData: ProductUpdateType) => {
+    updateMutation.mutate(formData)
   }
 
   return (
@@ -119,12 +125,13 @@ const Page = () => {
             onSubmit={handleSubmit(onSubmit)}
             className="grid grid-cols-1 md:grid-cols-3 gap-6"
           >
-            {/* LEFT */}
             <div className="md:col-span-2 space-y-4">
               <div>
                 <Label>Name</Label>
-                <Input placeholder={data?.name || "Product name"} {...register("name")} />
-                {errors.name && <p className="text-[#E7000A]">{errors.name.message}</p>}
+                <Input {...register("name")} />
+                {errors.name && (
+                  <p className="text-[#E7000A]">{errors.name.message}</p>
+                )}
               </div>
 
               <div className="grid sm:grid-cols-2 gap-4">
@@ -132,20 +139,24 @@ const Page = () => {
                   <Label>Price</Label>
                   <Input
                     type="number"
-                    placeholder={data?.price?.toString() || "0"}
+                    step="any"
                     {...register("price", { valueAsNumber: true })}
                   />
-                  {errors.price && <p className="text-[#E7000A]">{errors.price.message}</p>}
+                  {errors.price && (
+                    <p className="text-[#E7000A]">{errors.price.message}</p>
+                  )}
                 </div>
 
                 <div>
                   <Label>Market Price</Label>
                   <Input
                     type="number"
-                    placeholder={data?.market?.toString() || "0"}
+                    step="any"
                     {...register("market", { valueAsNumber: true })}
                   />
-                  {errors.market && <p className="text-[#E7000A]">{errors.market.message}</p>}
+                  {errors.market && (
+                    <p className="text-[#E7000A]">{errors.market.message}</p>
+                  )}
                 </div>
               </div>
 
@@ -154,10 +165,11 @@ const Page = () => {
                   <Label>Stock</Label>
                   <Input
                     type="number"
-                    placeholder={data?.stock?.toString() || "1"}
                     {...register("stock", { valueAsNumber: true })}
                   />
-                  {errors.stock && <p className="text-[#E7000A]">{errors.stock.message}</p>}
+                  {errors.stock && (
+                    <p className="text-[#E7000A]">{errors.stock.message}</p>
+                  )}
                 </div>
 
                 <div className="w-1/2">
@@ -166,51 +178,60 @@ const Page = () => {
                     name="category"
                     control={control}
                     render={({ field }) => (
-                      <Select value={field.value} onValueChange={field.onChange}>
+                      <Select
+                        value={field.value}
+                        onValueChange={field.onChange}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Select category" />
                         </SelectTrigger>
                         <SelectContent>
-                          {CATEGORIES.map(c => (
-                            <SelectItem key={c} value={c}>
-                              {c}
+                          {CATEGORIES.map(category => (
+                            <SelectItem key={category} value={category}>
+                              {category}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     )}
                   />
-                  {errors.category && <p className="text-[#E7000A]">{errors.category.message}</p>}
+                  {errors.category && (
+                    <p className="text-[#E7000A]">
+                      {errors.category.message}
+                    </p>
+                  )}
                 </div>
               </div>
 
               <div>
                 <Label>Description</Label>
-                <Textarea
-                  placeholder={data?.description || "Product description"}
-                  {...register("description")}
-                />
+                <Textarea {...register("description")} />
                 {errors.description && (
-                  <p className="text-[#E7000A]">{errors.description.message}</p>
+                  <p className="text-[#E7000A]">
+                    {errors.description.message}
+                  </p>
                 )}
               </div>
             </div>
 
-            {/* RIGHT */}
             <div className="space-y-4">
               <div className="p-6 border-2 border-dashed rounded-lg bg-muted/30 flex justify-center">
-                <Image
+                <img
                   src={data?.url || DEFAULT_PRODUCT_IMAGE}
                   alt="Product Image"
-                  width={160}
-                  height={160}
-                  className="rounded-md object-cover"
+                  className="w-40 h-40 rounded-md object-cover"
                 />
               </div>
 
-              <Button type="submit" disabled={isLoading} className="w-full">
+              <Button
+                type="submit"
+                disabled={updateMutation.isPending}
+                className="w-full"
+              >
                 <PlusIcon />
-                {isLoading ? "Updating..." : "Update Product"}
+                {updateMutation.isPending
+                  ? "Updating..."
+                  : "Update Product"}
               </Button>
             </div>
           </form>

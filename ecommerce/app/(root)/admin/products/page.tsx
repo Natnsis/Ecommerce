@@ -21,7 +21,7 @@ const Products = () => {
             <p>Add Product</p>
           </Button>
         </div>
-        <div className="mt-10">
+        <div className="mt-10 px-5 h-[70vh] overflow-y-auto">
           <ProductsTable />
         </div>
       </section>
