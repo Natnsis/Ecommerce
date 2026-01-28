@@ -35,7 +35,6 @@ const Profile = () => {
     fetchUser()
   }, [])
 
-  console.log(user?.user_metadata?.avatar_url)
 
   const logout = async () => {
     try {
@@ -48,7 +47,6 @@ const Profile = () => {
       throw error
     }
   }
-
   return (
     < DropdownMenu >
       <DropdownMenuTrigger asChild>

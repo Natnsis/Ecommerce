@@ -7,11 +7,14 @@ const supabase = createClient()
 export const useUser = () => {
   return useQuery<User | null>({
     queryKey: ["authUser"],
-    queryFn: async (): Promise<User | null> => {
+    queryFn: async () => {
       const { data: { session }, error } = await supabase.auth.getSession()
       if (error) throw error
       return session?.user ?? null
     },
     staleTime: Infinity,
+    refetchOnWindowFocus: true,
+    retry: 1,
+    enabled: true,
   })
 }
