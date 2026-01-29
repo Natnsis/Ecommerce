@@ -1,10 +1,20 @@
 "use client"
 import Image from 'next/image'
 import { Button } from "@/components/ui/button"
-import { ShoppingCartIcon, UserIcon } from "@phosphor-icons/react";
+import { ShoppingCartIcon, UserIcon, ListIcon } from "@phosphor-icons/react";
 import Language from '@/components/Language';
 import { ModeToggle } from "@/components/mode-toggle";
 import { useRouter } from "next/navigation"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
 const Header = () => {
   const router = useRouter();
   return (
@@ -13,12 +23,12 @@ const Header = () => {
         <Image src="/gebeya-logo.png" alt='logo' width={50} height={40} />
         <h1 className='text-2xl font-bold'>Gebeya</h1>
       </div>
-      <div className='text-lg flex gap-5'>
+      <div className='text-lg  gap-5 hidden md:block'>
         <Button variant="link">HOME</Button>
         <Button variant="link">ABOUT</Button>
         <Button variant="link">CONTACT US</Button>
       </div>
-      <div className='flex gap-5'>
+      <div className='gap-5 hidden md:flex'>
         <Button variant="outline">
           <ShoppingCartIcon size={32} />
         </Button>
@@ -29,8 +39,29 @@ const Header = () => {
           <p>Sign In</p>
         </Button>
       </div>
+      <div className='md:hidden'>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">
+              <ListIcon />
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuGroup>
+              <DropdownMenuItem>HOME</DropdownMenuItem>
+              <DropdownMenuItem>ABOUT</DropdownMenuItem>
+              <DropdownMenuItem>CONTACT US</DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => router.push("/auth/login")}
+              >
 
-
+                <UserIcon size={32} />
+                <p>Sign In</p>
+              </DropdownMenuItem>
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </header>
   )
 }
