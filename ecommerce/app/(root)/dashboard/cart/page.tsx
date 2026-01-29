@@ -11,9 +11,33 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useEffect } from "react";
+import { useUser } from "../../context/user";
+import { useQuery } from "@tanstack/react-query";
+import { getCartById } from "@/app/conrollers/cart.controller";
 
 const Cart = () => {
   const router = useRouter()
+  const { data: user, isLoading } = useUser();
+
+  useEffect(() => {
+    if (!isLoading && user) {
+      console.log("User ID:", user.id);
+      console.log("User Email:", user.email);
+    } else if (!isLoading && !user) {
+      console.log("No user found");
+    }
+  }, [user, isLoading]);
+
+  const userId = user?.id
+
+  const { data: carts, error: cartError } = useQuery({
+    queryKey: ['carts', userId],
+    queryFn: () => getCartById(userId!),
+    enabled: !!userId
+  })
+
+
   return (
     <main className="p-5 space-y-5">
       <header className="flex justify-start">
@@ -22,6 +46,7 @@ const Cart = () => {
           Go back
         </Button>
       </header>
+
       <section className="h-[86vh] p-5 space-y-5">
         <div className="h-[10%] flex justify-between">
           <div className="flex items-center">
@@ -29,6 +54,7 @@ const Cart = () => {
               Your Cart
             </h1>
           </div>
+
           <div className="flex items-end">
             <Button variant="secondary" className="bg-green-200">
               <CurrencyDollarSimpleIcon />
@@ -36,6 +62,7 @@ const Cart = () => {
             </Button>
           </div>
         </div>
+
         <div className="h-[85%] bg-white py-5 px-20 ">
           <Table>
             <TableHeader>
