@@ -84,23 +84,23 @@ const Login = () => {
                 <span className="text-sm text-gray-500">or</span>
                 <Separator className="flex-1" />
               </div>
-              <Button
-                variant="outline"
-                className="w-full mb-5"
-                onClick={loginWithOAuth}>
-                <Image src="/google.png" alt="google" width={20} height={50} />
-                <p>Sign in with Google</p>
-              </Button>
-              <p className="text-center text-gray-600 dark:text-gray-400">
-                Don't have an account? register
-                <Button
-                  className="text-bold"
-                  variant="link"
-                  onClick={() => router.push("/auth/register")}>
-                  Here
-                </Button>
-              </p>
             </form>
+            <Button
+              variant="outline"
+              className="w-full mb-5"
+              onClick={loginWithOAuth}>
+              <Image src="/google.png" alt="google" width={20} height={50} />
+              <p>Sign in with Google</p>
+            </Button>
+            <p className="text-center text-gray-600 dark:text-gray-400">
+              Don't have an account? register
+              <Button
+                className="text-bold"
+                variant="link"
+                onClick={() => router.push("/auth/register")}>
+                Here
+              </Button>
+            </p>
           </CardContent>
         </Card>
       </div>
