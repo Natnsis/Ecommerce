@@ -4,14 +4,14 @@ import { Card, CardContent } from "@/components/ui/card"
 const About = () => {
   return (
     <section className="ml-20">
-      <div className="flex w-full">
+      <div className="flex w-full flex-col-reverse md:flex-row">
         <div>
-          <Image src="/about.png" alt="about-image" width={600} height={200} />
+          <Image src="/about.png" alt="about-image" width={600} height={200} className="" />
         </div>
         <div className="px-10 w-[70vw]">
           <h1 className="text-4xl">About Us</h1>
           <p className="text-gray-600 dark:text-gray-400">At Gebeya, we believe shopping should be simple, enjoyable, and tailored to you. Our mission is to bring you high-quality products at unbeatable prices, all in one convenient online store.</p>
-          <div className="flex gap-3">
+          <div className="flex-row gap-3 md:flex">
             <Card className="mt-5">
               <CardContent>
                 <h1 className="mt-3">Who We Are</h1>

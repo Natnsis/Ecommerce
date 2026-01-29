@@ -6,11 +6,11 @@ import { ArrowRightIcon, ShoppingBagIcon } from "@phosphor-icons/react"
 
 const Hero = () => {
   return (
-    <main className="w-full flex justify-between mt-10 h-3/4">
+    <main className="w-full flex justify-between mt-10 h-3/4 md:flex-row flex-col">
       <div className="flex flex-col justify-center">
         <div className="pl-20">
           <h1 className="text-5xl font-extrabold mb-2">Discover Your Perfect Products</h1>
-          <p className="text-gray-500 w-4/5 mb-5 dark:text-gray-400">
+          <p className="text-gray-500 w-4/5 mb-5 dark:text-gray-400 text-center md:text-start">
             We bring you the best quality products at unbeatable prices.
             Your satisfaction is our priority.
           </p>
@@ -25,8 +25,8 @@ const Hero = () => {
           </CardContent>
         </Card>
       </div>
-      <div className="pr-20">
-        <Image src="/hero.png" alt="hero-img" width={400} height={400} />
+      <div className="md:pr-20 pr-0 flex justify-center md:items-center">
+        <Image src="/hero.png" alt="hero-img" width={400} height={400} className="h-1/2" />
       </div>
     </main>
   )

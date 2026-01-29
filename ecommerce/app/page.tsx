@@ -7,7 +7,7 @@ import Footer from "@/components/Footer";
 
 const LandingPage = () => {
   return (
-    <section>
+    <section className="flex-col gap-5">
       <div className="h-screen p-5">
         <Header />
         <Hero />
