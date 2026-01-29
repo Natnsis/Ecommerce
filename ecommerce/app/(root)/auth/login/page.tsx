@@ -51,8 +51,13 @@ const Login = () => {
 
   return (
     <section className="h-screen flex gap-20">
-      <div className="flex h-full items-center w-1/2 justify-center">
-        <Image src="/login.png" alt="login-image" width={300} height={400} />
+      <div className="flex h-full items-center w-1/2 w-0 justify-center">
+        <Image
+          src="/login.png"
+          alt="login-image"
+          width={300}
+          height={400}
+          className="hidden md:block" />
       </div>
       <div className="flex items-center justify-center">
         <Card>
