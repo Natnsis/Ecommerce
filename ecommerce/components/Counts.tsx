@@ -3,7 +3,7 @@ import { HandbagSimpleIcon, InvoiceIcon, UserIcon } from "@phosphor-icons/react"
 
 const Counts = () => {
   return (
-    <div className="flex gap-5 w-full mt-5">
+    <div className="flex-col flex gap-5 w-full mt-5 md:flex-row">
       <Card className="w-full">
         <CardContent>
           <div className="flex gap-5">

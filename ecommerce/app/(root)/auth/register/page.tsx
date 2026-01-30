@@ -47,19 +47,35 @@ const Register = () => {
   }
 
   return (
-    <section className="h-screen flex gap-10">
-      <div className="flex items-center justify-center w-1/2">
+    <section className="h-screen flex gap-20">
+      <div className="flex items-center justify-center md:ml-0 ml-20">
         <Card>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <h1 className="text-3xl text-center" >Get Started With Us</h1>
-              <p className="mb-5 text-gray-600 dark:text-gray-400">Enter your email and password to create your account.</p>
+              <h1 className="text-3xl text-center">
+                Get Started With Us
+              </h1>
+              <p className="mb-5 text-gray-600 dark:text-gray-400">
+                Enter your email and password to create your account.
+              </p>
               <Label htmlFor="email">Email</Label>
-              <Input id="email" className="mb-3" {...register("email")} />
-              {errors.email && (<p className="text-red-600 mb-3">{errors.email.message}</p>)}
+              <Input
+                id="email"
+                className="mb-3"
+                {...register("email")} />
+              {errors.email && (
+                <p className="text-red-600 mb-3">
+                  {errors.email.message}
+                </p>)}
               <Label htmlFor="password">Password</Label>
-              <Input id="password" className="mb-3" {...register("password")} />
-              {errors.password && (<p className="text-red-600 mb-3">{errors.password.message}</p>)}
+              <Input
+                id="password"
+                className="mb-3"
+                {...register("password")} />
+              {errors.password && (
+                <p className="text-red-600 mb-3">
+                  {errors.password.message}
+                </p>)}
               <Button
                 className="w-full mb-3"
                 type="submit"
@@ -69,7 +85,9 @@ const Register = () => {
               </Button>
               <div className="flex items-center gap-2 mb-5">
                 <Separator className="flex-1" />
-                <span className="text-sm text-gray-500">or</span>
+                <span className="text-sm text-gray-500">
+                  or
+                </span>
                 <Separator className="flex-1" />
               </div>
             </form>
@@ -97,8 +115,14 @@ const Register = () => {
           </CardContent>
         </Card>
       </div>
-      <div className="flex h-full items-center justify-center">
-        <Image src="/register.png" alt="login-image" width={300} height={400} />
+      <div
+        className="h-full items-center w-1/2 
+        justify-center hidden md:flex ">
+        <Image
+          src="/register.png"
+          alt="login-image"
+          width={300}
+          height={400} />
       </div>
     </section>
   )

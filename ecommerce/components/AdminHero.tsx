@@ -6,9 +6,9 @@ import { recentUsers } from "@/lib/constant";
 
 const AdminHero = () => {
   return (
-    <div className="flex gap-5 mt-5 h-[60vh]">
+    <div className="flex flex-col gap-5 mt-5 h-[60vh] md:flex-row">
       <MiddlePart />
-      <Card className="w-[25vw] h-full">
+      <Card className="w-[25vw] h-full hidden md:block">
         <CardContent>
           <div className="flex justify-between">
             <h1 className="text-lg">Recent Users</h1>

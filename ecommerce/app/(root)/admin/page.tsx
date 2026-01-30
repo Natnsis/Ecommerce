@@ -14,7 +14,9 @@ const Admin = () => {
         <Counts />
         <div className="h-[65vh] overflow-y-auto">
           <AdminHero />
-          <RecentProducts />
+          <div className="hidden md:block">
+            <RecentProducts />
+          </div>
         </div>
       </section>
     </main>

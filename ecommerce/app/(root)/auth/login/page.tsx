@@ -51,10 +51,10 @@ const Login = () => {
 
   return (
     <section className="h-screen flex gap-20">
-      <div className="flex h-full items-center w-1/2 justify-center">
+      <div className="h-full items-center w-1/2 justify-center hidden md:flex ">
         <Image src="/login.png" alt="login-image" width={300} height={400} />
       </div>
-      <div className="flex items-center justify-center">
+      <div className="flex items-center justify-center md:ml-0 ml-20">
         <Card>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)}>

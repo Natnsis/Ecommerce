@@ -6,9 +6,9 @@ const WhyChooseUs = () => {
   return (
     <section className="h-full">
       <h1 className="text-center text-4xl mb-10">Why Choose Us</h1>
-      <div className="flex justify-center gap-10 px-20">
+      <div className="flex flex-col justify-center gap-10 px-20 md:flex-row md:gap-12 md:px-20">
         <Card>
-          <CardContent className=''>
+          <CardContent>
             <div className='flex justify-center p-10 rounded-full'>
               <HandshakeIcon size={70} color='#E7000A' />
             </div>

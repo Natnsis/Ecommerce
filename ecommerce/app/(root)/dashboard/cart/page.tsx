@@ -63,7 +63,7 @@ const Cart = () => {
           </div>
         </div>
 
-        <div className="h-[85%] bg-white py-5 px-20 ">
+        <div className="h-[85%] bg-white py-5 px-20 md:px-5">
           <Table>
             <TableHeader>
               <TableRow>
