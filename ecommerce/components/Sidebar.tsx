@@ -13,7 +13,6 @@ import { useRouter } from "next/navigation"
 import { AdminModeToggle } from "@/components/admin-mode"
 import { Logout } from "@/app/conrollers/auth.controller"
 import { toast } from "sonner"
-import { Spinner } from "./ui/spinner"
 
 type PageVariants = "ghost" | "default"
 
