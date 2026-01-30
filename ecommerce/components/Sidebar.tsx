@@ -117,13 +117,13 @@ const Sidebar = ({ pageName }: { pageName: string }) => {
             <div className="hidden md:block">
               <AdminModeToggle />
             </div>
-            <div className="flex justify-center md:hidden">
+            <div className="flex md:hidden justify-start">
               <ModeToggle />
             </div>
           </div>
         </div>
 
-        <div className="h-[50vh] flex items-end">
+        <div className="h-[50vh] md:flex md:items-end">
           <Button
             className="w-full mt-5 flex justify-start gap-2"
             variant="ghost"

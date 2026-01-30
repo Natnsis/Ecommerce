@@ -11,7 +11,7 @@ const AdminHeader = () => {
         <h1 className="text-xl font-bold">Welcome Back!</h1>
         <p className="text-gray-600 text-sm dark:text-gray-500">Manage the platfrom with freedom</p>
       </div>
-      <div className="flex gap-3">
+      <div className="gap-3 hidden md:flex ">
         <Avatar className="h-15 w-10">
           <AvatarImage
             src="https://github.com/shadcn.png"
