@@ -56,14 +56,14 @@ const Cart = () => {
           </div>
 
           <div className="flex items-end">
-            <Button variant="secondary" className="bg-green-200">
+            <Button variant="secondary" className="text-green-200">
               <CurrencyDollarSimpleIcon />
               Cashout
             </Button>
           </div>
         </div>
 
-        <div className="h-[85%] bg-white py-5 px-20 md:px-5">
+        <div className="h-[85%] py-5 px-20 md:px-5">
           <Table>
             <TableHeader>
               <TableRow>
