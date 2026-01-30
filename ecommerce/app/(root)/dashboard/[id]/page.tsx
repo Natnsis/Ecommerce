@@ -66,8 +66,8 @@ const detail = () => {
         <ArrowLeftIcon size={20} />
         <p>Go back</p>
       </Button>
-      <section className="flex gap-5 h-[90vh] mt-10">
-        <div className="bg-white p-10 w-1/2 h-[80vh] flex items-center justify-center">
+      <section className="flex gap-5 h-[90vh] mt-10 flex-col md:flex-row md:h-fit">
+        <div className="bg-white p-10 md:w-1/2 h-[80vh] flex items-center justify-center">
           <img
             src={product?.url ? product?.url : "/product-placeholder.png"}
             alt="product-img"
@@ -76,7 +76,7 @@ const detail = () => {
             className="max-h-full w-auto object-contain"
           />
         </div>
-        <div className="p-10 w-1/2 flex flex-col justify-center gap-3">
+        <div className="p-10 md:w-1/2 flex flex-col justify-center gap-3">
           <h1 className="text-5xl font-extrabold mb-2">
             {product?.name ? product?.name : "Product Name"}
           </h1>
