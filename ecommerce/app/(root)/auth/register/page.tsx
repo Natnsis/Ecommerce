@@ -47,17 +47,13 @@ const Register = () => {
   }
 
   return (
-    <section className="h-screen flex gap-10">
-      <div className="flex items-center justify-center w-1/2 md:ml-0 ml-20 min-w-[40vw]">
+    <section className="h-screen flex gap-20">
+      <div className="flex items-center justify-center md:ml-0 ml-20">
         <Card>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)}>
               <h1 className="text-3xl text-center" >Get Started With Us</h1>
-              <p
-                className="mb-5 text-gray-600 dark:text-gray-400 
-                md:text-start text-center">
-                Enter your email and password to create your account.
-              </p>
+              <p className="mb-5 text-gray-600 dark:text-gray-400">Enter your email and password to create your account.</p>
               <Label htmlFor="email">Email</Label>
               <Input id="email" className="mb-3" {...register("email")} />
               {errors.email && (<p className="text-red-600 mb-3">{errors.email.message}</p>)}
@@ -101,7 +97,7 @@ const Register = () => {
           </CardContent>
         </Card>
       </div>
-      <div className="md:flex h-full items-center justify-center hidden">
+      <div className="h-full items-center w-1/2 justify-center hidden md:flex ">
         <Image src="/register.png" alt="login-image" width={300} height={400} />
       </div>
     </section>
