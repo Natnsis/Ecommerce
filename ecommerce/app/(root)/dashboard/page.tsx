@@ -76,10 +76,10 @@ export default function Dashboard() {
 
   return (
     <section className="p-4 sm:p-5 w-full min-h-screen">
-      {/* Top bar – header + search + icons */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-5">
+      <div
+        className="flex flex-col sm:flex-row justify-between 
+        items-start sm:items-center gap-4 mb-5">
         <InnerHeader />
-
         <div className="flex items-center gap-2.5 w-full sm:w-auto">
           <Input
             className="flex-1 min-w-[180px]"
@@ -87,7 +87,10 @@ export default function Dashboard() {
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
           />
-          <Button variant="outline" size="icon" className="shrink-0">
+          <Button
+            variant="outline"
+            size="icon"
+            className="shrink-0">
             <HeartIcon size={20} />
           </Button>
           <Button
@@ -103,9 +106,10 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Mobile-only: horizontal category filter bar */}
-      <div className="md:hidden mb-5 overflow-x-auto pb-1 -mx-2 px-2">
-        <div className="flex gap-2.5 min-w-max">
+      <div
+        className="md:hidden mb-5 overflow-x-auto pb-1 -mx-2 px-2">
+        <div
+          className="flex gap-2.5 min-w-max">
           {categories.map((item) => (
             <button
               key={item.value}
@@ -124,7 +128,6 @@ export default function Dashboard() {
       </div>
 
       <main className="flex gap-6">
-        {/* Desktop sidebar – hidden on mobile */}
         <aside className="w-64 shrink-0 hidden md:block">
           <div className="sticky top-6 space-y-6">
             <div>
@@ -132,7 +135,9 @@ export default function Dashboard() {
               {categories.map((item) => (
                 <label
                   key={item.value}
-                  className="flex items-center gap-2 py-1.5 text-sm text-gray-700 dark:text-gray-300 hover:text-rose-600 cursor-pointer select-none"
+                  className="flex items-center gap-2 py-1.5 text-sm 
+                  text-gray-700 dark:text-gray-300 hover:text-rose-600 
+                  cursor-pointer select-none"
                 >
                   <input
                     type="radio"
@@ -153,7 +158,10 @@ export default function Dashboard() {
               <h2 className="font-semibold mb-3">Price Range</h2>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-xs text-gray-500 mb-1 block">Min</label>
+                  <label
+                    className="text-xs text-gray-500 mb-1 block">
+                    Min
+                  </label>
                   <Input
                     type="number"
                     min={0}
@@ -163,7 +171,10 @@ export default function Dashboard() {
                   />
                 </div>
                 <div>
-                  <label className="text-xs text-gray-500 mb-1 block">Max</label>
+                  <label
+                    className="text-xs text-gray-500 mb-1 block">
+                    Max
+                  </label>
                   <Input
                     type="number"
                     min={0}
@@ -180,15 +191,14 @@ export default function Dashboard() {
           </div>
         </aside>
 
-        {/* Main content area */}
         <section className="flex-1">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-5">
+          <div className="flex flex-col sm:flex-row justify-between 
+            items-start sm:items-center gap-4 mb-5">
             <h1 className="text-2xl font-bold capitalize">
               {category === "all" ? "All Products" : category}
             </h1>
           </div>
 
-          {/* Mobile-only: price filter below title */}
           <div className="md:hidden mb-6">
             <h3 className="font-medium text-sm mb-2">Price Range</h3>
             <div className="grid grid-cols-2 gap-3">
@@ -213,28 +223,37 @@ export default function Dashboard() {
           </div>
 
           {productsLoading ? (
-            <div className="text-center py-16 text-gray-500">Loading products...</div>
+            <div className="text-center py-16 text-gray-500">
+              Loading products...
+            </div>
           ) : filteredProducts.length === 0 ? (
             <div className="text-center py-16 text-gray-500">
               No products match your filters
             </div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5">
+            <div
+              className="grid grid-cols-2 md:grid-cols-3 
+                  lg:grid-cols-4 xl:grid-cols-5 gap-4 sm:gap-5">
               {filteredProducts.map((p) => (
                 <div
                   key={p.id}
                   onClick={() => router.push(`/dashboard/${p.id}`)}
-                  className="border rounded-lg overflow-hidden bg-white dark:bg-gray-900 hover:shadow-md transition-all cursor-pointer group flex flex-col h-full"
+                  className="border rounded-lg overflow-hidden 
+                      bg-white dark:bg-gray-900 hover:shadow-md 
+                      transition-all cursor-pointer group flex flex-col h-full"
                 >
                   <div className="relative pt-[100%] bg-gray-50 dark:bg-gray-800">
-                    <button className="absolute top-2 right-2 z-10 p-1.5 rounded-full bg-white/80 dark:bg-black/60 hover:bg-white dark:hover:bg-black transition">
+                    <button className="absolute top-2 right-2 z-10 p-1.5 
+                          rounded-full bg-white/80 dark:bg-black/60 
+                          hover:bg-white dark:hover:bg-black transition">
                       <HeartIcon size={18} className="text-gray-500 hover:text-rose-600" />
                     </button>
                     <Image
                       src={p.url || "/placeholder.svg"}
                       alt={p.name || "Product"}
                       fill
-                      className="object-contain p-3 sm:p-4 group-hover:scale-105 transition-transform duration-300"
+                      className="object-contain p-3 sm:p-4 
+                          group-hover:scale-105 transition-transform duration-300"
                     />
                   </div>
 
@@ -242,7 +261,8 @@ export default function Dashboard() {
                     <h3 className="font-medium text-sm sm:text-base line-clamp-2 mb-1.5">
                       {p.name}
                     </h3>
-                    <div className="flex items-center gap-1 text-xs sm:text-sm mb-2 text-gray-600 dark:text-gray-400">
+                    <div className="flex items-center gap-1 text-xs 
+                          sm:text-sm mb-2 text-gray-600 dark:text-gray-400">
                       <StarIcon size={14} weight="fill" className="text-amber-500" />
                       <span>4.5</span>
                       <span>(127)</span>
