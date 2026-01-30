@@ -56,7 +56,7 @@ const invoices = [
 
 export function UsersTable() {
   return (
-    <Table>
+    <Table className="w-[100vw] mt-5">
       <TableCaption>A list of your recent invoices.</TableCaption>
       <TableHeader>
         <TableRow>

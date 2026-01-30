@@ -64,14 +64,14 @@ export function ProductsTable() {
 
   return (
     <div>
-      <div className="w-1/2 mb-5">
+      <div className="w-1/2 md:mb-5 mb-0">
         <Input
           placeholder="search for product..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
       </div>
-      < Table >
+      <Table className="w-100vw">
         <TableHeader>
           <TableRow>
             <TableHead>No.</TableHead>
