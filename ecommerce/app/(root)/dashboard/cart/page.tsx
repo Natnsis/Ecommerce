@@ -13,8 +13,8 @@ import {
 } from "@/components/ui/table"
 import { useEffect } from "react";
 import { useUser } from "../../context/user";
-import { useQueries, useQuery } from "@tanstack/react-query";
-import { getCartById } from "@/app/conrollers/cart.controller";
+import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
+import { deleteCart, getCartById } from "@/app/conrollers/cart.controller";
 import { getProductWithId } from "@/app/conrollers/product.controller";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import {
@@ -65,6 +65,14 @@ const Cart = () => {
     product: productQueries[index]?.data,
   }));
 
+  const queryClient = useQueryClient()
+
+  const deleteCartMutation = useMutation({
+    mutationFn: (id: number) => deleteCart(id),
+    onSuccess: () => queryClient.invalidateQueries({
+      predicate: query => query.queryKey[0] === 'carts'
+    })
+  })
 
   return (
     <main className="p-5 space-y-5">
@@ -132,7 +140,9 @@ const Cart = () => {
                         </AlertDialogHeader>
                         <AlertDialogFooter>
                           <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction>Continue</AlertDialogAction>
+                          <AlertDialogAction onClick={() => deleteCartMutation.mutate(c.id)}>
+                            Continue
+                          </AlertDialogAction>
                         </AlertDialogFooter>
                       </AlertDialogContent>
                     </AlertDialog>
