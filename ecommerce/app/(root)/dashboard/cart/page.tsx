@@ -13,8 +13,10 @@ import {
 } from "@/components/ui/table"
 import { useEffect } from "react";
 import { useUser } from "../../context/user";
-import { useQuery } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { getCartById } from "@/app/conrollers/cart.controller";
+import { getProductWithId } from "@/app/conrollers/product.controller";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 const Cart = () => {
   const router = useRouter()
@@ -37,6 +39,20 @@ const Cart = () => {
     enabled: !!userId
   })
 
+  const productQueries = useQueries({
+    queries: (carts ?? []).map(cart => ({
+      queryKey: ['nested-product', cart.product_id],
+      queryFn: () => getProductWithId(cart.product_id),
+      enabled: !!cart.product_id
+    }))
+  })
+
+  const cartsWithProducts = carts?.map((cart, index) => ({
+    ...cart,
+    product: productQueries[index]?.data,
+  }));
+
+  console.log(cartsWithProducts)
 
   return (
     <main className="p-5 space-y-5">
@@ -76,31 +92,25 @@ const Cart = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                <TableCell className="pl-3">INV001</TableCell>
-                <TableCell>Paid</TableCell>
-                <TableCell>Credit Card</TableCell>
-                <TableCell>$250.00</TableCell>
-                <TableCell>$250.00</TableCell>
-                <TableCell>
-                  <Button variant="outline">
-                    <XIcon />
-                  </Button>
-                </TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell className="pl-3">INV001</TableCell>
-                <TableCell>Paid</TableCell>
-                <TableCell>Credit Card</TableCell>
-                <TableCell>$250.00</TableCell>
-                <TableCell>$250.00</TableCell>
-                <TableCell>
-                  <Button variant="outline">
-                    <XIcon />
-                  </Button>
-                </TableCell>
-              </TableRow>
+              {cartsWithProducts?.map((c, index) => (
+                <TableRow key={index}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>
+                    <Avatar>
+                      <AvatarImage src={c.product?.url} />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                  </TableCell>
+                  <TableCell>{c.product?.name}</TableCell>
+                  <TableCell>{c.quantity}</TableCell>
+                  <TableCell>{c.sum}</TableCell>
+                  <TableCell>
+                    <Button variant="outline">
+                      <XIcon />
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </div>
