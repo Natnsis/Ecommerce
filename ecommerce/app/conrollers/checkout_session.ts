@@ -1,11 +1,36 @@
-import Stripe from "stripe";
+import type { NextApiRequest, NextApiResponse } from 'next';
+import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.SECRET_KEY!)
+const stripe = new Stripe(process.env.SECRET_KEY!, {
+  apiVersion: '2023-08-16',
+});
 
-export default async function handler(req, res) {
+interface Item {
+  name: string;
+  price: number; // in USD
+  quantity: number;
+}
+
+interface CheckoutRequestBody {
+  items: Item[];
+}
+
+interface CheckoutResponse {
+  url?: string;
+  error?: string;
+}
+
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse<CheckoutResponse>
+) {
   if (req.method === 'POST') {
     try {
-      const { items } = req.body;
+      const { items } = req.body as CheckoutRequestBody;
+
+      if (!items || items.length === 0) {
+        return res.status(400).json({ error: 'No items provided' });
+      }
 
       const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
@@ -16,7 +41,7 @@ export default async function handler(req, res) {
             product_data: {
               name: item.name,
             },
-            unit_amount: item.price * 100, // in cents
+            unit_amount: item.price * 100, // convert dollars to cents
           },
           quantity: item.quantity,
         })),
@@ -24,9 +49,9 @@ export default async function handler(req, res) {
         cancel_url: `${req.headers.origin}/cancel`,
       });
 
-      res.status(200).json({ url: session.url });
+      res.status(200).json({ url: session.url! });
     } catch (err) {
-      console.error(err);
+      console.error('Stripe checkout error:', err);
       res.status(500).json({ error: 'Something went wrong' });
     }
   } else {
@@ -34,6 +59,3 @@ export default async function handler(req, res) {
     res.status(405).end('Method Not Allowed');
   }
 }
-
-
-
