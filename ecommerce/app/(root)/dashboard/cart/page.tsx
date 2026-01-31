@@ -13,8 +13,21 @@ import {
 } from "@/components/ui/table"
 import { useEffect } from "react";
 import { useUser } from "../../context/user";
-import { useQuery } from "@tanstack/react-query";
-import { getCartById } from "@/app/conrollers/cart.controller";
+import { useMutation, useQueries, useQuery, useQueryClient } from "@tanstack/react-query";
+import { deleteCart, getCartById } from "@/app/conrollers/cart.controller";
+import { getProductWithId } from "@/app/conrollers/product.controller";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 const Cart = () => {
   const router = useRouter()
@@ -37,6 +50,29 @@ const Cart = () => {
     enabled: !!userId
   })
 
+  if (cartError) throw cartError
+
+  const productQueries = useQueries({
+    queries: (carts ?? []).map(cart => ({
+      queryKey: ['nested-product', cart.product_id],
+      queryFn: () => getProductWithId(cart.product_id),
+      enabled: !!cart.product_id
+    }))
+  })
+
+  const cartsWithProducts = carts?.map((cart, index) => ({
+    ...cart,
+    product: productQueries[index]?.data,
+  }));
+
+  const queryClient = useQueryClient()
+
+  const deleteCartMutation = useMutation({
+    mutationFn: (id: number) => deleteCart(id),
+    onSuccess: () => queryClient.invalidateQueries({
+      predicate: query => query.queryKey[0] === 'carts'
+    })
+  })
 
   return (
     <main className="p-5 space-y-5">
@@ -56,14 +92,14 @@ const Cart = () => {
           </div>
 
           <div className="flex items-end">
-            <Button variant="secondary" className="bg-green-200">
+            <Button variant="secondary" className="text-green-200">
               <CurrencyDollarSimpleIcon />
               Cashout
             </Button>
           </div>
         </div>
 
-        <div className="h-[85%] bg-white py-5 px-20 md:px-5">
+        <div className="h-[85%] py-5 px-20 md:px-5">
           <Table>
             <TableHeader>
               <TableRow>
@@ -76,31 +112,43 @@ const Cart = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                <TableCell className="pl-3">INV001</TableCell>
-                <TableCell>Paid</TableCell>
-                <TableCell>Credit Card</TableCell>
-                <TableCell>$250.00</TableCell>
-                <TableCell>$250.00</TableCell>
-                <TableCell>
-                  <Button variant="outline">
-                    <XIcon />
-                  </Button>
-                </TableCell>
-              </TableRow>
-
-              <TableRow>
-                <TableCell className="pl-3">INV001</TableCell>
-                <TableCell>Paid</TableCell>
-                <TableCell>Credit Card</TableCell>
-                <TableCell>$250.00</TableCell>
-                <TableCell>$250.00</TableCell>
-                <TableCell>
-                  <Button variant="outline">
-                    <XIcon />
-                  </Button>
-                </TableCell>
-              </TableRow>
+              {cartsWithProducts?.map((c, index) => (
+                <TableRow key={index}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>
+                    <Avatar>
+                      <AvatarImage src={c.product?.url} />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                  </TableCell>
+                  <TableCell>{c.product?.name}</TableCell>
+                  <TableCell>{c.quantity}</TableCell>
+                  <TableCell>{c.sum}</TableCell>
+                  <TableCell>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline">
+                          <XIcon />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you sure you want to delete the cart item?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete data
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction onClick={() => deleteCartMutation.mutate(c.id)}>
+                            Continue
+                          </AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </div>
