@@ -17,6 +17,17 @@ import { useQueries, useQuery } from "@tanstack/react-query";
 import { getCartById } from "@/app/conrollers/cart.controller";
 import { getProductWithId } from "@/app/conrollers/product.controller";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 const Cart = () => {
   const router = useRouter()
@@ -39,6 +50,8 @@ const Cart = () => {
     enabled: !!userId
   })
 
+  if (cartError) throw cartError
+
   const productQueries = useQueries({
     queries: (carts ?? []).map(cart => ({
       queryKey: ['nested-product', cart.product_id],
@@ -52,7 +65,6 @@ const Cart = () => {
     product: productQueries[index]?.data,
   }));
 
-  console.log(cartsWithProducts)
 
   return (
     <main className="p-5 space-y-5">
@@ -105,9 +117,25 @@ const Cart = () => {
                   <TableCell>{c.quantity}</TableCell>
                   <TableCell>{c.sum}</TableCell>
                   <TableCell>
-                    <Button variant="outline">
-                      <XIcon />
-                    </Button>
+                    <AlertDialog>
+                      <AlertDialogTrigger asChild>
+                        <Button variant="outline">
+                          <XIcon />
+                        </Button>
+                      </AlertDialogTrigger>
+                      <AlertDialogContent>
+                        <AlertDialogHeader>
+                          <AlertDialogTitle>Are you sure you want to delete the cart item?</AlertDialogTitle>
+                          <AlertDialogDescription>
+                            This action cannot be undone. This will permanently delete data
+                          </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                          <AlertDialogCancel>Cancel</AlertDialogCancel>
+                          <AlertDialogAction>Continue</AlertDialogAction>
+                        </AlertDialogFooter>
+                      </AlertDialogContent>
+                    </AlertDialog>
                   </TableCell>
                 </TableRow>
               ))}
