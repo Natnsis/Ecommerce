@@ -19,7 +19,7 @@ type Item = {
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   if (req.method !== "POST") {
     res.setHeader("Allow", "POST");
@@ -58,6 +58,25 @@ export default async function handler(
 
     const stripe = getStripeClient();
 
+    // Validate line_items: Stripe requires unit_amount > 0
+    for (const li of line_items) {
+      if (
+        !li.price_data ||
+        typeof li.price_data.unit_amount !== "number" ||
+        li.price_data.unit_amount <= 0
+      ) {
+        console.error("Invalid line item unit_amount:", li);
+        return res
+          .status(400)
+          .json({
+            error:
+              "Invalid line item price; ensure price or sum is provided and > 0",
+          });
+      }
+    }
+
+    console.log("Creating Stripe session", { userId, line_items });
+
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       payment_method_types: ["card"],
@@ -69,6 +88,11 @@ export default async function handler(
       cancel_url: `${
         process.env.NEXT_PUBLIC_BASE_URL || req.headers.origin
       }/dashboard/cart`,
+    });
+
+    console.log("Stripe session created:", {
+      id: session.id,
+      url: session.url,
     });
 
     return res.status(200).json({ url: session.url, id: session.id });

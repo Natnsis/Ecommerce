@@ -76,7 +76,7 @@ const Cart = () => {
 
   const checkoutMutation = useMutation({
     mutationFn: async () => {
-      const res = await fetch("/api/create-payment-intent", {
+      const res = await fetch("/api/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -85,18 +85,15 @@ const Cart = () => {
             product_id: c.product_id,
             quantity: c.quantity,
             sum: c.sum,
+            name: c.product?.name,
           })),
         }),
       });
-
-      if (!res.ok) {
-        throw new Error("Failed to create payment");
-      }
-
+      if (!res.ok) throw new Error("Failed to create Stripe session");
       return res.json();
     },
     onSuccess: (data) => {
-      router.push(`/checkout?clientSecret=${data.clientSecret}`);
+      if (data.url) window.location.href = data.url; // redirect to Stripe Checkout
     },
   });
 
@@ -125,7 +122,7 @@ const Cart = () => {
               onClick={() => checkoutMutation.mutate()}
             >
               <CurrencyDollarSimpleIcon />
-              {checkoutMutation.isPending ? "Processing..." : "Cashout"}
+              {checkoutMutation.isPending ? "Redirecting..." : "Cashout"}
             </Button>
           </div>
         </div>
