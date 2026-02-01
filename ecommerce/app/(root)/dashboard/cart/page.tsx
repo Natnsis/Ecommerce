@@ -74,51 +74,31 @@ const Cart = () => {
     })
   })
 
-  /*
-  const handleProceedToCheckout = async () => {
-    if (!cartsWithProducts || cartsWithProducts.length === 0) {
-      alert("Your cart is empty");
-      return;
-    }
-
-    const itemsForStripe = cartsWithProducts.map((c) => ({
-      product_id: c.product_id,
-      quantity: c.quantity,
-      sum: c.sum,
-      product: {
-        name: c.product?.name,
-        url: c.product?.url,
-      },
-    }));
-
-    try {
-      const response = await fetch('/api/create-checkout-session', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ items: itemsForStripe }),
+  const checkoutMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("/api/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          carts: cartsWithProducts?.map(c => ({
+            id: c.id,
+            product_id: c.product_id,
+            quantity: c.quantity,
+            sum: c.sum,
+          })),
+        }),
       });
 
-      const data = await response.json();
-
-      if (data.error) {
-        alert(data.error);
-        return;
+      if (!res.ok) {
+        throw new Error("Failed to create payment");
       }
 
-      if (data.url) {
-        window.location.href = data.url;
-      }
-
-      //TODO: fix up the cart removal after payment
-
-    } catch (err) {
-      console.error(err);
-      alert("Something went wrong. Please try again.");
-    }
-  };
-*/
+      return res.json();
+    },
+    onSuccess: (data) => {
+      router.push(`/checkout?clientSecret=${data.clientSecret}`);
+    },
+  });
 
   return (
     <main className="p-5 space-y-5">
@@ -139,11 +119,13 @@ const Cart = () => {
 
           <div className="flex items-end">
             <Button
-              onClick={handleProceedToCheckout}
               variant="outline"
-              className="dark:text-green-200 text-green-600">
+              className="dark:text-green-200 text-green-600"
+              disabled={!cartsWithProducts?.length || checkoutMutation.isPending}
+              onClick={() => checkoutMutation.mutate()}
+            >
               <CurrencyDollarSimpleIcon />
-              Cashout
+              {checkoutMutation.isPending ? "Processing..." : "Cashout"}
             </Button>
           </div>
         </div>

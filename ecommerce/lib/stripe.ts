@@ -1,9 +1,9 @@
-import Stripe from 'stripe';
+import Stripe from "stripe";
 
-if (!process.env.SECRET_KEY) {
-  throw new Error('Missing STRIPE_SECRET_KEY in .env.local');
-}
-
-export const stripe = new Stripe(process.env.SECRET_KEY, {
-  apiVersion: '2025-12-15.clover' as any,
-});
+export const stripe = new Stripe(
+  process.env.NEXT_STRIPE_SECRET_KEY!,
+  {
+    apiVersion: "2023-10-16" as any,
+    typescript: true,
+  }
+);
