@@ -74,6 +74,7 @@ const Cart = () => {
     })
   })
 
+  /*
   const handleProceedToCheckout = async () => {
     if (!cartsWithProducts || cartsWithProducts.length === 0) {
       alert("Your cart is empty");
@@ -117,7 +118,7 @@ const Cart = () => {
       alert("Something went wrong. Please try again.");
     }
   };
-
+*/
 
   return (
     <main className="p-5 space-y-5">
