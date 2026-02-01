@@ -74,6 +74,13 @@ const Cart = () => {
     })
   })
 
+  if (cartsWithProducts) {
+    const total = cartsWithProducts.reduce((sum, product) => {
+      return sum + product.sum;
+    }, 0);
+    console.log(total);
+  }
+
   return (
     <main className="p-5 space-y-5">
       <header className="flex justify-start">
@@ -92,7 +99,7 @@ const Cart = () => {
           </div>
 
           <div className="flex items-end">
-            <Button variant="secondary" className="text-green-200">
+            <Button variant="outline" className="dark:text-green-200 text-green-600">
               <CurrencyDollarSimpleIcon />
               Cashout
             </Button>
@@ -103,7 +110,7 @@ const Cart = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="pl-3">No.</TableHead>
+                <TableHead className="text-center">No.</TableHead>
                 <TableHead>Img</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>QTY.</TableHead>
@@ -114,7 +121,7 @@ const Cart = () => {
             <TableBody>
               {cartsWithProducts?.map((c, index) => (
                 <TableRow key={index}>
-                  <TableCell>{index + 1}</TableCell>
+                  <TableCell className="text-center">{index + 1}</TableCell>
                   <TableCell>
                     <Avatar>
                       <AvatarImage src={c.product?.url} />
