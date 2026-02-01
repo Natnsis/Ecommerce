@@ -74,12 +74,50 @@ const Cart = () => {
     })
   })
 
-  if (cartsWithProducts) {
-    const total = cartsWithProducts.reduce((sum, product) => {
-      return sum + product.sum;
-    }, 0);
-    console.log(total);
-  }
+  const handleProceedToCheckout = async () => {
+    if (!cartsWithProducts || cartsWithProducts.length === 0) {
+      alert("Your cart is empty");
+      return;
+    }
+
+    const itemsForStripe = cartsWithProducts.map((c) => ({
+      product_id: c.product_id,
+      quantity: c.quantity,
+      sum: c.sum,
+      product: {
+        name: c.product?.name,
+        url: c.product?.url,
+      },
+    }));
+
+    try {
+      const response = await fetch('/api/create-checkout-session', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ items: itemsForStripe }),
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        alert(data.error);
+        return;
+      }
+
+      if (data.url) {
+        window.location.href = data.url;
+      }
+
+      //TODO: fix up the cart removal after payment
+
+    } catch (err) {
+      console.error(err);
+      alert("Something went wrong. Please try again.");
+    }
+  };
+
 
   return (
     <main className="p-5 space-y-5">
@@ -99,7 +137,10 @@ const Cart = () => {
           </div>
 
           <div className="flex items-end">
-            <Button variant="outline" className="dark:text-green-200 text-green-600">
+            <Button
+              onClick={handleProceedToCheckout}
+              variant="outline"
+              className="dark:text-green-200 text-green-600">
               <CurrencyDollarSimpleIcon />
               Cashout
             </Button>
