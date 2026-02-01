@@ -74,6 +74,29 @@ const Cart = () => {
     })
   })
 
+  const checkoutMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch("/api/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          carts: cartsWithProducts?.map(c => ({
+            id: c.id,
+            product_id: c.product_id,
+            quantity: c.quantity,
+            sum: c.sum,
+            name: c.product?.name,
+          })),
+        }),
+      });
+      if (!res.ok) throw new Error("Failed to create Stripe session");
+      return res.json();
+    },
+    onSuccess: (data) => {
+      if (data.url) window.location.href = data.url; // redirect to Stripe Checkout
+    },
+  });
+
   return (
     <main className="p-5 space-y-5">
       <header className="flex justify-start">
@@ -92,9 +115,14 @@ const Cart = () => {
           </div>
 
           <div className="flex items-end">
-            <Button variant="secondary" className="text-green-200">
+            <Button
+              variant="outline"
+              className="dark:text-green-200 text-green-600"
+              disabled={!cartsWithProducts?.length || checkoutMutation.isPending}
+              onClick={() => checkoutMutation.mutate()}
+            >
               <CurrencyDollarSimpleIcon />
-              Cashout
+              {checkoutMutation.isPending ? "Redirecting..." : "Cashout"}
             </Button>
           </div>
         </div>
@@ -103,7 +131,7 @@ const Cart = () => {
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead className="pl-3">No.</TableHead>
+                <TableHead className="text-center">No.</TableHead>
                 <TableHead>Img</TableHead>
                 <TableHead>Name</TableHead>
                 <TableHead>QTY.</TableHead>
@@ -114,7 +142,7 @@ const Cart = () => {
             <TableBody>
               {cartsWithProducts?.map((c, index) => (
                 <TableRow key={index}>
-                  <TableCell>{index + 1}</TableCell>
+                  <TableCell className="text-center">{index + 1}</TableCell>
                   <TableCell>
                     <Avatar>
                       <AvatarImage src={c.product?.url} />
