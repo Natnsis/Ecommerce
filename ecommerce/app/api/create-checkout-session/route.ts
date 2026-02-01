@@ -12,15 +12,11 @@ type CartItem = {
 export async function POST(req: Request) {
   try {
     const { carts }: { carts: CartItem[] } = await req.json();
-
     if (!carts || carts.length === 0) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
-
-    // Map cart items to Stripe line items (unit_amount must be integer cents)
     const line_items = carts.map((item) => {
       const qty = Math.max(1, item.quantity || 1);
-      // assume `sum` is a dollar amount for the line (e.g. 120.50), convert to cents per unit
       const unitAmountCents = Math.round((item.sum / qty) * 100);
 
       return {
@@ -33,7 +29,6 @@ export async function POST(req: Request) {
       };
     });
 
-    // validate unit_amount
     for (const li of line_items) {
       if (
         !li.price_data ||
