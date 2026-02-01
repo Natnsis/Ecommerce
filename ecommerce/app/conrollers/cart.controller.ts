@@ -49,7 +49,6 @@ export const getCartById = async (userId: string) => {
   }
 };
 
-/*
 export const deleteAllCartByUser = async (userId: string) => {
   try {
     const { error: cartError } = await supabase
@@ -62,4 +61,3 @@ export const deleteAllCartByUser = async (userId: string) => {
     throw error;
   }
 };
-*/
