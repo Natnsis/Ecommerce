@@ -93,7 +93,7 @@ const Cart = () => {
       return res.json();
     },
     onSuccess: (data) => {
-      if (data.url) window.location.href = data.url; // redirect to Stripe Checkout
+      if (data.url) window.location.href = data.url;
     },
   });
 
