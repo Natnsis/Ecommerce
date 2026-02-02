@@ -32,9 +32,14 @@ const Header = () => {
           <DeviceMobileIcon />
           Get The App
         </Button>
-        <Button variant="secondary">
-          <StarIcon />
-          Give A Star
+        <Button
+          variant="secondary">
+          <a
+            href="https://github.com/Natnsis/Ecommerce"
+            className='flex items-center gap-2'>
+            <StarIcon />
+            Give A Star
+          </a>
         </Button>
         <Language />
         <ModeToggle />
@@ -61,8 +66,10 @@ const Header = () => {
                 Get The App
               </DropdownMenuItem>
               <DropdownMenuItem>
-                <StarIcon />
-                Give A Star
+                <a href="https://github.com/Natnsis/Ecommerce">
+                  <StarIcon />
+                  Give A Star
+                </a>
               </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => router.push("/auth/login")}

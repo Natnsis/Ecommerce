@@ -21,7 +21,9 @@ const Hero = () => {
           <CardContent>
             <p className="text-center">Browse our wide range of categories and enjoy exclusive offers every week. Fast shipping and easy returns make shopping effortless.</p>
             <div className="mt-5 flex justify-center w-full gap-5">
-              <Button>
+              <Button
+                onClick={() => router.push("learnMore")}
+              >
                 Learn More
                 <ArrowRightIcon size={32} />
               </Button>
