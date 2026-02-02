@@ -24,7 +24,7 @@ const Header = () => {
       <div className='text-lg  gap-5 hidden md:block'>
         <Button variant="link"><a href='#home'>HOME</a></Button>
         <Button variant="link"><a href='#about'>ABOUT</a></Button>
-        <Button variant="link">CONTACT US</Button>
+        <Button variant="link"><a href='mailto:nsisay49@gmail.com'>CONTACT US</a></Button>
       </div>
       <div className='gap-5 hidden md:flex'>
         <Button variant="outline">
