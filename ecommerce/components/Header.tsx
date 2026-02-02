@@ -10,8 +10,6 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
@@ -24,8 +22,8 @@ const Header = () => {
         <h1 className='text-2xl font-bold'>Gebeya</h1>
       </div>
       <div className='text-lg  gap-5 hidden md:block'>
-        <Button variant="link">HOME</Button>
-        <Button variant="link">ABOUT</Button>
+        <Button variant="link"><a href='#home'>HOME</a></Button>
+        <Button variant="link"><a href='#about'>ABOUT</a></Button>
         <Button variant="link">CONTACT US</Button>
       </div>
       <div className='gap-5 hidden md:flex'>
