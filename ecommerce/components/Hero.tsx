@@ -3,8 +3,10 @@ import Image from "next/image";
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowRightIcon, ShoppingBagIcon } from "@phosphor-icons/react"
+import { useRouter } from "next/navigation";
 
 const Hero = () => {
+  const router = useRouter()
   return (
     <main className="w-full flex justify-between mt-10 h-3/4 md:flex-row flex-col">
       <div className="flex flex-col justify-center">
@@ -19,8 +21,17 @@ const Hero = () => {
           <CardContent>
             <p className="text-center">Browse our wide range of categories and enjoy exclusive offers every week. Fast shipping and easy returns make shopping effortless.</p>
             <div className="mt-5 flex justify-center w-full gap-5">
-              <Button>Learn More <ArrowRightIcon size={32} /></Button>
-              <Button variant="outline">Shop Now  <ShoppingBagIcon size={32} /></Button>
+              <Button>
+                Learn More
+                <ArrowRightIcon size={32} />
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => router.push("/auth/login")}
+              >
+                Shop Now
+                <ShoppingBagIcon size={32} />
+              </Button>
             </div>
           </CardContent>
         </Card>
