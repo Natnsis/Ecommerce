@@ -1,7 +1,7 @@
 "use client"
 import Image from 'next/image'
 import { Button } from "@/components/ui/button"
-import { ShoppingCartIcon, UserIcon, ListIcon } from "@phosphor-icons/react";
+import { UserIcon, ListIcon, DeviceMobileIcon } from "@phosphor-icons/react";
 import Language from '@/components/Language';
 import { ModeToggle } from "@/components/mode-toggle";
 import { useRouter } from "next/navigation"
@@ -10,10 +10,9 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { StarIcon } from 'lucide-react';
 
 const Header = () => {
   const router = useRouter();
@@ -24,13 +23,23 @@ const Header = () => {
         <h1 className='text-2xl font-bold'>Gebeya</h1>
       </div>
       <div className='text-lg  gap-5 hidden md:block'>
-        <Button variant="link">HOME</Button>
-        <Button variant="link">ABOUT</Button>
-        <Button variant="link">CONTACT US</Button>
+        <Button variant="link"><a href='#home'>HOME</a></Button>
+        <Button variant="link"><a href='#about'>ABOUT</a></Button>
+        <Button variant="link"><a href='mailto:nsisay49@gmail.com'>CONTACT US</a></Button>
       </div>
       <div className='gap-5 hidden md:flex'>
         <Button variant="outline">
-          <ShoppingCartIcon size={32} />
+          <DeviceMobileIcon />
+          Get The App
+        </Button>
+        <Button
+          variant="secondary">
+          <a
+            href="https://github.com/Natnsis/Ecommerce"
+            className='flex items-center gap-2'>
+            <StarIcon />
+            Give A Star
+          </a>
         </Button>
         <Language />
         <ModeToggle />
@@ -39,6 +48,7 @@ const Header = () => {
           <p>Sign In</p>
         </Button>
       </div>
+
       <div className='md:hidden'>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -51,10 +61,19 @@ const Header = () => {
               <DropdownMenuItem>HOME</DropdownMenuItem>
               <DropdownMenuItem>ABOUT</DropdownMenuItem>
               <DropdownMenuItem>CONTACT US</DropdownMenuItem>
+              <DropdownMenuItem>
+                <DeviceMobileIcon />
+                Get The App
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <a href="https://github.com/Natnsis/Ecommerce">
+                  <StarIcon />
+                  Give A Star
+                </a>
+              </DropdownMenuItem>
               <DropdownMenuItem
                 onClick={() => router.push("/auth/login")}
               >
-
                 <UserIcon size={32} />
                 <p>Sign In</p>
               </DropdownMenuItem>

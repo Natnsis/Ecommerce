@@ -1,7 +1,7 @@
-import { createClient } from "@/lib/supabase/client"
-import { productType } from "../schemas/product.schema"
+import { createClient } from "@/lib/supabase/client";
+import { productType } from "../schemas/product.schema";
 
-const supabase = createClient()
+const supabase = createClient();
 
 export const addProduct = async (data: productType) => {
   try {
@@ -36,7 +36,6 @@ export const addProduct = async (data: productType) => {
 
     if (dbError) throw dbError;
     return { message: "Product added successfully" };
-
   } catch (error) {
     console.error(error);
     throw error;
@@ -54,7 +53,7 @@ export const getProducts = async () => {
     }
     return products;
   } catch (error) {
-    console.log(error)
+    console.log(error);
   }
 };
 
@@ -65,13 +64,13 @@ export const getProductWithId = async (id: number) => {
       .select("*")
       .filter("id", "eq", id)
       .maybeSingle();
-    if (productError) throw productError
-    return product
+    if (productError) throw productError;
+    return product;
   } catch (error) {
-    console.log(error)
-    throw error
+    console.log(error);
+    throw error;
   }
-}
+};
 
 export const deleteProduct = async (id: string) => {
   try {
@@ -79,41 +78,41 @@ export const deleteProduct = async (id: string) => {
       .from("products")
       .select("url")
       .eq("id", id)
-      .maybeSingle()
+      .maybeSingle();
 
-    if (fetchError) throw fetchError
-    if (!product?.url) throw new Error("Image URL not found")
+    if (fetchError) throw fetchError;
+    if (!product?.url) throw new Error("Image URL not found");
 
-    const bucketName = "products"
-    const filePath = product.url.split(`/storage/v1/object/public/${bucketName}/`)[1]
+    const bucketName = "products";
+    const filePath = product.url.split(
+      `/storage/v1/object/public/${bucketName}/`,
+    )[1];
 
     if (!filePath) {
-      throw new Error("Invalid image URL format")
+      throw new Error("Invalid image URL format");
     }
 
-    const { error: storageError } = await supabase
-      .storage
+    const { error: storageError } = await supabase.storage
       .from(bucketName)
-      .remove([filePath])
+      .remove([filePath]);
 
-    if (storageError) throw storageError
+    if (storageError) throw storageError;
 
     const { error: deleteError } = await supabase
       .from("products")
       .delete()
-      .eq("id", id)
+      .eq("id", id);
 
-    if (deleteError) throw deleteError
-
+    if (deleteError) throw deleteError;
   } catch (error: any) {
     console.error("Delete product failed:", {
       message: error?.message,
       code: error?.code,
       details: error?.details,
       raw: error,
-    })
+    });
   }
-}
+};
 
 export const updateProduct = async (id: number, data: Partial<productType>) => {
   try {
@@ -127,7 +126,7 @@ export const updateProduct = async (id: number, data: Partial<productType>) => {
         market,
         category,
         description,
-        stock
+        stock,
       })
       .eq("id", id);
 
@@ -137,5 +136,49 @@ export const updateProduct = async (id: number, data: Partial<productType>) => {
   } catch (error: any) {
     console.error("Update error:", error);
     throw error;
+  }
+};
+
+export const reduceQuantityOfProduct = async (
+  items: { product_id: number; quantity: number }[],
+) => {
+  try {
+    for (const it of items) {
+      const { product_id, quantity } = it;
+
+      const { data: product, error: fetchError } = await supabase
+        .from("products")
+        .select("id, stock")
+        .eq("id", product_id)
+        .maybeSingle();
+
+      if (fetchError) {
+        console.error("Failed to fetch product", product_id, fetchError);
+        continue;
+      }
+      if (!product) {
+        console.warn("Product not found for id", product_id);
+        continue;
+      }
+
+      const currentStock = Number(product.stock) || 0;
+      const newStock = Math.max(0, currentStock - (quantity || 0));
+
+      const { error: updateError } = await supabase
+        .from("products")
+        .update({ stock: newStock })
+        .eq("id", product_id);
+
+      if (updateError) {
+        console.error(
+          "Failed to update product stock",
+          product_id,
+          updateError,
+        );
+      }
+    }
+  } catch (err) {
+    console.error("reduceQuantityOfProduct error", err);
+    throw err;
   }
 };

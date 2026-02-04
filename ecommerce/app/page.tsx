@@ -8,11 +8,11 @@ import Footer from "@/components/Footer";
 const LandingPage = () => {
   return (
     <section className="flex-col gap-5">
-      <div className="h-screen p-5">
+      <div className="h-screen p-5" id="home">
         <Header />
         <Hero />
       </div>
-      <div className="p-5 mb-40">
+      <div className="p-5 mb-40" id="about">
         <About />
       </div>
       <div className="p-5">

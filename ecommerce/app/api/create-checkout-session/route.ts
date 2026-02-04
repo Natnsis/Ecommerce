@@ -11,7 +11,8 @@ type CartItem = {
 
 export async function POST(req: Request) {
   try {
-    const { carts }: { carts: CartItem[] } = await req.json();
+    const { carts, userId }: { carts: CartItem[]; userId?: string } =
+      await req.json();
     if (!carts || carts.length === 0) {
       return NextResponse.json({ error: "Cart is empty" }, { status: 400 });
     }
@@ -47,10 +48,11 @@ export async function POST(req: Request) {
       payment_method_types: ["card"],
       mode: "payment",
       line_items,
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/success`,
+      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/finalize/{CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/dashboard/cart`,
       metadata: {
         cartIds: carts.map((c) => c.id).join(","),
+        ...(userId ? { user_id: userId } : {}),
       },
     });
 
