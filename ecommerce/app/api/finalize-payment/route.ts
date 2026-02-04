@@ -41,12 +41,50 @@ export async function POST(req: Request) {
       );
     }
 
-    const carts = await getCartById(String(userId));
+    // Determine carts either by userId or by cartIds from session metadata
+    let carts: any[] = [];
 
+    if (userId) {
+      carts = await getCartById(String(userId));
+    } else if (Array.isArray(cartIds) && cartIds.length > 0) {
+      // fetch cart rows by ids when user id is not provided
+      // convert ids to numbers if they are strings
+      const ids = cartIds
+        .map((id: any) => (typeof id === "string" ? Number(id) : id))
+        .filter(Boolean);
+      try {
+        const { data: fetched, error } = await (
+          await import("@/lib/supabase/client")
+        )
+          .createClient()
+          .from("cart")
+          .select("*")
+          .in("id", ids);
+        if (error) {
+          console.error("Failed to fetch carts by ids", error);
+        } else {
+          carts = fetched || [];
+        }
+      } catch (err) {
+        console.error("Error fetching carts by ids", err);
+      }
+    }
+
+    console.log(
+      "Finalize: userId=",
+      userId,
+      "cartIds=",
+      cartIds,
+      "fetched carts count=",
+      carts?.length,
+    );
+    if (Array.isArray(carts) && carts.length > 0)
+      console.log("Sample cart row:", carts[0]);
+    // reduce stock from cart items
     if (Array.isArray(carts) && carts.length > 0) {
       const itemsToReduce = carts.map((c: any) => ({
-        product_id: c.product_id,
-        quantity: c.quantity,
+        product_id: Number(c.product_id),
+        quantity: Number(c.quantity),
       }));
       try {
         await reduceQuantityOfProduct(itemsToReduce);
@@ -55,24 +93,66 @@ export async function POST(req: Request) {
       }
     }
 
+    // record transaction(s) using product_id from cart rows
     try {
       if (Array.isArray(carts) && carts.length > 0) {
         for (const c of carts) {
           const amount =
             typeof c.sum === "number" ? c.sum : c.sum ? Number(c.sum) : null;
-          await addTransaction(String(userId), amount, c.product_id);
+          const pid =
+            c.product_id !== undefined && c.product_id !== null
+              ? Number(c.product_id)
+              : null;
+          console.log(
+            "Recording transaction for product_id=",
+            pid,
+            "amount=",
+            amount,
+          );
+          await addTransaction(userId ? String(userId) : null, amount, pid);
         }
       } else if (totalAmount !== null) {
-        await addTransaction(String(userId), totalAmount, null);
+        await addTransaction(userId ? String(userId) : null, totalAmount, null);
       }
     } catch (err) {
       console.error("Failed to record transaction(s)", err);
     }
 
+    // delete cart rows: prefer deleting by user if available, otherwise by ids
     try {
-      await deleteAllCartByUser(String(userId));
+      let deleteResult: any = null;
+      if (userId) {
+        await deleteAllCartByUser(String(userId));
+        deleteResult = { by: "user", userId };
+      } else if (Array.isArray(cartIds) && cartIds.length > 0) {
+        const ids = cartIds
+          .map((id: any) => (typeof id === "string" ? Number(id) : id))
+          .filter(Boolean);
+        try {
+          const clientModule = await import("@/lib/supabase/client");
+          const client = clientModule.createClient();
+          const { data: deleted, error } = await client
+            .from("cart")
+            .delete()
+            .in("id", ids);
+          if (error) {
+            console.error("Failed to delete carts by ids", error);
+            deleteResult = { by: "ids", ids, error };
+          } else {
+            deleteResult = {
+              by: "ids",
+              ids,
+              deletedCount: (deleted || []).length,
+            };
+          }
+        } catch (err) {
+          console.error("Error deleting carts by ids", err);
+          deleteResult = { by: "ids", ids: cartIds, error: String(err) };
+        }
+      }
+      console.log("Finalize delete result:", deleteResult);
     } catch (err) {
-      console.error("Failed to clear cart for user", userId, err);
+      console.error("Failed to clear cart for user or ids", userId, err);
     }
 
     return NextResponse.json({
