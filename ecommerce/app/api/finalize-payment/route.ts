@@ -15,6 +15,7 @@ export async function POST(req: Request) {
     const totalAmount = session.amount_total! / 100;
     const cartIds = session.metadata?.cartIds?.split(",") ?? [];
     const userId = session.metadata?.user_id;
+
     /*
         if (await transactionExists(session.id)) {
           return NextResponse.json({ ok: true });
