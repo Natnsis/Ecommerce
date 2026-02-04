@@ -1,9 +1,15 @@
 "use client"
 import InnerHeader from "@/components/InnerHeader"
 import Profile from "@/components/Profile"
-import { Card, CardContent } from "@/components/ui/card"
-import { products } from "@/lib/constant"
-import Image from "next/image"
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 const order = () => {
   return (
@@ -15,31 +21,27 @@ const order = () => {
       <section className="px-20 pt-10">
         <h1 className="text-4xl">Ordered Summary</h1>
         <div className="h-[75vh] p-5">
-          {products.map((p, index) => (
-            <Card key={index} className="mb-5">
-              <CardContent className="flex justify-between">
-                <div className="flex gap-5">
-                  <div className="bg-gray-200 p-3 rounded-lg h-20">
-                    <Image src={p.img} width={100} height={50} alt="img" className="fill" />
-                  </div>
-                  <div>
-                    <h1 className="text-lg">{p.title}</h1>
-                    <p className="text-gray-600 dark:text-gray-400">Forest Green</p>
-                    <div className="flex gap-4">
-                      <p>${p.price}</p>
-                      <s>${p.former}</s>
-                    </div>
-                  </div>
-                </div>
-                <div>
-
-                </div>
-                <div className="flex items-end">
-                  x1
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+          <div className="h-[75vh] p-5">
+            <Table>
+              <TableCaption>A list of your recent invoices.</TableCaption>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[100px]">Invoice</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Method</TableHead>
+                  <TableHead className="text-right">Amount</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                <TableRow>
+                  <TableCell className="font-medium">INV001</TableCell>
+                  <TableCell>Paid</TableCell>
+                  <TableCell>Credit Card</TableCell>
+                  <TableCell className="text-right">$250.00</TableCell>
+                </TableRow>
+              </TableBody>
+            </Table>
+          </div>
         </div>
       </section>
     </main>
