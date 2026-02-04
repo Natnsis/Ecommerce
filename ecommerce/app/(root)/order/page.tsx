@@ -10,17 +10,34 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { useQuery } from "@tanstack/react-query"
+import { useQueries, useQuery } from "@tanstack/react-query"
 import { useUser } from "../context/user"
+import { getProductWithId } from "@/app/conrollers/product.controller"
 
 const order = () => {
   const { data: user, isLoading } = useUser();
   const { data: transactions, error: transactionError } = useQuery({
     queryKey: ['transaction', user?.id],
-    queryFn: () => fetchTransactionById(user?.id),
+    queryFn: () => fetchTransactionById(user?.id!),
     enabled: !!user?.id
-  })
-  console.log(transactions);
+  });
+
+  if (transactionError) throw transactionError;
+
+  const productQueries = useQueries({
+    queries: (transactions ?? []).map((transaction) => ({
+      queryKey: ["nested-product", transaction.product_id],
+      queryFn: () => getProductWithId(transaction.product_id),
+      enabled: !!transaction.product_id,
+    })),
+  });
+
+  const transactionWithProducts = transactions?.map((transaction, index) => ({
+    ...transaction,
+    product: productQueries[index]?.data,
+  }));
+
+  console.log(transactionWithProducts);
 
   return (
     <main className="p-5">
