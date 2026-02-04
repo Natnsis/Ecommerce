@@ -88,18 +88,11 @@ export default function Dashboard() {
             onChange={(e) => setSearchTerm(e.target.value)}
           />
           <Button
-            variant="outline"
-            size="icon"
-            className="shrink-0">
-            <HeartIcon size={20} />
-          </Button>
-          <Button
-            variant="outline"
-            size="icon"
             onClick={() => router.push("/dashboard/cart")}
             className="shrink-0"
           >
             <ShoppingBagIcon size={20} />
+            Your Cart
           </Button>
           <ModeToggle />
           <Profile />
@@ -243,11 +236,6 @@ export default function Dashboard() {
                       transition-all cursor-pointer group flex flex-col h-full"
                 >
                   <div className="relative pt-[100%] bg-gray-50 dark:bg-gray-800">
-                    <button className="absolute top-2 right-2 z-10 p-1.5 
-                          rounded-full bg-white/80 dark:bg-black/60 
-                          hover:bg-white dark:hover:bg-black transition">
-                      <HeartIcon size={18} className="text-gray-500 hover:text-rose-600" />
-                    </button>
                     <Image
                       src={p.url || "/placeholder.svg"}
                       alt={p.name || "Product"}
@@ -279,9 +267,6 @@ export default function Dashboard() {
                           </span>
                         )}
                       </div>
-                      <Button size="icon" className="h-8 w-8 sm:h-9 sm:w-9">
-                        <ShoppingBagIcon size={16} />
-                      </Button>
                     </div>
                   </div>
                 </div>
