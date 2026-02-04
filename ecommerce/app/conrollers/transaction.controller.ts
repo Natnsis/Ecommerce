@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/client";
 
 const supabase = createClient();
+
 export const addTransaction = async (
   userId: string | null,
   amount: number | null,
@@ -21,3 +22,15 @@ export const addTransaction = async (
     throw err;
   }
 };
+
+export const fetchTransactionById = async (userId: string) => {
+  try {
+    const { data: transaction, error } = await supabase.from('transaction')
+      .select("*")
+      .eq('user_id', userId)
+    if (error) throw error
+    return transaction
+  } catch (error) {
+    throw error
+  }
+}
