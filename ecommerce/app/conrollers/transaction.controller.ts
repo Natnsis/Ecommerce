@@ -1,15 +1,17 @@
 import { createClient } from "@/lib/supabase/client";
 
 const supabase = createClient();
-
 export const addTransaction = async (
   userId: string | null,
   amount: number | null,
+  productId?: number | null,
 ) => {
   try {
     const payload: any = {};
-    if (amount !== undefined) payload.amount = amount;
+    if (amount !== undefined && amount !== null) payload.amount = amount;
     if (userId) payload.user_id = userId;
+    if (productId !== undefined && productId !== null)
+      payload.product_id = productId;
 
     const { error } = await supabase.from("transaction").insert(payload);
     if (error) throw error;
