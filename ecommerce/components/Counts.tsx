@@ -1,6 +1,6 @@
 import { useUser } from "@/app/(root)/context/user";
 import { getProducts } from "@/app/conrollers/product.controller";
-import { fetchTransactionById } from "@/app/conrollers/transaction.controller";
+import { getAllTransaction } from "@/app/conrollers/transaction.controller";
 import { getCustomersCount } from "@/app/conrollers/users.controller";
 import { Card, CardContent } from "@/components/ui/card";
 import { HandbagSimpleIcon, InvoiceIcon, UserIcon } from "@phosphor-icons/react"
@@ -15,17 +15,14 @@ const Counts = () => {
   if (countError) throw countError
 
   const { data: orderCount, error: orderError } = useQuery({
-    queryKey: ['order-count', user?.id],
-    queryFn: () => fetchTransactionById(user?.id!),
-    enabled: !!user?.id
+    queryKey: ['order-count'],
+    queryFn: getAllTransaction,
   });
 
   const { data: productCount, error: productError } = useQuery({
     queryKey: ['product-count'],
     queryFn: getProducts
   })
-
-  console.log(productCount?.length);
 
   return (
     <div className="flex-col flex gap-5 w-full mt-5 md:flex-row">
