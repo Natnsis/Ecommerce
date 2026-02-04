@@ -1,17 +1,27 @@
 "use client"
+import { fetchTransactionById } from "@/app/conrollers/transaction.controller"
 import InnerHeader from "@/components/InnerHeader"
 import Profile from "@/components/Profile"
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useQuery } from "@tanstack/react-query"
+import { useUser } from "../context/user"
 
 const order = () => {
+  const { data: user, isLoading } = useUser();
+  const { data: transactions, error: transactionError } = useQuery({
+    queryKey: ['transaction', user?.id],
+    queryFn: () => fetchTransactionById(user?.id),
+    enabled: !!user?.id
+  })
+  console.log(transactions);
+
   return (
     <main className="p-5">
       <div className="flex justify-between items-center">
@@ -23,7 +33,6 @@ const order = () => {
         <div className="h-[75vh] p-5">
           <div className="h-[75vh] p-5">
             <Table>
-              <TableCaption>A list of your recent invoices.</TableCaption>
               <TableHeader>
                 <TableRow>
                   <TableHead className="w-[100px]">Invoice</TableHead>
