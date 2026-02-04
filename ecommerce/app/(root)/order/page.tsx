@@ -1,5 +1,7 @@
 "use client"
+
 import { fetchTransactionById } from "@/app/conrollers/transaction.controller"
+import { getProductWithId } from "@/app/conrollers/product.controller"
 import InnerHeader from "@/components/InnerHeader"
 import Profile from "@/components/Profile"
 import {
@@ -12,32 +14,40 @@ import {
 } from "@/components/ui/table"
 import { useQueries, useQuery } from "@tanstack/react-query"
 import { useUser } from "../context/user"
-import { getProductWithId } from "@/app/conrollers/product.controller"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
-const order = () => {
-  const { data: user, isLoading } = useUser();
-  const { data: transactions, error: transactionError } = useQuery({
-    queryKey: ['transaction', user?.id],
-    queryFn: () => fetchTransactionById(user?.id!),
-    enabled: !!user?.id
-  });
-
-  if (transactionError) throw transactionError;
-
+const Order = () => {
+  const { data: user } = useUser()
+  const {
+    data: transactions = [],
+    isLoading: transactionsLoading,
+    error: transactionError,
+  } = useQuery({
+    queryKey: ["transactions", user?.id],
+    queryFn: () => fetchTransactionById(user!.id),
+    enabled: !!user?.id,
+  })
+  if (transactionError) throw transactionError
   const productQueries = useQueries({
-    queries: (transactions ?? []).map((transaction) => ({
-      queryKey: ["nested-product", transaction.product_id],
-      queryFn: () => getProductWithId(transaction.product_id),
-      enabled: !!transaction.product_id,
+    queries: transactions.map((t) => ({
+      queryKey: ["product", t.product_id],
+      queryFn: () => getProductWithId(t.product_id),
+      enabled: !!t.product_id,
     })),
-  });
+  })
 
-  const transactionWithProducts = transactions?.map((transaction, index) => ({
-    ...transaction,
-    product: productQueries[index]?.data,
-  }));
+  const productMap = productQueries.reduce<Record<string, any>>((acc, q, i) => {
+    const productId = transactions[i]?.product_id
+    if (productId && q.data) {
+      acc[productId] = q.data
+    }
+    return acc
+  }, {})
 
-  console.log(transactionWithProducts);
+  const transactionWithProducts = transactions.map((t) => ({
+    ...t,
+    product: productMap[t.product_id],
+  }))
 
   return (
     <main className="p-5">
@@ -45,33 +55,49 @@ const order = () => {
         <InnerHeader />
         <Profile />
       </div>
+
       <section className="px-20 pt-10">
         <h1 className="text-4xl">Ordered Summary</h1>
+
         <div className="h-[75vh] p-5">
-          <div className="h-[75vh] p-5">
-            <Table>
-              <TableHeader>
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>No.</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Image</TableHead>
+                <TableHead>Price</TableHead>
+                <TableHead>Amount</TableHead>
+              </TableRow>
+            </TableHeader>
+
+            <TableBody>
+              {transactionsLoading && (
                 <TableRow>
-                  <TableHead className="w-[100px]">Invoice</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Method</TableHead>
-                  <TableHead className="text-right">Amount</TableHead>
+                  <TableCell colSpan={5}>Loading...</TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                <TableRow>
-                  <TableCell className="font-medium">INV001</TableCell>
-                  <TableCell>Paid</TableCell>
-                  <TableCell>Credit Card</TableCell>
-                  <TableCell className="text-right">$250.00</TableCell>
+              )}
+
+              {transactionWithProducts.map((t, index) => (
+                <TableRow key={t.id}>
+                  <TableCell>{index + 1}</TableCell>
+                  <TableCell>{t.product?.name ?? "Loading..."}</TableCell>
+                  <TableCell>
+                    <Avatar>
+                      <AvatarImage src={t.product?.url ?? "https://github.com/shadcn.png"} />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                  </TableCell>
+                  <TableCell>{t.product?.price ?? "-"}</TableCell>
+                  <TableCell>{t.amount}</TableCell>
                 </TableRow>
-              </TableBody>
-            </Table>
-          </div>
+              ))}
+            </TableBody>
+          </Table>
         </div>
       </section>
     </main>
   )
 }
 
-export default order 
+export default Order
