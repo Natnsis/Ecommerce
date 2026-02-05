@@ -5,6 +5,7 @@ import { getCustomersCount } from "@/app/conrollers/users.controller";
 import { Card, CardContent } from "@/components/ui/card";
 import { HandbagSimpleIcon, InvoiceIcon, UserIcon } from "@phosphor-icons/react"
 import { useQuery } from "@tanstack/react-query";
+import { Spinner } from "@/components/ui/spinner"
 
 const Counts = () => {
   const { data: user } = useUser();
@@ -33,7 +34,7 @@ const Counts = () => {
               <HandbagSimpleIcon size={32} color="white" weight="fill" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">{orderCount?.length}</h1>
+              <h1 className="text-2xl font-bold">{orderCount?.length ? orderCount?.length : <Spinner />}</h1>
               <p className="text-gray-700">Total Order</p>
             </div>
           </div>
@@ -46,7 +47,7 @@ const Counts = () => {
               <UserIcon size={32} color="white" weight="fill" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">{userCount}</h1>
+              <h1 className="text-2xl font-bold">{userCount ? userCount : <Spinner />}</h1>
               <p className="text-gray-700">Number Of Customers</p>
             </div>
           </div>
@@ -59,7 +60,7 @@ const Counts = () => {
               <InvoiceIcon size={32} color="white" weight="fill" />
             </div>
             <div>
-              <h1 className="text-2xl font-bold">{productCount?.length}</h1>
+              <h1 className="text-2xl font-bold">{productCount?.length ? productCount?.length : <Spinner />}</h1>
               <p className="text-gray-700">Number Of Products</p>
             </div>
           </div>

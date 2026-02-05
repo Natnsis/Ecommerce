@@ -3,7 +3,6 @@ import Sidebar from "@/components/Sidebar";
 import AdminHeader from "@/components/AdminHeader";
 import Counts from "@/components/Counts";
 import AdminHero from "@/components/AdminHero";
-import { RecentProducts } from "@/components/RecentProducts";
 
 const Admin = () => {
   return (
@@ -14,9 +13,6 @@ const Admin = () => {
         <Counts />
         <div className="h-[65vh] overflow-y-auto">
           <AdminHero />
-          <div className="hidden md:block">
-            <RecentProducts />
-          </div>
         </div>
       </section>
     </main>
