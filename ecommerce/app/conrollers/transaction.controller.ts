@@ -34,3 +34,14 @@ export const fetchTransactionById = async (userId: string) => {
     throw error
   }
 }
+
+export const getAllTransaction = async () => {
+  try {
+    const { data: transactions, error } = await supabase.from('transaction')
+      .select("*")
+    if (error) throw error
+    return transactions
+  } catch (error) {
+    throw error
+  }
+}
