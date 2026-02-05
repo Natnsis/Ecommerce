@@ -41,7 +41,6 @@ const Header = () => {
             Give A Star
           </a>
         </Button>
-        <Language />
         <ModeToggle />
         <Button onClick={() => router.push("/auth/login")}>
           <UserIcon size={32} />
