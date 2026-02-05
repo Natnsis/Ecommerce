@@ -11,7 +11,7 @@ const Admin = () => {
       <section className="px-5 col-span-7 p-5">
         <AdminHeader />
         <Counts />
-        <div className="h-[65vh] overflow-y-auto">
+        <div className="h-[65vh] overflow-y-auto w-full flex justify-center">
           <AdminHero />
         </div>
       </section>

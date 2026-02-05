@@ -10,6 +10,7 @@ import {
 
 export async function UsersTable() {
   const users = await getAllAuthUsers()
+  console.log(users)
   return (
     <div className="mt-10 px-10">
       <Table className="">

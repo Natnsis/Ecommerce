@@ -22,7 +22,7 @@ const AdminHeader = () => {
         </Avatar>
         <div>
           <h1 className="text-gray-600 dark:text-gray-200">Admin</h1>
-          <p className="text-gray-600 text-sm dark:text-gray-500">nsisay49@gmail.com</p>
+          <p className="text-gray-600 text-sm dark:text-gray-500">admin@gmail.com</p>
         </div>
       </div>
     </header>
