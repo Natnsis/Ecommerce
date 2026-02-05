@@ -12,29 +12,28 @@ import { AuthSchema, AuthTypes } from "@/app/schemas/auth.schema"
 import { useState } from "react"
 import { GoogleOAuth, RegisterWithEmail } from "@/app/conrollers/auth.controller"
 import { toast } from "sonner"
+import { Spinner } from "@/components/ui/spinner"
 
 const Register = () => {
   const router = useRouter()
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState(false)
 
-  const { register, handleSubmit, formState: { errors } } = useForm({
+  const { register, handleSubmit, formState: { errors } } = useForm<AuthTypes>({
     resolver: zodResolver(AuthSchema),
-    defaultValues: {
-      email: "",
-      password: ""
-    }
+    defaultValues: { email: "", password: "" }
   })
 
   const onSubmit = async (data: AuthTypes) => {
     try {
       setIsLoading(true)
-      await RegisterWithEmail(data);
-      toast.success("user registered succcessfully")
-      setIsLoading(false)
+      await RegisterWithEmail(data)
+      toast.success("User registered successfully")
       router.push("/auth/login")
-    } catch (error) {
+    } catch (error: unknown) {
+      if (error instanceof Error) toast.error(error.message)
+      else toast.error("Something went wrong")
+    } finally {
       setIsLoading(false)
-      throw error
     }
   }
 
@@ -42,90 +41,75 @@ const Register = () => {
     try {
       await GoogleOAuth()
     } catch (error) {
-      throw error
+      if (error instanceof Error) toast.error(error.message)
+      else toast.error("Something went wrong")
     }
   }
 
   return (
-    <section className="h-screen flex gap-20">
-      <div className="flex items-center justify-center md:ml-0 ml-20">
+    <section className="h-screen flex flex-col md:flex-row items-center justify-center gap-10 md:gap-20 px-4">
+      <div className="flex items-center justify-center md:ml-10 ml-0">
         <Card>
           <CardContent>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <h1 className="text-3xl text-center">
-                Get Started With Us
-              </h1>
-              <p className="mb-5 text-gray-600 dark:text-gray-400">
+              <h1 className="text-3xl text-center mb-2">Get Started With Us</h1>
+              <p className="mb-5 text-gray-600 dark:text-gray-400 text-center">
                 Enter your email and password to create your account.
               </p>
+
               <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                className="mb-3"
-                {...register("email")} />
-              {errors.email && (
-                <p className="text-red-600 mb-3">
-                  {errors.email.message}
-                </p>)}
+              <Input id="email" className="mb-3" {...register("email")} />
+              {errors.email && <p className="text-red-600 mb-3">{errors.email.message}</p>}
+
               <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                className="mb-3"
-                {...register("password")} />
-              {errors.password && (
-                <p className="text-red-600 mb-3">
-                  {errors.password.message}
-                </p>)}
-              <Button
-                className="w-full mb-3"
-                type="submit"
-                disabled={isLoading}
-              >
-                {isLoading ? "registering..." : "Register"}
+              <Input id="password" className="mb-3" {...register("password")} />
+              {errors.password && <p className="text-red-600 mb-3">{errors.password.message}</p>}
+
+              <Button type="submit" className="w-full mb-3" disabled={isLoading}>
+                {isLoading ? <div className="flex gap-1"><Spinner /> Registering...</div> : "Register"}
               </Button>
+
               <div className="flex items-center gap-2 mb-5">
                 <Separator className="flex-1" />
-                <span className="text-sm text-gray-500">
-                  or
-                </span>
+                <span className="text-sm text-gray-500">or</span>
                 <Separator className="flex-1" />
               </div>
             </form>
+
             <Button
               variant="outline"
-              className="w-full"
-              onClick={loginWithOAuth}>
-              <Image
-                src="/google.png"
-                alt="google"
-                width={20}
-                height={50} />
-              <p>Sign in with Google</p>
+              className="w-full mb-5 flex items-center justify-center gap-2"
+              onClick={loginWithOAuth}
+            >
+              <Image src="/google.png" alt="google" width={20} height={20} />
+              Sign in with Google
             </Button>
-            <p
-              className="text-center text-gray-600 dark:text-gray-400">
-              Already have an account? register
+
+            <p className="text-center text-gray-600 dark:text-gray-400">
+              Already have an account?
               <Button
-                className="text-bold"
                 variant="link"
-                onClick={() => router.push("/auth/login")}>
-                Here
+                className="ml-1"
+                onClick={() => router.push("/auth/login")}
+              >
+                Login Here
               </Button>
             </p>
           </CardContent>
         </Card>
       </div>
-      <div
-        className="h-full items-center w-1/2 
-        justify-center hidden md:flex ">
+
+      <div className="hidden md:flex h-full w-1/2 items-center justify-center">
         <Image
           src="/register.png"
-          alt="login-image"
+          alt="register-image"
           width={300}
-          height={400} />
+          height={400}
+          className="object-contain"
+        />
       </div>
     </section>
   )
 }
 
-export default Register 
+export default Register

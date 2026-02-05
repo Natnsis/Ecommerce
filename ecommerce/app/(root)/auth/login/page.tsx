@@ -37,7 +37,13 @@ const Login = () => {
       }
       setIsLoading(false)
     } catch (error) {
-      throw error
+      if (error instanceof Error) {
+        toast.error(error.message)
+      } else {
+        toast.error("Something went wrong")
+      }
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -51,7 +57,7 @@ const Login = () => {
 
   return (
     <section className="h-screen flex gap-20">
-      <div className="h-full items-center w-1/2 justify-center hidden md:flex ">
+      <div className="h-full items-center w-1/2 justify-center hidden md:flex">
         <Image src="/login.png" alt="login-image" width={300} height={400} />
       </div>
       <div className="flex items-center justify-center md:ml-0 ml-20">
@@ -93,12 +99,12 @@ const Login = () => {
               <p>Sign in with Google</p>
             </Button>
             <p className="text-center text-gray-600 dark:text-gray-400">
-              Don't have an account? register
+              Don't have an account?
               <Button
                 className="text-bold"
                 variant="link"
                 onClick={() => router.push("/auth/register")}>
-                Here
+                Register here
               </Button>
             </p>
           </CardContent>
