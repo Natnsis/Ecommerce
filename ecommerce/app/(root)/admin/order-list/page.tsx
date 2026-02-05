@@ -1,7 +1,16 @@
+"use client"
+import { getAllTransaction } from "@/app/conrollers/transaction.controller"
 import { OrdersTable } from "@/components/OrdersTable"
 import Sidebar from "@/components/Sidebar"
+import { useQuery } from "@tanstack/react-query"
 
 const orderList = () => {
+  const { data: orders, error: orderErrors } = useQuery({
+    queryKey: ['overall-order'],
+    queryFn: getAllTransaction
+  })
+
+
   return (
     <main className="grid grid-cols-8 h-screen">
       <Sidebar pageName="order-list" />
