@@ -72,7 +72,7 @@ const Page = () => {
 
   const { data } = useQuery({
     queryKey: ["product", id],
-    queryFn: () => getProductWithId(id as string),
+    queryFn: () => getProductWithId(Number(id)),
     enabled: !!id
   })
 
