@@ -20,8 +20,6 @@ import { StarIcon } from "lucide-react"
 const Header = () => {
   const router = useRouter()
   const supabase = createClient()
-
-  // 🔥 NEW STATE
   const [href, setHref] = useState("/auth/login")
   const [label, setLabel] = useState("Sign In")
 
@@ -59,14 +57,12 @@ const Header = () => {
         <h1 className="text-2xl font-bold">Gebeya</h1>
       </div>
 
-      {/* CENTER */}
       <div className="text-lg gap-5 hidden md:block">
         <Button variant="link"><a href="#home">HOME</a></Button>
         <Button variant="link"><a href="#about">ABOUT</a></Button>
         <Button variant="link"><a href="mailto:nsisay49@gmail.com">CONTACT US</a></Button>
       </div>
 
-      {/* RIGHT DESKTOP */}
       <div className="gap-5 hidden md:flex">
         <Button variant="outline">
           <DeviceMobileIcon />
@@ -85,14 +81,12 @@ const Header = () => {
 
         <ModeToggle />
 
-        {/* 🔥 REPLACED BUTTON */}
         <Button onClick={() => router.push(href)}>
           <UserIcon size={32} />
           <p>{label}</p>
         </Button>
       </div>
 
-      {/* MOBILE MENU */}
       <div className="md:hidden">
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -119,7 +113,6 @@ const Header = () => {
                 </a>
               </DropdownMenuItem>
 
-              {/* 🔥 SAME LOGIC FOR MOBILE */}
               <DropdownMenuItem onClick={() => router.push(href)}>
                 <UserIcon size={32} />
                 <p>{label}</p>
