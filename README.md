@@ -102,26 +102,17 @@ ecommerce/
 - Performance optimizations (image optimization, lazy loading, partial prerendering)
 - Unit + integration tests (Vitest / Playwright)
 
-## 📜 License
+## 📸 Quick Overview
 
-This project is licensed under the **MIT License**.
+<p align="center">
+  <img src="/public/screenshots/landing.png" width="24%" alt="Landing"/>
+  <img src="/public/screenshots/auth.png" width="24%" alt="Auth"/>
+  <img src="/public/screenshots/products.png" width="24%" alt="Products"/> 
+  <img src="/public/screenshots/admin.png" width="24%" alt="Admin"/>
+  <img src="/public/screenshots/store.png" width="24%" alt="Cutomer-Dashobard"/>
+  <img src="/public/screenshots/product-add.png" width="24%" alt="Add Product"/>
+</p>
 
-See the [LICENSE](LICENSE) file for details.
-
-## 💡 Adding Screenshots / Demo Images
-
-1. Place your images inside the `public/screenshots/` folder (create it if needed)
-
-2. Reference them in markdown like this:
-
-```markdown
-![Admin Page](./public/screenshots/admin.png)
-![Auth Page](./public/screenshots/auth.png)
-![Landing Dashboard](./public/screenshots/landing.png)
-![Adding Product Page](./public/screenshots/product-add.png)
-![customer Dashboard View](./public/screenshots/store.png)
-![Products View](./public/screenshots/products.png)
-```
 
 
 
