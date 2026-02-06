@@ -1,76 +1,147 @@
-"use client";
-import { LogOut } from "lucide-react";
-import { Button } from "./ui/button";
-import { useRouter } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
-import { FormEvent, useState } from "react";
+"use client"
+import { useEffect, useState } from "react"
+import { Button } from "@/components/ui/button"
+import {
+  HouseSimpleIcon,
+  StorefrontIcon,
+  UsersThreeIcon,
+  TreasureChestIcon,
+  SignOutIcon
+} from "@phosphor-icons/react"
+import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { AdminModeToggle } from "@/components/admin-mode"
+import { Logout } from "@/app/conrollers/auth.controller"
+import { toast } from "sonner"
+import { ModeToggle } from "./mode-toggle"
 
-const Sidebar = () => {
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-  const handleLogout = async (e: FormEvent) => {
-    e.preventDefault()
-    const supabase = createClient();
-    setIsLoading(true);
-    const { error } = await supabase.auth.signOut();
-    setIsLoading(false);
-    if (error) {
-      console.error("Logout error:", error);
-      alert("Failed to log out. Please try again.");
-    } else {
-      router.push("/login");
-      router.refresh();
+type PageVariants = "ghost" | "default"
+
+const Sidebar = ({ pageName }: { pageName: string }) => {
+  const router = useRouter()
+  const [home, setHome] = useState<PageVariants>("default");
+  const [order, setOrder] = useState<PageVariants>("ghost")
+  const [user, setUser] = useState<PageVariants>("ghost")
+  const [product, setProduct] = useState<PageVariants>("ghost")
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+
+  useEffect(() => {
+    switch (pageName) {
+      case "home":
+        setHome("default")
+        setOrder("ghost")
+        setUser("ghost")
+        setProduct("ghost")
+        break;
+
+      case "order-list":
+        setHome("ghost")
+        setOrder("default")
+        setUser("ghost")
+        setProduct("ghost")
+        break;
+
+      case "users":
+        setHome("ghost")
+        setOrder("ghost")
+        setUser("default")
+        setProduct("ghost")
+        break;
+
+      case "products":
+        setHome("ghost")
+        setOrder("ghost")
+        setUser("ghost")
+        setProduct("default")
+        break;
+
+      default:
+        break;
     }
-  };
+  }, [])
+
+  const logout = async () => {
+    try {
+      setIsLoading(true)
+      await Logout()
+      setIsLoading(false)
+      toast.success("you've logged out");
+      router.push("/auth/login");
+    } catch (error) {
+      throw error
+    }
+  }
+
   return (
-    <div className="p-5 flex flex-col justify-between items-center h-screen border-r w-60">
-      <div>
-        <div className="flex flex-col items-center mb-5">
-          <h1 className="font-secondary-extrabold text-2xl">Gebeya</h1>
-          <img
-            src="/admin.jpg"
-            className="w-20 h-20 rounded-full border my-3"
-          />
+    <aside className="col-span-1 border-r p-2 h-full">
+      <div className="h-full">
+        <div>
+          <Image alt="logo-img" src="/gebeya-logo.png" width={60} height={200} />
+          <Button
+            className="w-full mt-5 flex justify-start gap-2"
+            onClick={() => router.push("/admin")}
+            variant={home}>
+            <HouseSimpleIcon />
+            <div className="hidden md:block">
+              Home
+            </div>
+          </Button>
+          <Button
+            className="w-full mt-5 flex justify-start md:gap-2"
+            variant={order}
+            onClick={() => router.push("/admin/order-list")}>
+            <StorefrontIcon />
+            <div className="hidden md:block">
+              Order List
+            </div>
+          </Button>
+          <Button
+            className="w-full mt-5 flex justify-start gap-2"
+            variant={user}
+            onClick={() => router.push("/admin/users")}>
+            <UsersThreeIcon />
+            <div className="hidden md:block">
+              Users
+            </div>
+          </Button>
+          <Button
+            className="w-full mt-5 flex justify-start gap-2"
+            variant={product}
+            onClick={() => router.push("/admin/products")}>
+            <TreasureChestIcon />
+            <div className="hidden md:block">
+              Products
+            </div>
+          </Button>
+          <div className="mt-5">
+            <div className="hidden md:block">
+              <AdminModeToggle />
+            </div>
+            <div className="flex md:hidden justify-start">
+              <ModeToggle />
+            </div>
+          </div>
         </div>
 
-        <div className="flex flex-col gap-2 w-full">
+        <div className="h-[50vh] md:flex md:items-end">
           <Button
+            className="w-full mt-5 flex justify-start gap-2"
             variant="ghost"
-            className="w-full justify-start"
-            onClick={() => router.push("/AdminDashboard")}
-          >
-            Dashboard
-          </Button>
-
-          <Button
-            variant="ghost"
-            className="w-full justify-start"
-            onClick={() => router.push("/ManageVendors")}
-          >
-            Vendors
-          </Button>
-
-          <Button
-            variant="ghost"
-            className="w-full justify-start"
-            onClick={() => router.push("/AdminFeedback")}
-          >
-            Feedbacks
+            disabled={isLoading}
+            onClick={logout}>
+            <SignOutIcon />
+            <div className="hidden md:block">
+              {isLoading ?
+                <div>
+                  logging out...
+                </div> :
+                "Logout"}
+            </div>
           </Button>
         </div>
       </div>
-      <form className="w-full">
-        <Button
-          className="flex gap-3 items-center cursor-pointer w-full"
-          type="submit"
-          onClick={handleLogout}
-        >
-          <LogOut size={20} />
-          <p>{isLoading ? "logging out.." : "Logout"}</p>
-        </Button>
-      </form>
-    </div>
-  );
-};
+    </aside>
+  )
+}
 
-export default Sidebar;
+export default Sidebar
