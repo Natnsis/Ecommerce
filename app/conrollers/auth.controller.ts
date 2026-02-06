@@ -50,7 +50,7 @@ export const GoogleOAuth = async () => {
   const { error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${window.location.origin}/dashboard`,
+      redirectTo: "https://ecommerce-1k9egbz78-natnsis-projects.vercel.app/dashboard",
       queryParams: {
         prompt: "select_account",
       },
