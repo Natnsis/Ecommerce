@@ -103,7 +103,6 @@ export function LineGraph() {
       }
     })
 
-    // process users
     users.forEach((u) => {
       const date = u.created_at.slice(0, 10)
       if (!map.has(date)) map.set(date, { date, success: 0, other: 0, users: 0 })
@@ -124,8 +123,8 @@ export function LineGraph() {
 
   console.log(transactions)
   return (
-    <Card className="w-full">
-      <CardHeader className="flex flex-row items-center gap-2 border-b">
+    <Card className="flex flex-col h-full">
+      <CardHeader>
         <div className="flex-1">
           <CardTitle>Transaction & User Activity</CardTitle>
           <CardDescription>
@@ -145,9 +144,12 @@ export function LineGraph() {
         </Select>
       </CardHeader>
 
-      <CardContent className="pt-6">
-        <ChartContainer config={chartConfig} className="h-[300px] w-full">
-          <AreaChart data={chartData}>
+      <CardContent className="pt-6 flex flex-col flex-1 min-h-0">
+        <ChartContainer config={chartConfig} className="w-full flex-1 min-h-0">
+          <AreaChart
+            data={chartData}
+            className="w-full h-full"
+          >
             <defs>
               <linearGradient id="fillSuccess" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="var(--color-success)" stopOpacity={0.8} />
@@ -215,7 +217,7 @@ export function LineGraph() {
             <ChartLegend content={<ChartLegendContent />} />
           </AreaChart>
         </ChartContainer>
-      </CardContent>
-    </Card>
+      </CardContent >
+    </Card >
   )
 }
