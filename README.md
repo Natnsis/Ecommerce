@@ -115,11 +115,13 @@ See the [LICENSE](LICENSE) file for details.
 2. Reference them in markdown like this:
 
 ```markdown
-![Home Page](./public/screenshots/home.png)
-![Product Page](./public/screenshots/product.png)
-![Admin Dashboard](./public/screenshots/admin-dashboard.png)
-![Checkout Flow](./public/screenshots/checkout.png)
-![Mobile View](./public/screenshots/mobile.png)
+![Admin Page](./public/screenshots/admin.png)
+![Auth Page](./public/screenshots/auth.png)
+![Landing Dashboard](./public/screenshots/landing.png)
+![Adding Product Page](./public/screenshots/product-add.png)
+![customer Dashboard View](./public/screenshots/store.png)
+![Products View](./public/screenshots/products.png)
 ```
+
 
 
