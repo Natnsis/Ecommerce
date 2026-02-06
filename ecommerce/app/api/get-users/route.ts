@@ -1,4 +1,3 @@
-
 import { supabaseAdmin } from "@/lib/supabase/admin"
 
 export async function GET() {
